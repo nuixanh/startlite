@@ -1,0 +1,101 @@
+body,td {
+	font-family:tahoma,sans-serif;
+	font-size:11px;	
+}
+#logo{
+	
+}
+
+.main-menu{
+	border-bottom:1px solid #7abce8;
+	/*background-color:#c0e4ff;*/
+	padding:10px 10px 10px 10px;
+	color:#000000;	
+	margin:5px 0 5px 0;
+}
+.main-menu a{	
+	margin:0px 0 5px 0px;
+}
+.main-menu a,.main-menu a:active,.main-menu a:visited{
+	color:#000000;
+	text-decoration:none;
+}
+
+.main-menu a:hover{
+	text-decoration:underline;;
+}
+.horizon-menu{
+	border-top:1px solid #7abce8;
+	background-color:#c0e4ff;
+	padding: 5px 2px 5px 2px;
+	color:#000000;	
+	margin:1px 0 5px 0;
+}
+.horizon-menu a{
+	padding:0 5px 0 5px;
+	margin:3px 0 3px 0px;
+}
+.horizon-menu a,.horizon-menu a:active,.horizon-menu a:visited{
+	color:#000000;
+	text-decoration:none;
+}
+
+.horizon-menu a:hover{
+	text-decoration:underline;;
+}
+.form{
+	border:1px solid #afafaf;
+	background-color:#f9f9f9;
+	padding:10px;
+	margin-top:10px;
+	margin-bottom:10px;
+}
+.form input,.form select,.form option,.form textarea{
+	border:1px solid #afafaf;
+	
+}
+.form input[type=submit],.form input[type=button],.form input[type=reset]{
+	background:#f0f0f0;
+}
+.form label{
+	padding-right:5px;
+}
+.grid{	
+	border:1px solid #7abce8;
+}
+.grid td{
+	padding:3px;
+}
+.grid tr:hover{
+	background-color:#f0f0f0;
+}
+.grid .grid-header{	
+	background-color:#c0e4ff;
+}	
+.grid .grid-row-odd{
+
+}
+
+.error{
+	color:red;
+}
+* input.error{
+	border:2px solid red;
+	background:#FFDFE0;
+	color:red;
+	
+}
+#data-table th span{
+
+}
+#data-table th{
+border-bottom:1px solid #7abce8;
+text-align:left;
+padding:5px;
+}
+.css_right{
+float:right;
+}
+.form legend{
+	margin-left:10px;padding:4px;
+}
