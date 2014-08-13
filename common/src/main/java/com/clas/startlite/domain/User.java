@@ -1,20 +1,24 @@
-package com.clas.domain;
+package com.clas.startlite.domain;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * Created by Son on 8/6/14.
  */
-@Document(collection="admin_user")
-public class AdminUser {
-    public String username;
-    public String password;
-    public String firstName;
-    public String lastName;
-    public String email;
-    public int role;
+@Document(collection="user")
+public class User {
+    private String id;
+    private String username;
+    private String password;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private int role;
+    private long created;
+    private String createdBy;
+    private long modified;
 
-    public AdminUser() {
+    public User() {
     }
 
     public int getRole() {
@@ -23,14 +27,6 @@ public class AdminUser {
 
     public void setRole(int role) {
         this.role = role;
-    }
-
-    public AdminUser(String username, String password, String firstName,
-                     String lastName) {
-        this.username = username;
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
     }
 
     public String getUsername() {
@@ -73,8 +69,35 @@ public class AdminUser {
         this.email = email;
     }
 
-    @Override
-    public String toString(){
-        return "First Name:" + this.firstName + " Last Name:" + this.lastName + " Username:" + this.username ;
+    public long getCreated() {
+        return created;
+    }
+
+    public void setCreated(long created) {
+        this.created = created;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public long getModified() {
+        return modified;
+    }
+
+    public void setModified(long modified) {
+        this.modified = modified;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

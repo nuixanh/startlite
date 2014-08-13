@@ -1,6 +1,7 @@
-package com.clas.startlite.webapp;
+package clas.startlite.webapp.security;
 
-import com.clas.domain.AdminUser;
+import com.clas.startlite.common.Constants;
+import com.clas.startlite.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -24,9 +25,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public UserDetails loadUserByUsername(String username)
             throws UsernameNotFoundException {
-        AdminUser adminUser = getUserDetail(username);
-        System.out.println(username);
-        org.springframework.security.core.userdetails.User userDetail = new org.springframework.security.core.userdetails.User(adminUser.getUsername(), adminUser.getPassword(),true,true,true,true,getAuthorities(adminUser.getRole()));
+        User user = getUserDetail(username);
+        org.springframework.security.core.userdetails.User userDetail = new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), true, true, true, true, getAuthorities(user.getRole()));
         return userDetail;
     }
 
@@ -35,23 +35,24 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.mongoTemplate = mongoTemplate;
     }
 
-    public List<GrantedAuthority> getAuthorities(Integer role) {
+    public List<GrantedAuthority> getAuthorities(int role) {
         List<GrantedAuthority> authList = new ArrayList<GrantedAuthority>();
-        if (role.intValue() == 1) {
-            authList.add(new SimpleGrantedAuthority("ROLE_USER"));
-            authList.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-        } else if (role.intValue() == 2) {
-            authList.add(new SimpleGrantedAuthority("ROLE_USER"));
+        if (role == 0) {
+            authList.add(new SimpleGrantedAuthority(Constants.ROLE_REGULAR_USER));
+        } else if (role == 1) {
+            authList.add(new SimpleGrantedAuthority(Constants.ROLE_QUESTION_CONTRIBUTOR));
+        } else if (role == 2) {
+            authList.add(new SimpleGrantedAuthority(Constants.ROLE_QUESTION_CONTRIBUTOR));
+            authList.add(new SimpleGrantedAuthority(Constants.ROLE_SCENARIO_CREATOR));
         }
         return authList;
     }
 
-    public AdminUser getUserDetail(String username){
-        MongoOperations mongoOperation = (MongoOperations)mongoTemplate;
-        AdminUser adminUser = mongoOperation.findOne(
+    public User getUserDetail(String username){
+        MongoOperations mongoOperation = mongoTemplate;
+        User user = mongoOperation.findOne(
                 new Query(Criteria.where("username").is(username)),
-                AdminUser.class);
-        System.out.println(adminUser.toString());
-        return adminUser;
+                User.class);
+        return user;
     }
 }

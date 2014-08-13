@@ -1,4 +1,4 @@
-package com.clas.startlite.security;
+package clas.startlite.webapp.security;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;

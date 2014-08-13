@@ -10,19 +10,19 @@
     <security:http realm="Protected API" use-expressions="true" auto-config="false" create-session="stateless"
                    entry-point-ref="CustomAuthenticationEntryPoint">
         <security:custom-filter ref="authenticationTokenProcessingFilter" position="FORM_LOGIN_FILTER"/>
-        <security:intercept-url pattern="/authenticate" access="permitAll"/>
+        <security:intercept-url pattern="/greeting" access="permitAll"/>
         <security:intercept-url pattern="/**" access="isAuthenticated()"/>
     </security:http>
 
     <beans:bean id="CustomAuthenticationEntryPoint"
-          class="com.clas.startlite.security.CustomAuthenticationEntryPoint"/>
+          class="clas.startlite.webapp.security.CustomAuthenticationEntryPoint"/>
 
     <authentication-manager alias="authenticationManager">
         <authentication-provider user-service-ref="customUserDetailsService"/>
     </authentication-manager>
-    <beans:bean id="customUserDetailsService" class="com.clas.startlite.webapp.CustomUserDetailsService"/>
+    <beans:bean id="customUserDetailsService" class="clas.startlite.webapp.security.CustomUserDetailsService"/>
 
-    <beans:bean class="com.clas.startlite.security.AuthenticationTokenProcessingFilter"
+    <beans:bean class="clas.startlite.webapp.security.AuthenticationTokenProcessingFilter"
           id="authenticationTokenProcessingFilter">
         <beans:property name="authenticationManager" ref="authenticationManager"></beans:property>
     </beans:bean>

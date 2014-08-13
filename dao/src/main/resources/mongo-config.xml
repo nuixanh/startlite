@@ -1,29 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mongo="http://www.springframework.org/schema/data/mongo"
-       xsi:schemaLocation="http://www.springframework.org/schema/context
-            http://www.springframework.org/schema/context/spring-context-3.1.xsd
-            http://www.springframework.org/schema/data/mongo
+       xsi:schemaLocation="http://www.springframework.org/schema/data/mongo
             http://www.springframework.org/schema/data/mongo/spring-mongo-1.5.xsd
             http://www.springframework.org/schema/beans
-            http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+            http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
     <!-- Default bean name is 'mongo' -->
     <mongo:mongo host="db" port="27017" />
 
     <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
         <constructor-arg ref="mongo" />
-        <constructor-arg name="databaseName" value="tipons"/>
+        <constructor-arg name="databaseName" value="startlite"/>
     </bean>
 
-    <!-- To translate any MongoExceptions thrown in @Repository annotated classes -->
-    <context:annotation-config />
-
-    <!--<bean id="mongoMerchantDao" class="com.tipons.mongo.merchant.MongoMerchantDao">-->
-        <!--<constructor-arg ref="mongoTemplate" />-->
-        <!--<constructor-arg type="java.lang.Class"-->
-                         <!--value="com.tipons.domain.merchant.bean.MerchantBean" />-->
-    <!--</bean>-->
+    <bean id = "userDao" class="com.clas.startlite.dao.UserDao">
+        <property name="template" ref="mongoTemplate"/>
+        <property name="parameterizedType" value="com.clas.startlite.domain.User"/>
+    </bean>
 </beans>
