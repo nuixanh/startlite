@@ -21,9 +21,9 @@
     <!-- To translate any MongoExceptions thrown in @Repository annotated classes -->
     <context:annotation-config />
 
-    <bean id="mongoMerchantDao" class="com.tipons.mongo.merchant.MongoMerchantDao">
-        <constructor-arg ref="mongoTemplate" />
-        <constructor-arg type="java.lang.Class"
-                         value="com.tipons.domain.merchant.bean.MerchantBean" />
-    </bean>
+    <!--<bean id="mongoMerchantDao" class="com.tipons.mongo.merchant.MongoMerchantDao">-->
+        <!--<constructor-arg ref="mongoTemplate" />-->
+        <!--<constructor-arg type="java.lang.Class"-->
+                         <!--value="com.tipons.domain.merchant.bean.MerchantBean" />-->
+    <!--</bean>-->
 </beans>

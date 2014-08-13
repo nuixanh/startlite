@@ -1,58 +1,31 @@
 <beans:beans xmlns="http://www.springframework.org/schema/security"
              xmlns:beans="http://www.springframework.org/schema/beans"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:security="http://www.springframework.org/schema/security"
              xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
                 http://www.springframework.org/schema/security
                 http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
-    <http use-expressions="true">
-        <intercept-url pattern="/login.html*" access="permitAll" />
-        <intercept-url pattern="/**" access="isAuthenticated()" />
-        <form-login
-                login-page="/login.html"
-                default-target-url="/add-merchant.html"
-                authentication-failure-url="/login.html?login_error=1"
-                always-use-default-target="true"/>
-        <logout/>
+    <security:http realm="Protected API" use-expressions="true" auto-config="false" create-session="stateless"
+                   entry-point-ref="CustomAuthenticationEntryPoint">
+        <security:custom-filter ref="authenticationTokenProcessingFilter" position="FORM_LOGIN_FILTER"/>
+        <security:intercept-url pattern="/authenticate" access="permitAll"/>
+        <security:intercept-url pattern="/**" access="isAuthenticated()"/>
+    </security:http>
 
-    </http>
+    <beans:bean id="CustomAuthenticationEntryPoint"
+          class="com.clas.startlite.security.CustomAuthenticationEntryPoint"/>
 
-    <!--<authentication-manager>
-        <authentication-provider>
-            <user-service>
-                <user name="rod" password="koala" authorities="supervisor, teller, user" />
-                <user name="dianne" password="emu" authorities="teller, user" />
-                <user name="scott" password="wombat" authorities="user" />
-                <user name="peter" password="opal" authorities="user" />
-            </user-service>
-        </authentication-provider>
-    </authentication-manager>-->
-    <!--access-decision-manager-ref="accessDecisionManager"-->
-    <!--<http auto-config="false" >
-        <intercept-url pattern="/login.html*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-        <form-login login-page="/login.html" authentication-failure-url="/login.html?error=1" login-processing-url="/j_security_check"/>
-    </http>-->
-    <beans:bean id="customUserDetailsService" class="com.clas.startlite.webapp.CustomUserDetailsService"/>
-
-    <authentication-manager>
+    <authentication-manager alias="authenticationManager">
         <authentication-provider user-service-ref="customUserDetailsService"/>
     </authentication-manager>
+    <beans:bean id="customUserDetailsService" class="com.clas.startlite.webapp.CustomUserDetailsService"/>
 
-    <!--<beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
-        <beans:property name="allowIfAllAbstainDecisions">
-            <beans:value>false</beans:value>
-        </beans:property>
-        <beans:property name="decisionVoters">
-            <beans:list>
-                <beans:ref local="roleVoter"/>
-                <beans:bean class="org.springframework.security.access.vote.AuthenticatedVoter"/>
-            </beans:list>
-        </beans:property>
+    <beans:bean class="com.clas.startlite.security.AuthenticationTokenProcessingFilter"
+          id="authenticationTokenProcessingFilter">
+        <beans:property name="authenticationManager" ref="authenticationManager"></beans:property>
     </beans:bean>
-    <beans:bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter">
-        <beans:property name="rolePrefix">
-            <beans:value/>
-        </beans:property>
-    </beans:bean>-->
+
+
 </beans:beans>

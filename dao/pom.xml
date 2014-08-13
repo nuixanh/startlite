@@ -12,21 +12,21 @@
     <artifactId>dao</artifactId>
 
     <dependencies>
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>2.12.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.tipons.common</groupId>
-            <artifactId>common</artifactId>
-            <version>0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.tipons.dataaccess</groupId>
-            <artifactId>data_access</artifactId>
-            <version>0.1-SNAPSHOT</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.mongodb</groupId>-->
+            <!--<artifactId>mongo-java-driver</artifactId>-->
+            <!--<version>2.12.3</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.tipons.common</groupId>-->
+            <!--<artifactId>common</artifactId>-->
+            <!--<version>0.1-SNAPSHOT</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.tipons.dataaccess</groupId>-->
+            <!--<artifactId>data_access</artifactId>-->
+            <!--<version>0.1-SNAPSHOT</version>-->
+        <!--</dependency>-->
 
     </dependencies>
 
