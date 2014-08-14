@@ -1,11 +1,11 @@
-package clas.startlite.webapp.dto;
+package com.clas.startlite.webapp.dto;
 
 /**
  * Created by Son on 8/14/14.
  */
 public class UserLoginDTO {
     public String sessionId;
-    public String email;
+    public String userId;
     public int role;
 
     public String getSessionId() {
@@ -16,12 +16,12 @@ public class UserLoginDTO {
         this.sessionId = sessionId;
     }
 
-    public String getEmail() {
-        return email;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public int getRole() {

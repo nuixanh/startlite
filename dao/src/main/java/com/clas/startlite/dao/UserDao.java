@@ -15,4 +15,9 @@ public class UserDao extends BaseDao<User, String>{
         Query query = new Query(cr);
         return template.findOne(query, User.class);
     }
+    public User findOneByEmail(String email){
+        Criteria cr = where("email").is(email);
+        Query query = new Query(cr);
+        return template.findOne(query, User.class);
+    }
 }

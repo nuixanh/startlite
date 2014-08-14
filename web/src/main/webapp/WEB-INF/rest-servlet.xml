@@ -14,7 +14,7 @@
     <context:annotation-config/>
 
     <!-- Activates scanning of @Repository and @Service -->
-    <context:component-scan base-package="clas.startlite.webapp"/>
+    <context:component-scan base-package="com.clas.startlite.webapp"/>
 
     <mvc:annotation-driven content-negotiation-manager="contentManager"/>
     <bean id="contentManager"

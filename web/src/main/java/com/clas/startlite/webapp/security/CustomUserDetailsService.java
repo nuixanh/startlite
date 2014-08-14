@@ -1,12 +1,9 @@
-package clas.startlite.webapp.security;
+package com.clas.startlite.webapp.security;
 
 import com.clas.startlite.common.Constants;
+import com.clas.startlite.dao.UserDao;
 import com.clas.startlite.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,18 +18,11 @@ import java.util.List;
  */
 
 public class CustomUserDetailsService implements UserDetailsService {
-    private MongoTemplate mongoTemplate;
-
-    public UserDetails loadUserByUsername(String username)
+    public UserDetails loadUserByUsername(String email)
             throws UsernameNotFoundException {
-        User user = getUserDetail(username);
-        org.springframework.security.core.userdetails.User userDetail = new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), true, true, true, true, getAuthorities(user.getRole()));
+        User user = getUserDetail(email);
+        org.springframework.security.core.userdetails.User userDetail = new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), true, true, true, true, getAuthorities(user.getRole()));
         return userDetail;
-    }
-
-    @Autowired
-    public void setMongoTemplate(MongoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
     }
 
     public List<GrantedAuthority> getAuthorities(int role) {
@@ -48,11 +38,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         return authList;
     }
 
-    public User getUserDetail(String username){
-        MongoOperations mongoOperation = mongoTemplate;
-        User user = mongoOperation.findOne(
-                new Query(Criteria.where("username").is(username)),
-                User.class);
+    public User getUserDetail(String email){
+        User user = userDao.findOneByEmail(email);
         return user;
     }
+
+    @Autowired
+    private UserDao userDao;
 }

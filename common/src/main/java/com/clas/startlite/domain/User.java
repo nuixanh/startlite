@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection="user")
 public class User {
     private String id;
-    private String username;
     private String password;
     private String firstName;
     private String lastName;
@@ -27,14 +26,6 @@ public class User {
 
     public void setRole(int role) {
         this.role = role;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPassword() {

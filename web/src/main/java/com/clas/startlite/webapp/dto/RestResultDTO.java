@@ -1,4 +1,6 @@
-package clas.startlite.webapp.dto;
+package com.clas.startlite.webapp.dto;
+
+import com.clas.startlite.webapp.common.ErrorCodeMap;
 
 /**
  * Created by Son on 8/14/14.

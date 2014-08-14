@@ -19,4 +19,8 @@
         <property name="template" ref="mongoTemplate"/>
         <property name="parameterizedType" value="com.clas.startlite.domain.User"/>
     </bean>
+    <bean id = "sessionDao" class="com.clas.startlite.dao.SessionDao">
+        <property name="template" ref="mongoTemplate"/>
+        <property name="parameterizedType" value="com.clas.startlite.domain.Session"/>
+    </bean>
 </beans>
