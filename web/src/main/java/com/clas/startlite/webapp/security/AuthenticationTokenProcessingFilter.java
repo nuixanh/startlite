@@ -37,7 +37,7 @@ public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
         if(StringUtils.isNotBlank(userId) && StringUtils.isNoneBlank(token)){
             Session session = sessionDao.validate(token, userId, System.currentTimeMillis());
             if(session != null){
-                com.clas.startlite.domain.User user = userDao.findOne(session.getId());
+                com.clas.startlite.domain.User user = userDao.findOne(userId);
                 if(user != null){
                     UserDetails userDetails = new User(user.getEmail(), user.getPassword(), true, true, true, true, AuthorityUtils.getAuthorities(user.getRole()));
                     UsernamePasswordAuthenticationToken authentication =
