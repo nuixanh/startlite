@@ -1,5 +1,10 @@
 package com.clas.startlite.webapp.security;
 
+import com.clas.startlite.webapp.common.ErrorCodeMap;
+import com.clas.startlite.webapp.dto.RestResultDTO;
+import com.clas.startlite.webapp.util.RestUtils;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
@@ -17,7 +22,8 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                          AuthenticationException authException) throws IOException, ServletException {
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getOutputStream().println("{\"error\": \"test\"}");
-//        response.sendError( HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Authentication token was either missing or invalid." );
+        RestResultDTO restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_SESSION_INVALID);
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        response.getOutputStream().println(gson.toJson(restResultDTO));
     }
 }

@@ -7,9 +7,12 @@
                 http://www.springframework.org/schema/security
                 http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
+    <http pattern="/login" security="none"/>
+
     <security:http realm="Protected API" use-expressions="true" auto-config="false" create-session="stateless"
                    entry-point-ref="CustomAuthenticationEntryPoint">
-        <security:intercept-url pattern="/login" access="permitAll"/>
+
+        <!--<security:intercept-url pattern="/login" access="permitAll"/>-->
         <security:custom-filter ref="authenticationTokenProcessingFilter" position="FORM_LOGIN_FILTER"/>
         <security:intercept-url pattern="/**" access="isAuthenticated()"/>
     </security:http>
