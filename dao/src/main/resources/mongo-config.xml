@@ -12,15 +12,19 @@
 
     <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
         <constructor-arg ref="mongo" />
-        <constructor-arg name="databaseName" value="startlite"/>
+        <constructor-arg name="databaseName" value="starlite"/>
     </bean>
 
-    <bean id = "userDao" class="com.clas.startlite.dao.UserDao">
-        <property name="template" ref="mongoTemplate"/>
-        <property name="parameterizedType" value="com.clas.startlite.domain.User"/>
+    <bean id = "userDao" class="com.clas.starlite.dao.UserDao">
+        <property name="parameterizedType" value="com.clas.starlite.domain.User"/>
     </bean>
-    <bean id = "sessionDao" class="com.clas.startlite.dao.SessionDao">
-        <property name="template" ref="mongoTemplate"/>
-        <property name="parameterizedType" value="com.clas.startlite.domain.Session"/>
+    <bean id = "sessionDao" class="com.clas.starlite.dao.SessionDao">
+        <property name="parameterizedType" value="com.clas.starlite.domain.Session"/>
+    </bean>
+    <bean id = "scenarioDao" class="com.clas.starlite.dao.ScenarioDao">
+        <property name="parameterizedType" value="com.clas.starlite.domain.Scenario"/>
+    </bean>
+    <bean id = "questionDao" class="com.clas.starlite.dao.QuestionDao">
+        <property name="parameterizedType" value="com.clas.starlite.domain.Question"/>
     </bean>
 </beans>

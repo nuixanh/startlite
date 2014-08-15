@@ -1,7 +1,7 @@
 package com.clas.startlite.test.dao;
 
-import com.clas.startlite.dao.UserDao;
-import com.clas.startlite.domain.User;
+import com.clas.starlite.dao.UserDao;
+import com.clas.starlite.domain.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

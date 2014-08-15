@@ -1,0 +1,1 @@
+curl -G "http://startlite.cloudapp.net:8088/starlite/login?email=test@live.com&password=test"

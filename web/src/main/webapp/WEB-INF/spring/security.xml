@@ -18,14 +18,14 @@
     </security:http>
 
     <beans:bean id="CustomAuthenticationEntryPoint"
-          class="com.clas.startlite.webapp.security.CustomAuthenticationEntryPoint"/>
+          class="com.clas.starlite.webapp.security.CustomAuthenticationEntryPoint"/>
 
     <authentication-manager alias="authenticationManager">
         <authentication-provider user-service-ref="customUserDetailsService"/>
     </authentication-manager>
-    <beans:bean id="customUserDetailsService" class="com.clas.startlite.webapp.security.CustomUserDetailsService"/>
+    <beans:bean id="customUserDetailsService" class="com.clas.starlite.webapp.security.CustomUserDetailsService"/>
 
-    <beans:bean class="com.clas.startlite.webapp.security.AuthenticationTokenProcessingFilter"
+    <beans:bean class="com.clas.starlite.webapp.security.AuthenticationTokenProcessingFilter"
           id="authenticationTokenProcessingFilter">
         <beans:property name="authenticationManager" ref="authenticationManager"></beans:property>
     </beans:bean>
