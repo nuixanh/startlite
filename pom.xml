@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.clas.startlite</groupId>
-    <artifactId>startlite</artifactId>
+    <artifactId>clas-startlite</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
@@ -102,5 +102,17 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <developers>
+        <developer>
+            <id>Son.NguyenThanh</id>
+            <name>Son Nguyen Thanh</name>
+            <email>son.nguyen.thanh@live.com</email>
+            <organization>CLAS</organization>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
 
 </project>

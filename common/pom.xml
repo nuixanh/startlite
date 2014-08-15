@@ -9,7 +9,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>common</artifactId>
+    <groupId>com.clas.startlite</groupId>
+    <artifactId>clas-startlite-common</artifactId>
+    <name>startlite-common</name>
+
     <dependencies>
         <dependency>
             <groupId>commons-logging</groupId>
