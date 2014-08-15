@@ -1,1 +1,2 @@
 curl -G "http://startlite.cloudapp.net:8088/starlite/login?email=test@live.com&password=test"
+curl -i -H "user: bf93c5bc-c49f-4601-9b78-6c35389f70a1" -H "token: 3cbed11b-6351-47ef-9ad6-00512fffa207" http://startlite.cloudapp.net:8088/starlite/scenarios
