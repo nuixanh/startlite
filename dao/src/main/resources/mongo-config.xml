@@ -8,7 +8,7 @@
             http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
     <!-- Default bean name is 'mongo' -->
-    <mongo:mongo host="db" port="27017" />
+    <mongo:mongo host="localhost" port="27017" />
 
     <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
         <constructor-arg ref="mongo" />
