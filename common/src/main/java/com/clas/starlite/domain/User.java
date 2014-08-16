@@ -1,5 +1,6 @@
 package com.clas.starlite.domain;
 
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
@@ -11,6 +12,7 @@ public class User {
     private String password;
     private String firstName;
     private String lastName;
+    @Indexed
     private String email;
     private int role;
     private long created;

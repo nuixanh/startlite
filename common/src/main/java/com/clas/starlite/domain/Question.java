@@ -1,5 +1,6 @@
 package com.clas.starlite.domain;
 
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Map;
@@ -15,8 +16,11 @@ public class Question {
     private long created;
     private String createdBy;
     private long modified;
+    @Indexed
     private String scenarioId;
     private boolean status;
+    @Indexed
+    private long revision;
 
     public String getId() {
         return id;
@@ -80,5 +84,13 @@ public class Question {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public long getRevision() {
+        return revision;
+    }
+
+    public void setRevision(long revision) {
+        this.revision = revision;
     }
 }

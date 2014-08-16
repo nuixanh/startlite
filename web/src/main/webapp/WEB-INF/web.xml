@@ -36,7 +36,7 @@
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
-            classpath:/mongo-config.xml
+            classpath:/mongo.xml
             /WEB-INF/rest-servlet.xml
             /WEB-INF/spring/security.xml
         </param-value>

@@ -2,7 +2,7 @@ package com.clas.startlite.test.dao;
 
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(locations={"/mongo-config.xml"})
+@ContextConfiguration(locations={"/mongo.xml"})
 public class BaseDaoTest {
 
 }

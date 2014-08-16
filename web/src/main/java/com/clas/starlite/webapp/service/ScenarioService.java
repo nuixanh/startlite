@@ -1,25 +1,30 @@
 package com.clas.starlite.webapp.service;
 
+import com.clas.starlite.common.Constants;
 import com.clas.starlite.dao.QuestionDao;
+import com.clas.starlite.dao.RevisionDao;
 import com.clas.starlite.dao.ScenarioDao;
+import com.clas.starlite.domain.Revision;
 import com.clas.starlite.domain.Scenario;
 import com.clas.starlite.webapp.converter.ScenarioConverter;
 import com.clas.starlite.webapp.dto.ScenarioDTO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by sonnt4 on 8/15/2014.
  */
 @Component
 public class ScenarioService {
-    public List<ScenarioDTO> getList(String scenario, Long timestamp){
+    public List<ScenarioDTO> getList(String scenarioId, Long timestamp){
         List<ScenarioDTO> output;
         try {
-            List<Scenario> scenarios = scenarioDao.findSelfAndChildren(scenario, true, timestamp);
+            List<Scenario> scenarios = scenarioDao.findSelfAndChildren(scenarioId, true, timestamp);
             output = ScenarioConverter.convert(scenarios);
         } catch (Exception e) {
             e.printStackTrace();
@@ -27,8 +32,48 @@ public class ScenarioService {
         }
         return output;
     }
+    public ScenarioDTO create(Scenario scenario){
+        scenario.setId(UUID.randomUUID().toString());
+        scenario.setCreated(System.currentTimeMillis());
+        scenario.setModified(System.currentTimeMillis());
+        scenario.setStatus(true);
+        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SCENARIO, Constants.REVISION_ACTION_ADD, scenario.getId());
+        scenario.setRevision(revision.getVersion());
+        scenarioDao.save(scenario);
+        return ScenarioConverter.convert(scenario);
+    }
+    public ScenarioDTO update(Scenario scenario){
+        Scenario updateObj = scenarioDao.findOne(scenario.getId());
+        if(updateObj != null){
+            updateObj.setName(scenario.getName());
+            updateObj.setModifiedBy(scenario.getModifiedBy());
+            updateObj.setModified(System.currentTimeMillis());
+            Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SCENARIO, Constants.REVISION_ACTION_EDIT, scenario.getId());
+            updateObj.setRevision(revision.getVersion());
+            scenarioDao.save(updateObj);
+            return ScenarioConverter.convert(updateObj);
+        }else{
+            return null;
+        }
+    }
+    public ScenarioDTO delete(String scenarioId, String userId){
+        Scenario scenario = scenarioDao.findOne(scenarioId);
+        if(scenario != null){
+            scenario.setStatus(false);
+            Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SCENARIO, Constants.REVISION_ACTION_DELETE, scenario.getId());
+            scenario.setRevision(revision.getVersion());
+            scenario.setModifiedBy(userId);
+            scenario.setModified(System.currentTimeMillis());
+            scenarioDao.save(scenario);
+            return ScenarioConverter.convert(scenario);
+        }else{
+            return null;
+        }
+    }
     @Autowired
     private ScenarioDao scenarioDao;
     @Autowired
     private QuestionDao questionDao;
+    @Autowired
+    private RevisionDao revisionDao;
 }

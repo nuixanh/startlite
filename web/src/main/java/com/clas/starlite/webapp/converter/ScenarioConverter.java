@@ -13,9 +13,13 @@ public class ScenarioConverter {
     public static List<ScenarioDTO> convert(List<Scenario> scenarios){
         List<ScenarioDTO> output = new ArrayList<ScenarioDTO>();
         for (Scenario scenario : scenarios) {
-            ScenarioDTO dto = new ScenarioDTO(scenario.getId(), scenario.getName(), scenario.getModified(), scenario.isSection(), scenario.getParentId());
+            ScenarioDTO dto = convert(scenario);
             output.add(dto);
         }
         return output;
+    }
+    public static ScenarioDTO convert(Scenario scenario){
+        ScenarioDTO dto = new ScenarioDTO(scenario.getId(), scenario.getName(), scenario.getModified(), scenario.isSection(), scenario.getParentId(), scenario.getRevision());
+        return dto;
     }
 }

@@ -27,4 +27,7 @@
     <bean id = "questionDao" class="com.clas.starlite.dao.QuestionDao">
         <property name="parameterizedType" value="com.clas.starlite.domain.Question"/>
     </bean>
+    <bean id = "revisionDao" class="com.clas.starlite.dao.RevisionDao">
+        <property name="parameterizedType" value="com.clas.starlite.domain.Revision"/>
+    </bean>
 </beans>
