@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by Son on 8/6/14.
  */
@@ -29,7 +32,12 @@ public class LoginController extends ApplicationObjectSupport {
             password = new RijndaelCrypt(RijndaelCrypt.generatePublicKey()).decrypt(password);
             UserLoginDTO userDto = loginService.login(email, password);
             if(userDto != null){
-                restResultDTO.setData(userDto);
+                Map<String, Long> revisionMap = loginService.getCurrentRevision();
+                Map<String, Object> data = new HashMap<String, Object>();
+                data.put("revision", revisionMap);
+                data.put("user", userDto);
+                restResultDTO.setData(data);
+
                 restResultDTO.setSuccessful(true);
             }else{
                 restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_LOGIN_FAIL);

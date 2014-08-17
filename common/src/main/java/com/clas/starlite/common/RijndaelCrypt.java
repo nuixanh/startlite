@@ -22,9 +22,9 @@ public class RijndaelCrypt {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public static void main(String[] args) throws Exception{
-        RijndaelCrypt rijndaelCrypt = new RijndaelCrypt("16082014");
+        RijndaelCrypt rijndaelCrypt = new RijndaelCrypt("17082014");
         System.out.println(rijndaelCrypt.encrypt("test".getBytes()));
-        System.out.println(rijndaelCrypt.decrypt("Pk19LCls1wc7guXPjSgSqQ=="));
+//        System.out.println(rijndaelCrypt.decrypt("zvFn2CHF2LFBgmivVxvmrw=="));
     }
 
     private static String TRANSFORMATION = "AES/CBC/PKCS5Padding";

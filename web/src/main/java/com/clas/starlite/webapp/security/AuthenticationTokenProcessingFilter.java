@@ -4,8 +4,14 @@ import com.clas.starlite.common.Constants;
 import com.clas.starlite.dao.SessionDao;
 import com.clas.starlite.dao.UserDao;
 import com.clas.starlite.domain.Session;
+import com.clas.starlite.webapp.common.ErrorCodeMap;
+import com.clas.starlite.webapp.dto.RestResultDTO;
 import com.clas.starlite.webapp.util.AuthorityUtils;
+import com.clas.starlite.webapp.util.RestUtils;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,22 +39,34 @@ public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
         HttpServletRequest httpServletRequest = (HttpServletRequest)request;
         String userId = httpServletRequest.getHeader(Constants.HTTP_HEADER_USER);
         String token = httpServletRequest.getHeader(Constants.HTTP_HEADER_TOKEN);
-
+        boolean hasError = false;
+        String error = null;
         if(StringUtils.isNotBlank(userId) && StringUtils.isNoneBlank(token)){
-            Session session = sessionDao.validate(token, userId, System.currentTimeMillis());
-            if(session != null){
-                com.clas.starlite.domain.User user = userDao.findOne(userId);
-                if(user != null){
-                    UserDetails userDetails = new User(user.getEmail(), user.getPassword(), true, true, true, true, AuthorityUtils.getAuthorities(user.getRole()));
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword());
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails((HttpServletRequest) request));
-                    SecurityContextHolder.getContext().setAuthentication(authenticationManager.authenticate(authentication));
+            try {
+                Session session = sessionDao.validate(token, userId, System.currentTimeMillis());
+                if(session != null){
+                    com.clas.starlite.domain.User user = userDao.findOne(userId);
+                    if(user != null){
+                        UserDetails userDetails = new User(userId, user.getPassword(), true, true, true, true, AuthorityUtils.getAuthorities(user.getRole()));
+                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword());
+                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails((HttpServletRequest) request));
+                        SecurityContextHolder.getContext().setAuthentication(authenticationManager.authenticate(authentication));
+                    }
                 }
+            } catch (Exception e) {
+                error = ExceptionUtils.getStackTrace(e);
+                hasError = true;
             }
         }
-        // continue thru the filter chain
-        chain.doFilter(request, response);
+        if(hasError){
+            RestResultDTO restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_EXCEPTION);
+            restResultDTO.setData(error);
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            response.getOutputStream().println(gson.toJson(restResultDTO));
+        }else{
+            // continue thru the filter chain
+            chain.doFilter(request, response);
+        }
     }
 
     @Autowired

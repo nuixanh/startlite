@@ -6,6 +6,7 @@ import com.clas.starlite.webapp.dto.RestResultDTO;
 import com.clas.starlite.webapp.dto.ScenarioDTO;
 import com.clas.starlite.webapp.service.ScenarioService;
 import com.clas.starlite.webapp.util.RestUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ApplicationObjectSupport;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,9 @@ public class ScenarioController extends ApplicationObjectSupport {
     @RequestMapping(value = "/scenario/create", method= RequestMethod.POST, consumes="application/json", produces={"application/json"})
     public RestResultDTO create(@RequestBody Scenario scenario, @RequestHeader(value="user", required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();
+        if(scenario == null || StringUtils.isBlank(scenario.getName())){
+            restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_INVALID_PARAMS);
+        }
         scenario.setCreatedBy(userId);
         scenario.setModifiedBy(userId);
         ScenarioDTO scenarioDTO = scenarioService.create(scenario);
@@ -42,6 +46,10 @@ public class ScenarioController extends ApplicationObjectSupport {
     @RequestMapping(value = "/scenario/update", method= RequestMethod.POST, consumes="application/json", produces={"application/json"})
     public RestResultDTO update(@RequestBody Scenario scenario, @RequestHeader(value="user", required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();
+        if(scenario == null || StringUtils.isBlank(scenario.getName())){
+            restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_INVALID_PARAMS);
+        }
+
         scenario.setModifiedBy(userId);
         ScenarioDTO scenarioDTO = scenarioService.update(scenario);
         if(scenarioDTO != null){

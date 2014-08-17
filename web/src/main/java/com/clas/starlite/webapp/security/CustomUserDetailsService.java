@@ -3,6 +3,7 @@ package com.clas.starlite.webapp.security;
 import com.clas.starlite.common.Constants;
 import com.clas.starlite.dao.UserDao;
 import com.clas.starlite.domain.User;
+import com.clas.starlite.webapp.util.AuthorityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,29 +19,14 @@ import java.util.List;
  */
 
 public class CustomUserDetailsService implements UserDetailsService {
-    public UserDetails loadUserByUsername(String email)
+    public UserDetails loadUserByUsername(String userId)
             throws UsernameNotFoundException {
-        User user = getUserDetail(email);
-        org.springframework.security.core.userdetails.User userDetail = new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), true, true, true, true, getAuthorities(user.getRole()));
-        return userDetail;
-    }
-
-    public List<GrantedAuthority> getAuthorities(int role) {
-        List<GrantedAuthority> authList = new ArrayList<GrantedAuthority>();
-        if (role == 0) {
-            authList.add(new SimpleGrantedAuthority(Constants.ROLE_REGULAR_USER));
-        } else if (role == 1) {
-            authList.add(new SimpleGrantedAuthority(Constants.ROLE_QUESTION_CONTRIBUTOR));
-        } else if (role == 2) {
-            authList.add(new SimpleGrantedAuthority(Constants.ROLE_QUESTION_CONTRIBUTOR));
-            authList.add(new SimpleGrantedAuthority(Constants.ROLE_SCENARIO_CREATOR));
+        org.springframework.security.core.userdetails.User userDetail = null;
+        User user = userDao.findOne(userId);
+        if(user != null){
+            userDetail = new org.springframework.security.core.userdetails.User(userId, user.getPassword(), true, true, true, true, AuthorityUtils.getAuthorities(user.getRole()));
         }
-        return authList;
-    }
-
-    public User getUserDetail(String email){
-        User user = userDao.findOneByEmail(email);
-        return user;
+        return userDetail;
     }
 
     @Autowired

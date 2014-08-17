@@ -8,7 +8,6 @@ import com.clas.starlite.domain.Revision;
 import com.clas.starlite.domain.Scenario;
 import com.clas.starlite.webapp.converter.ScenarioConverter;
 import com.clas.starlite.webapp.dto.ScenarioDTO;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -42,16 +41,16 @@ public class ScenarioService {
         scenarioDao.save(scenario);
         return ScenarioConverter.convert(scenario);
     }
-    public ScenarioDTO update(Scenario scenario){
-        Scenario updateObj = scenarioDao.findOne(scenario.getId());
-        if(updateObj != null){
-            updateObj.setName(scenario.getName());
-            updateObj.setModifiedBy(scenario.getModifiedBy());
-            updateObj.setModified(System.currentTimeMillis());
-            Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SCENARIO, Constants.REVISION_ACTION_EDIT, scenario.getId());
-            updateObj.setRevision(revision.getVersion());
-            scenarioDao.save(updateObj);
-            return ScenarioConverter.convert(updateObj);
+    public ScenarioDTO update(Scenario sc){
+        Scenario scenario = scenarioDao.findOne(sc.getId());
+        if(scenario != null){
+            scenario.setName(sc.getName());
+            scenario.setModifiedBy(sc.getModifiedBy());
+            scenario.setModified(System.currentTimeMillis());
+            Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SCENARIO, Constants.REVISION_ACTION_EDIT, sc.getId());
+            scenario.setRevision(revision.getVersion());
+            scenarioDao.save(scenario);
+            return ScenarioConverter.convert(scenario);
         }else{
             return null;
         }

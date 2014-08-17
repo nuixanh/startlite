@@ -1,20 +1,16 @@
-package com.clas.starlite.webapp.dto;
+package com.clas.starlite.domain;
+
+import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * Created by sonnt4 on 8/15/2014.
  */
-public class AnswerDTO {
+@Document(collection="answer")
+public class Answer {
     private String id;
     private String desc;
     private long modified;
     private int score;
-
-    public AnswerDTO(String id, String desc, long modified, int score) {
-        this.id = id;
-        this.desc = desc;
-        this.modified = modified;
-        this.score = score;
-    }
 
     public String getId() {
         return id;

@@ -8,8 +8,20 @@ import java.util.List;
 public class QuestionDTO {
     private String id;
     private String desc;
+    private long created;
     private long modified;
+    private long revision;
+    private String scenarioId;
     private List<AnswerDTO> answers;
+
+    public QuestionDTO(String id, String desc, long created, long modified, long revision, String scenarioId) {
+        this.id = id;
+        this.desc = desc;
+        this.created = created;
+        this.modified = modified;
+        this.revision = revision;
+        this.scenarioId = scenarioId;
+    }
 
     public String getId() {
         return id;
