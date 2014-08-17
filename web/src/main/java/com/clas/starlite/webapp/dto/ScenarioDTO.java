@@ -14,7 +14,7 @@ public class ScenarioDTO {
     private String parentId;
     private long revision;
     private int status;
-    private List<ScenarioDTO> sections;
+    private List<ScenarioDTO> scenarios;
     private List<QuestionDTO> questions;
 
     public ScenarioDTO(String id, String name, long modified, boolean isSection, String parentId, long revision, int status) {
@@ -67,12 +67,12 @@ public class ScenarioDTO {
         this.name = name;
     }
 
-    public List<ScenarioDTO> getSections() {
-        return sections;
+    public List<ScenarioDTO> getScenarios() {
+        return scenarios;
     }
 
-    public void setSections(List<ScenarioDTO> sections) {
-        this.sections = sections;
+    public void setScenarios(List<ScenarioDTO> scenarios) {
+        this.scenarios = scenarios;
     }
 
     public List<QuestionDTO> getQuestions() {

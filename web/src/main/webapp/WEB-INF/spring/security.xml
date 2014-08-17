@@ -14,7 +14,7 @@
         <access-denied-handler ref="customAccessDeniedHandler" />
         <security:custom-filter ref="authenticationTokenProcessingFilter" position="FORM_LOGIN_FILTER"/>
         <security:intercept-url pattern="/scenario/*" access="hasRole('ROLE_SCENARIO_CREATOR')"/>
-        <!--<security:intercept-url pattern="/scenario/update" access="hasRole('ROLE_SCENARIO_CREATOR')"/>-->
+        <security:intercept-url pattern="/solution/*" access="hasRole('ROLE_SCENARIO_CREATOR')"/>
         <security:intercept-url pattern="/question/create" access="hasRole('ROLE_SCENARIO_CREATOR') or hasRole('ROLE_CONTRIBUTOR')"/>
         <security:intercept-url pattern="/question/approve/*" access="hasRole('ROLE_SCENARIO_CREATOR')"/>
         <security:intercept-url pattern="/question/delete/*" access="hasRole('ROLE_SCENARIO_CREATOR')"/>

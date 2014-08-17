@@ -9,7 +9,10 @@ public enum ErrorCodeMap {
     FAILURE_SESSION_INVALID(2),
     FAILURE_LOGIN_FAIL(3),
     FAILURE_OBJECT_NOT_FOUND(4),
-    FAILURE_PERMISSION_DENY(5);
+    FAILURE_PERMISSION_DENY(5),
+    FAILURE_SCENARIO_NOT_FOUND(6),
+    FAILURE_SOLUTION_NOT_FOUND(7);
+
     private final int value;
 
     private ErrorCodeMap(int value){

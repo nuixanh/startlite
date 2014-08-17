@@ -11,17 +11,15 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.UUID;
-
 /**
  * Created by Son on 8/14/14.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-public class TestInsertUser extends BaseDaoTest{
+public class TestInsertUserForProduction extends BaseDaoTest{
     @Test
     public void testInsert(){
-        String userId = "751e988f-2118-48ae-9ee4-14efda7a9c59";
-        String sessionId = "5e356083-ae1b-4c42-8039-7627827ca2f1";
+        String userId = "d8be1fda-e01a-4c81-82c7-d8bde3c3f919";
+        String sessionId = "49d0a953-c78e-43df-b3e6-7dd382cd729e";
         User user = new User();
         user.setId(userId);
         user.setEmail("son@live.com");
@@ -34,8 +32,8 @@ public class TestInsertUser extends BaseDaoTest{
     }
     @Test
     public void testInsertQuestionContributor(){
-        String userId = "68b25d39-d90d-47cb-8132-4447947437d2";
-        String sessionId = "d6608e39-22c3-4714-81ac-b36345ad4b20";
+        String userId = "a0a0164d-0d52-43b1-a9b5-cffd41d89587";
+        String sessionId = "fceb809a-79e1-4870-b64c-013f03680339";
         User user = new User();
         user.setId(userId);
         user.setEmail("contributor@live.com");
@@ -47,8 +45,8 @@ public class TestInsertUser extends BaseDaoTest{
     }
     @Test
     public void testInsertScenarioCreator(){
-        String userId = "000b6350-23b9-4989-9754-fcaa14d20b68";
-        String sessionId = "96f6b9ab-ce18-4505-84a0-130f569680e6";
+        String userId = "4d9d51aa-c3d8-47d1-b62d-5f4862c7a838";
+        String sessionId = "646867be-ecd1-433d-a85a-2ee21b4d90be";
         User user = new User();
         user.setId(userId);
         user.setEmail("scenario@live.com");

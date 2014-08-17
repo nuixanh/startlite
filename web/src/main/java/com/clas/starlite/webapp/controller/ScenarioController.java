@@ -20,10 +20,10 @@ import java.util.List;
 public class ScenarioController extends ApplicationObjectSupport {
 
     @RequestMapping(value = "/scenarios", method= RequestMethod.GET, produces={"application/json"})
-    public RestResultDTO login(@RequestParam(value="timestamp", required=false) Long timestamp,
+    public RestResultDTO login(@RequestParam(value="revision", required=false) Long revision,
                                @RequestParam(value="id", required=false, defaultValue="") String scenarioId) {
         RestResultDTO restResultDTO = new RestResultDTO();
-        List<ScenarioDTO> scenarioList = scenarioService.getList(scenarioId,timestamp);
+        List<ScenarioDTO> scenarioList = scenarioService.getList(scenarioId,revision);
         restResultDTO.setData(scenarioList);
         restResultDTO.setSuccessful(true);
 
@@ -32,13 +32,12 @@ public class ScenarioController extends ApplicationObjectSupport {
     @RequestMapping(value = "/scenario/create", method= RequestMethod.POST, consumes="application/json", produces={"application/json"})
     public RestResultDTO create(@RequestBody Scenario scenario, @RequestHeader(value="user", required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();
-        if(scenario == null || StringUtils.isBlank(scenario.getName())){
-            restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_INVALID_PARAMS);
+        ErrorCodeMap errorCode = scenarioService.validate(scenario);
+        if(errorCode != null){
+            restResultDTO = RestUtils.createInvalidOutput(errorCode);
             return restResultDTO;
         }
-        scenario.setCreatedBy(userId);
-        scenario.setModifiedBy(userId);
-        ScenarioDTO scenarioDTO = scenarioService.create(scenario);
+        ScenarioDTO scenarioDTO = scenarioService.create(scenario, userId);
         restResultDTO.setData(scenarioDTO);
         restResultDTO.setSuccessful(true);
 

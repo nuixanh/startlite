@@ -30,4 +30,7 @@
     <bean id = "revisionDao" class="com.clas.starlite.dao.RevisionDao">
         <property name="parameterizedType" value="com.clas.starlite.domain.Revision"/>
     </bean>
+    <bean id = "solutionDao" class="com.clas.starlite.dao.SolutionDao">
+        <property name="parameterizedType" value="com.clas.starlite.domain.Solution"/>
+    </bean>
 </beans>

@@ -1,8 +1,10 @@
 package com.clas.starlite.domain;
 
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,6 +24,10 @@ public class Scenario {
     @Indexed
     private int status;
     private long revision;
+    @DBRef
+    private List<Scenario> scenarios;
+    @DBRef
+    private List<Question> questions;
 
     public String getId() {
         return id;
@@ -109,5 +115,21 @@ public class Scenario {
 
     public void setRevision(long revision) {
         this.revision = revision;
+    }
+
+    public List<Scenario> getScenarios() {
+        return scenarios;
+    }
+
+    public void setScenarios(List<Scenario> scenarios) {
+        this.scenarios = scenarios;
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
     }
 }

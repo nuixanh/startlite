@@ -7,7 +7,6 @@ import com.clas.starlite.webapp.dto.QuestionDTO;
 import com.clas.starlite.webapp.dto.RestResultDTO;
 import com.clas.starlite.webapp.service.QuestionService;
 import com.clas.starlite.webapp.util.RestUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,13 +19,12 @@ public class QuestionController {
     @RequestMapping(value = "/question/create", method= RequestMethod.POST, consumes="application/json", produces={"application/json"})
     public RestResultDTO create(@RequestBody Question question, @RequestHeader(value="user", required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();
-        if(question == null || StringUtils.isBlank(question.getDesc()) || question.getAnswers() == null){
-            restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_INVALID_PARAMS);
+        ErrorCodeMap errorCode = questionService.validate(question);
+        if(errorCode != null){
+            restResultDTO = RestUtils.createInvalidOutput(errorCode);
             return restResultDTO;
         }
-        question.setCreatedBy(userId);
-        question.setModifiedBy(userId);
-        QuestionDTO questionDTO = questionService.create(question);
+        QuestionDTO questionDTO = questionService.create(question, userId);
         restResultDTO.setData(questionDTO);
         restResultDTO.setSuccessful(true);
         return restResultDTO;
