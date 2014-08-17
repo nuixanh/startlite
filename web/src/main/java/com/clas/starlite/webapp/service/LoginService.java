@@ -35,6 +35,7 @@ public class LoginService {
                 output = new UserLoginDTO();
                 output.setUserId(user.getId());
                 output.setSessionId(session.getId());
+                output.setRole(user.getRole());
             }
         }
         return output;

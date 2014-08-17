@@ -37,7 +37,6 @@ public class LoginController extends ApplicationObjectSupport {
                 data.put("revision", revisionMap);
                 data.put("user", userDto);
                 restResultDTO.setData(data);
-
                 restResultDTO.setSuccessful(true);
             }else{
                 restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_LOGIN_FAIL);

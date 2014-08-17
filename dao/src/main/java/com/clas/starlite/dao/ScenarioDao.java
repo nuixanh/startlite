@@ -15,7 +15,7 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
  * Created by Son on 8/14/14.
  */
 public class ScenarioDao extends BaseDao<Scenario, String>{
-    public List<Scenario> findSelfAndChildren(String scenarioId, Boolean status, Long timestamp){
+    public List<Scenario> findSelfAndChildren(String scenarioId, Integer status, Long timestamp){
         if(StringUtils.isBlank(scenarioId) && status == null && timestamp == null){
             return new ArrayList<Scenario>();
         }

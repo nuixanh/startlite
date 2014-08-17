@@ -19,8 +19,8 @@ public class Scenario {
     private long modified;
     private boolean isSection;
     private String parentId;
-    private boolean status;
     @Indexed
+    private int status;
     private long revision;
 
     public String getId() {
@@ -87,11 +87,11 @@ public class Scenario {
         this.nameMap = nameMap;
     }
 
-    public boolean isStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 

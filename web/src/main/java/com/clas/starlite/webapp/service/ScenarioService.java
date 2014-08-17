@@ -1,6 +1,7 @@
 package com.clas.starlite.webapp.service;
 
 import com.clas.starlite.common.Constants;
+import com.clas.starlite.common.Status;
 import com.clas.starlite.dao.QuestionDao;
 import com.clas.starlite.dao.RevisionDao;
 import com.clas.starlite.dao.ScenarioDao;
@@ -23,7 +24,7 @@ public class ScenarioService {
     public List<ScenarioDTO> getList(String scenarioId, Long timestamp){
         List<ScenarioDTO> output;
         try {
-            List<Scenario> scenarios = scenarioDao.findSelfAndChildren(scenarioId, true, timestamp);
+            List<Scenario> scenarios = scenarioDao.findSelfAndChildren(scenarioId, Status.ACTIVE.getValue(), timestamp);
             output = ScenarioConverter.convert(scenarios);
         } catch (Exception e) {
             e.printStackTrace();
@@ -35,7 +36,7 @@ public class ScenarioService {
         scenario.setId(UUID.randomUUID().toString());
         scenario.setCreated(System.currentTimeMillis());
         scenario.setModified(System.currentTimeMillis());
-        scenario.setStatus(true);
+        scenario.setStatus(Status.ACTIVE.getValue());
         Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SCENARIO, Constants.REVISION_ACTION_ADD, scenario.getId());
         scenario.setRevision(revision.getVersion());
         scenarioDao.save(scenario);
@@ -58,7 +59,7 @@ public class ScenarioService {
     public ScenarioDTO delete(String scenarioId, String userId){
         Scenario scenario = scenarioDao.findOne(scenarioId);
         if(scenario != null){
-            scenario.setStatus(false);
+            scenario.setStatus(Status.DEACTIVE.getValue());
             Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SCENARIO, Constants.REVISION_ACTION_DELETE, scenario.getId());
             scenario.setRevision(revision.getVersion());
             scenario.setModifiedBy(userId);

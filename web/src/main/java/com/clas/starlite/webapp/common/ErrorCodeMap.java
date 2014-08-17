@@ -8,7 +8,8 @@ public enum ErrorCodeMap {
     FAILURE_INVALID_PARAMS(1),
     FAILURE_SESSION_INVALID(2),
     FAILURE_LOGIN_FAIL(3),
-    FAILURE_OBJECT_NOT_FOUND(4);
+    FAILURE_OBJECT_NOT_FOUND(4),
+    FAILURE_PERMISSION_DENY(5);
     private final int value;
 
     private ErrorCodeMap(int value){

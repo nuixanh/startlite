@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class QuestionConverter {
     public static QuestionDTO convert(Question q){
-        QuestionDTO dto = new QuestionDTO(q.getId(), q.getDesc(), q.getCreated(), q.getModified(), q.getRevision(), q.getScenarioId());
+        QuestionDTO dto = new QuestionDTO(q.getId(), q.getDesc(), q.getCreated(), q.getModified(), q.getRevision(), q.getScenarioId(), q.getStatus());
         dto.setAnswers(convert(q.getAnswers()));
         return dto;
     }

@@ -1,5 +1,6 @@
 package com.clas.startlite.test.dao;
 
+import com.clas.starlite.common.UserRole;
 import com.clas.starlite.dao.UserDao;
 import com.clas.starlite.domain.User;
 import org.junit.Test;
@@ -20,6 +21,25 @@ public class TestInsertUser extends BaseDaoTest{
         user.setId(UUID.randomUUID().toString());
         user.setEmail("son@live.com");
         user.setPassword("test");
+        user.setRole(UserRole.ROLE_REGULAR.getValue());
+        userDao.save(user);
+    }
+    @Test
+    public void testInsertQuestionContributor(){
+        User user = new User();
+        user.setId(UUID.randomUUID().toString());
+        user.setEmail("contributor@live.com");
+        user.setPassword("test");
+        user.setRole(UserRole.ROLE_CONTRIBUTOR.getValue());
+        userDao.save(user);
+    }
+    @Test
+    public void testInsertScenarioCreator(){
+        User user = new User();
+        user.setId(UUID.randomUUID().toString());
+        user.setEmail("scenario@live.com");
+        user.setPassword("test");
+        user.setRole(UserRole.ROLE_SCENARIO_CREATOR.getValue());
         userDao.save(user);
     }
     @Autowired

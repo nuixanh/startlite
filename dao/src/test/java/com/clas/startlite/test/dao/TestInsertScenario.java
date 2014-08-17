@@ -1,5 +1,6 @@
 package com.clas.startlite.test.dao;
 
+import com.clas.starlite.common.Status;
 import com.clas.starlite.dao.ScenarioDao;
 import com.clas.starlite.domain.Scenario;
 import org.junit.Test;
@@ -21,7 +22,7 @@ public class TestInsertScenario extends BaseDaoTest{
         scenario.setName("Scenario 1");
         scenario.setCreated(System.currentTimeMillis());
         scenario.setModified(scenario.getCreated());
-        scenario.setStatus(true);
+        scenario.setStatus(Status.ACTIVE.getValue());
         scenarioDao.save(scenario);
     }
     @Autowired

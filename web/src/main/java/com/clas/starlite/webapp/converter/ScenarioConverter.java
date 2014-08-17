@@ -19,7 +19,7 @@ public class ScenarioConverter {
         return output;
     }
     public static ScenarioDTO convert(Scenario scenario){
-        ScenarioDTO dto = new ScenarioDTO(scenario.getId(), scenario.getName(), scenario.getModified(), scenario.isSection(), scenario.getParentId(), scenario.getRevision());
+        ScenarioDTO dto = new ScenarioDTO(scenario.getId(), scenario.getName(), scenario.getModified(), scenario.isSection(), scenario.getParentId(), scenario.getRevision(), scenario.getStatus());
         return dto;
     }
 }

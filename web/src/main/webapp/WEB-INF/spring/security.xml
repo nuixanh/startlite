@@ -10,15 +10,19 @@
     <http pattern="/login" security="none"/>
 
     <security:http realm="Protected API" use-expressions="true" auto-config="false" create-session="stateless"
-                   entry-point-ref="CustomAuthenticationEntryPoint">
-        <!--<security:intercept-url pattern="/login" access="permitAll"/>-->
+                   entry-point-ref="customAuthenticationEntryPoint">
+        <access-denied-handler ref="customAccessDeniedHandler" />
         <security:custom-filter ref="authenticationTokenProcessingFilter" position="FORM_LOGIN_FILTER"/>
-        <!--<security:intercept-url pattern="/scenarios" access="ROLE_REGULAR" />-->
+        <security:intercept-url pattern="/scenario/*" access="hasRole('ROLE_SCENARIO_CREATOR')"/>
+        <!--<security:intercept-url pattern="/scenario/update" access="hasRole('ROLE_SCENARIO_CREATOR')"/>-->
+        <security:intercept-url pattern="/question/create" access="hasRole('ROLE_SCENARIO_CREATOR') or hasRole('ROLE_CONTRIBUTOR')"/>
+        <security:intercept-url pattern="/question/approve/*" access="hasRole('ROLE_SCENARIO_CREATOR')"/>
+        <security:intercept-url pattern="/question/delete/*" access="hasRole('ROLE_SCENARIO_CREATOR')"/>
         <security:intercept-url pattern="/**" access="isAuthenticated()"/>
     </security:http>
 
-    <beans:bean id="CustomAuthenticationEntryPoint"
-          class="com.clas.starlite.webapp.security.CustomAuthenticationEntryPoint"/>
+    <beans:bean id="customAuthenticationEntryPoint" class="com.clas.starlite.webapp.security.CustomAuthenticationEntryPoint"/>
+    <beans:bean id="customAccessDeniedHandler" class="com.clas.starlite.webapp.security.CustomAccessDeniedHandler"/>
 
     <authentication-manager alias="authenticationManager">
         <authentication-provider user-service-ref="customUserDetailsService"/>

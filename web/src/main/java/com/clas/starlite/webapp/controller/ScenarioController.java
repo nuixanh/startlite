@@ -34,6 +34,7 @@ public class ScenarioController extends ApplicationObjectSupport {
         RestResultDTO restResultDTO = new RestResultDTO();
         if(scenario == null || StringUtils.isBlank(scenario.getName())){
             restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_INVALID_PARAMS);
+            return restResultDTO;
         }
         scenario.setCreatedBy(userId);
         scenario.setModifiedBy(userId);
@@ -48,6 +49,7 @@ public class ScenarioController extends ApplicationObjectSupport {
         RestResultDTO restResultDTO = new RestResultDTO();
         if(scenario == null || StringUtils.isBlank(scenario.getName())){
             restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_INVALID_PARAMS);
+            return restResultDTO;
         }
 
         scenario.setModifiedBy(userId);

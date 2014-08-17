@@ -13,16 +13,18 @@ public class ScenarioDTO {
     private boolean isSection;
     private String parentId;
     private long revision;
+    private int status;
     private List<ScenarioDTO> sections;
     private List<QuestionDTO> questions;
 
-    public ScenarioDTO(String id, String name, long modified, boolean isSection, String parentId, long revision) {
+    public ScenarioDTO(String id, String name, long modified, boolean isSection, String parentId, long revision, int status) {
         this.id = id;
         this.name = name;
         this.modified = modified;
         this.isSection = isSection;
         this.parentId = parentId;
         this.revision = revision;
+        this.status = status;
     }
 
     public String getId() {
@@ -87,5 +89,13 @@ public class ScenarioDTO {
 
     public void setRevision(long revision) {
         this.revision = revision;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

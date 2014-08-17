@@ -20,7 +20,7 @@ public class Question {
     private String modifiedBy;
     @Indexed
     private String scenarioId;
-    private boolean status;
+    private int status;
     @Indexed
     private long revision;
 
@@ -82,11 +82,11 @@ public class Question {
         this.scenarioId = scenarioId;
     }
 
-    public boolean isStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 

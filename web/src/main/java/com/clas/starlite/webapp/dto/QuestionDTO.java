@@ -12,15 +12,17 @@ public class QuestionDTO {
     private long modified;
     private long revision;
     private String scenarioId;
+    private int status;
     private List<AnswerDTO> answers;
 
-    public QuestionDTO(String id, String desc, long created, long modified, long revision, String scenarioId) {
+    public QuestionDTO(String id, String desc, long created, long modified, long revision, String scenarioId, int status) {
         this.id = id;
         this.desc = desc;
         this.created = created;
         this.modified = modified;
         this.revision = revision;
         this.scenarioId = scenarioId;
+        this.status = status;
     }
 
     public String getId() {
@@ -53,5 +55,37 @@ public class QuestionDTO {
 
     public void setAnswers(List<AnswerDTO> answers) {
         this.answers = answers;
+    }
+
+    public long getCreated() {
+        return created;
+    }
+
+    public void setCreated(long created) {
+        this.created = created;
+    }
+
+    public long getRevision() {
+        return revision;
+    }
+
+    public void setRevision(long revision) {
+        this.revision = revision;
+    }
+
+    public String getScenarioId() {
+        return scenarioId;
+    }
+
+    public void setScenarioId(String scenarioId) {
+        this.scenarioId = scenarioId;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }
