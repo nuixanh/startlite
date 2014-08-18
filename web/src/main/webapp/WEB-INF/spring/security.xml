@@ -7,7 +7,7 @@
                 http://www.springframework.org/schema/security
                 http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
-    <http pattern="/login" security="none"/>
+    <http pattern="/signup" security="none"/>
 
     <security:http realm="Protected API" use-expressions="true" auto-config="false" create-session="stateless"
                    entry-point-ref="customAuthenticationEntryPoint">

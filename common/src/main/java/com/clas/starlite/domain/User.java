@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class User {
     private String id;
     private String password;
+    private String name;
     private String firstName;
     private String lastName;
     @Indexed
@@ -18,6 +19,23 @@ public class User {
     private long created;
     private String createdBy;
     private long modified;
+    private String link;
+    private String locale;
+
+    public User(String id, String password, String name, String firstName, String lastName, String email, int role, long created, String createdBy, long modified, String link, String locale) {
+        this.id = id;
+        this.password = password;
+        this.name = name;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.role = role;
+        this.created = created;
+        this.createdBy = createdBy;
+        this.modified = modified;
+        this.link = link;
+        this.locale = locale;
+    }
 
     public User() {
     }
@@ -92,5 +110,29 @@ public class User {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
     }
 }

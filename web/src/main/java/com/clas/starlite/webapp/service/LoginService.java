@@ -1,12 +1,15 @@
 package com.clas.starlite.webapp.service;
 
 import com.clas.starlite.common.Constants;
+import com.clas.starlite.common.UserRole;
 import com.clas.starlite.dao.RevisionDao;
 import com.clas.starlite.dao.SessionDao;
 import com.clas.starlite.dao.UserDao;
 import com.clas.starlite.domain.Revision;
+import com.clas.starlite.domain.Scenario;
 import com.clas.starlite.domain.Session;
 import com.clas.starlite.domain.User;
+import com.clas.starlite.util.CommonUtils;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
 import com.clas.starlite.webapp.dto.UserLoginDTO;
 import com.clas.starlite.webapp.util.RestUtils;
@@ -24,6 +27,26 @@ import java.util.UUID;
  */
 @Component
 public class LoginService {
+    public ErrorCodeMap validate(String email, String password){
+        if(StringUtils.isBlank(email) || StringUtils.isBlank(password)){
+            return ErrorCodeMap.FAILURE_INVALID_PARAMS;
+        }else if(!CommonUtils.isValidEmail(email)){
+            return ErrorCodeMap.FAILURE_INVALID_EMAIL;
+        }else{
+            User user = userDao.findOneByEmail(email);
+            if(user == null){
+                return ErrorCodeMap.FAILURE_USER_NOT_FOUND;
+            }else if(!password.equals(user.getPassword())){
+                return ErrorCodeMap.FAILURE_LOGIN_FAIL;
+            }
+        }
+        return null;
+    }
+    public void signup(String email, String password, String name, String firstName, String lastName, String locale, String link){
+        User user = new User(UUID.randomUUID().toString(), password, name, firstName, lastName, email, UserRole.ROLE_REGULAR.getValue(),
+                System.currentTimeMillis(), null, System.currentTimeMillis(), link, locale);
+        userDao.save(user);
+    }
     public UserLoginDTO login(String email, String password){
         UserLoginDTO output = null;
         if(StringUtils.isNotBlank(email) && StringUtils.isNoneBlank(password)){

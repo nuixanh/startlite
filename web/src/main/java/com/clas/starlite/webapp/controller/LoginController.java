@@ -23,7 +23,7 @@ import java.util.Map;
 @RestController
 public class LoginController extends ApplicationObjectSupport {
 
-    @RequestMapping(value = "/login", method= RequestMethod.GET, produces={"application/json"})
+    /*@RequestMapping(value = "/login", method= RequestMethod.GET, produces={"application/json"})
     public RestResultDTO login(@RequestParam(value="email", required=true, defaultValue="") String email,
                               @RequestParam(value="password", required=true, defaultValue="") String password) {
         RestResultDTO restResultDTO = new RestResultDTO();
@@ -43,6 +43,39 @@ public class LoginController extends ApplicationObjectSupport {
             }
         }else{
             restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_INVALID_PARAMS);
+        }
+
+        return restResultDTO;
+    }*/
+
+    @RequestMapping(value = "/signup", method= RequestMethod.GET, produces={"application/json"})
+    public RestResultDTO signup(@RequestParam(value="email", required=true, defaultValue="") String email,
+                               @RequestParam(value="id", required=true, defaultValue="") String password,
+                               @RequestParam(value="name", defaultValue="") String name,
+                               @RequestParam(value="firstName", defaultValue="") String firstName,
+                               @RequestParam(value="lastName", defaultValue="") String lastName,
+                               @RequestParam(value="link", defaultValue="") String link,
+                               @RequestParam(value="locale", defaultValue="") String locale) {
+        RestResultDTO restResultDTO = new RestResultDTO();
+        email = email.trim();
+        ErrorCodeMap errorCode = loginService.validate(email, password);
+        if(errorCode == ErrorCodeMap.FAILURE_USER_NOT_FOUND){
+            loginService.signup(email, password, name, firstName, lastName, link, locale);
+        }else if(errorCode != null){
+            restResultDTO = RestUtils.createInvalidOutput(errorCode);
+            return restResultDTO;
+        }
+
+        UserLoginDTO userDto = loginService.login(email, password);
+        if(userDto != null){
+            Map<String, Long> revisionMap = loginService.getCurrentRevision();
+            Map<String, Object> data = new HashMap<String, Object>();
+            data.put("revision", revisionMap);
+            data.put("user", userDto);
+            restResultDTO.setData(data);
+            restResultDTO.setSuccessful(true);
+        }else{
+            restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_LOGIN_FAIL);
         }
 
         return restResultDTO;
