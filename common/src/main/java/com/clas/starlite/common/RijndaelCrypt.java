@@ -22,7 +22,7 @@ public class RijndaelCrypt {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public static void main(String[] args) throws Exception{
-        RijndaelCrypt rijndaelCrypt = new RijndaelCrypt("17082014");
+        RijndaelCrypt rijndaelCrypt = new RijndaelCrypt("18082014");
         System.out.println(rijndaelCrypt.encrypt("test".getBytes()));
 //        System.out.println(rijndaelCrypt.decrypt("zvFn2CHF2LFBgmivVxvmrw=="));
     }
