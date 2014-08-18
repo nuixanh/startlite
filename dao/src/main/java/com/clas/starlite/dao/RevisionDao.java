@@ -3,9 +3,12 @@ package com.clas.starlite.dao;
 import com.clas.starlite.domain.Revision;
 import com.clas.starlite.domain.RevisionHistory;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
@@ -28,5 +31,10 @@ public class RevisionDao extends BaseDao<Revision, String>{
     }
     public Revision incVersion(String type, String action, String entityId){
         return incVersion(type, 1, action, entityId);
+    }
+
+    public List<RevisionHistory> getHistory(String type, Long revision){
+        Criteria cr = Criteria.where("type").is(type).and("version").gt(revision);
+        return template.find(Query.query(cr), RevisionHistory.class);
     }
 }

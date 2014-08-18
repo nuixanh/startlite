@@ -15,9 +15,10 @@ public class SolutionDTO {
     private long modified;
     private int status;
     private long revision;
+    private String rootParentId;
     private List<SolutionDTO> solutions;
 
-    public SolutionDTO(String id, String desc, String attr, String parentId, boolean isGroup, long created, long modified, int status, long revision) {
+    public SolutionDTO(String id, String desc, String attr, String parentId, boolean isGroup, long created, long modified, int status, long revision, String rootParentId) {
         this.id = id;
         this.desc = desc;
         this.attr = attr;
@@ -27,6 +28,7 @@ public class SolutionDTO {
         this.modified = modified;
         this.status = status;
         this.revision = revision;
+        this.rootParentId = rootParentId;
     }
 
     public String getId() {
@@ -107,5 +109,13 @@ public class SolutionDTO {
 
     public void setSolutions(List<SolutionDTO> solutions) {
         this.solutions = solutions;
+    }
+
+    public String getRootParentId() {
+        return rootParentId;
+    }
+
+    public void setRootParentId(String rootParentId) {
+        this.rootParentId = rootParentId;
     }
 }

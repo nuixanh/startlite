@@ -21,6 +21,7 @@ public class Scenario {
     private long modified;
     private boolean isSection;
     private String parentId;
+    private String rootParentId;
     @Indexed
     private int status;
     private long revision;
@@ -131,5 +132,13 @@ public class Scenario {
 
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
+    }
+
+    public String getRootParentId() {
+        return rootParentId;
+    }
+
+    public void setRootParentId(String rootParentId) {
+        this.rootParentId = rootParentId;
     }
 }

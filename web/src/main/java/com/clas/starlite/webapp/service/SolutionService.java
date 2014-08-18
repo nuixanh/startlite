@@ -52,6 +52,11 @@ public class SolutionService {
                     parent.setSolutions(new ArrayList<Solution>());
                 }
                 parent.getSolutions().add(s);
+                if(StringUtils.isNotBlank(parent.getRootParentId())){
+                    s.setRootParentId(parent.getRootParentId());
+                }else{
+                    s.setRootParentId(s.getParentId());
+                }
                 solutionDao.save(parent);
             }
         }

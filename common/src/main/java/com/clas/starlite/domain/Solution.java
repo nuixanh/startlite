@@ -21,6 +21,8 @@ public class Solution {
     private long modified;
     private int status;
     private long revision;
+    private String rootParentId;
+
     @DBRef
     private List<Solution> solutions;
     @DBRef
@@ -128,5 +130,13 @@ public class Solution {
 
     public void setRules(List<SolutionRule> rules) {
         this.rules = rules;
+    }
+
+    public String getRootParentId() {
+        return rootParentId;
+    }
+
+    public void setRootParentId(String rootParentId) {
+        this.rootParentId = rootParentId;
     }
 }

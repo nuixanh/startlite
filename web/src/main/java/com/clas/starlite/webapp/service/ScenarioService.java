@@ -2,10 +2,10 @@ package com.clas.starlite.webapp.service;
 
 import com.clas.starlite.common.Constants;
 import com.clas.starlite.common.Status;
-import com.clas.starlite.dao.QuestionDao;
 import com.clas.starlite.dao.RevisionDao;
 import com.clas.starlite.dao.ScenarioDao;
 import com.clas.starlite.domain.Revision;
+import com.clas.starlite.domain.RevisionHistory;
 import com.clas.starlite.domain.Scenario;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
 import com.clas.starlite.webapp.converter.ScenarioConverter;
@@ -14,9 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by sonnt4 on 8/15/2014.
@@ -34,11 +32,31 @@ public class ScenarioService {
         }
         return null;
     }
-    public List<ScenarioDTO> getList(String scenarioId, Long revision){
+    public List<ScenarioDTO> getList(String scenarioId, Long revision, Boolean getQuestion){
         List<ScenarioDTO> output;
         try {
-            List<Scenario> scenarios = scenarioDao.getTree(scenarioId, revision);
-            output = ScenarioConverter.convert(scenarios);
+            Set<String> scIdSet = new HashSet<String>();
+            if(revision != null && revision > 0){
+                List<RevisionHistory> rHistoryList = revisionDao.getHistory(Constants.REVISION_TYPE_SCENARIO, revision);
+                if(rHistoryList.size() > 0){
+                    Set<String> entityIdSet = new HashSet<String>();
+                    for (RevisionHistory rHistory : rHistoryList) {
+                        entityIdSet.add(rHistory.getEntityId());
+                    }
+                    scIdSet = scenarioDao.getRootScenarioIdSet(entityIdSet);
+                    if(StringUtils.isNotBlank(scenarioId)){
+                        scIdSet = new HashSet<String>();
+                        if(scIdSet.contains(scenarioId)){
+                            scIdSet.add(scenarioId);
+                        }
+                    }
+                }
+
+            }else if(StringUtils.isNotBlank(scenarioId)){
+                scIdSet.add(scenarioId);
+            }
+            List<Scenario> scenarios = scenarioDao.getTree(scIdSet);
+            output = ScenarioConverter.convert(scenarios, getQuestion);
         } catch (Exception e) {
             e.printStackTrace();
             output = new ArrayList<ScenarioDTO>();
@@ -61,11 +79,16 @@ public class ScenarioService {
                     parent.setScenarios(new ArrayList<Scenario>());
                 }
                 parent.getScenarios().add(scenario);
+                if(StringUtils.isNotBlank(parent.getRootParentId())){
+                    scenario.setRootParentId(parent.getRootParentId());
+                }else{
+                    scenario.setRootParentId(scenario.getParentId());
+                }
                 scenarioDao.save(parent);
             }
         }
         scenarioDao.save(scenario);
-        return ScenarioConverter.convert(scenario);
+        return ScenarioConverter.convert(scenario, false);
     }
     public ScenarioDTO update(Scenario sc){
         Scenario scenario = scenarioDao.findOne(sc.getId());
@@ -76,7 +99,7 @@ public class ScenarioService {
             Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SCENARIO, Constants.REVISION_ACTION_EDIT, sc.getId());
             scenario.setRevision(revision.getVersion());
             scenarioDao.save(scenario);
-            return ScenarioConverter.convert(scenario);
+            return ScenarioConverter.convert(scenario, false);
         }else{
             return null;
         }
@@ -90,7 +113,7 @@ public class ScenarioService {
             scenario.setModifiedBy(userId);
             scenario.setModified(System.currentTimeMillis());
             scenarioDao.save(scenario);
-            return ScenarioConverter.convert(scenario);
+            return ScenarioConverter.convert(scenario, false);
         }else{
             return null;
         }
@@ -98,7 +121,6 @@ public class ScenarioService {
     @Autowired
     private ScenarioDao scenarioDao;
     @Autowired
-    private QuestionDao questionDao;
-    @Autowired
     private RevisionDao revisionDao;
+
 }

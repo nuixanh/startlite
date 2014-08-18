@@ -23,7 +23,7 @@ public class Question {
     private int status;
     @Indexed
     private long revision;
-
+    private String rootParentId;
     private List<Answer> answers;
 
     public String getId() {
@@ -112,5 +112,13 @@ public class Question {
 
     public void setModifiedBy(String modifiedBy) {
         this.modifiedBy = modifiedBy;
+    }
+
+    public String getRootParentId() {
+        return rootParentId;
+    }
+
+    public void setRootParentId(String rootParentId) {
+        this.rootParentId = rootParentId;
     }
 }

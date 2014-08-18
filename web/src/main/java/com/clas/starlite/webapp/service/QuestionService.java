@@ -56,6 +56,12 @@ public class QuestionService {
                     scenario.setQuestions(new ArrayList<Question>());
                 }
                 scenario.getQuestions().add(q);
+
+                if(StringUtils.isNotBlank(scenario.getRootParentId())){
+                    q.setRootParentId(scenario.getRootParentId());
+                }else{
+                    q.setRootParentId(q.getScenarioId());
+                }
             }
             scenarioDao.save(scenario);
         }

@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class SolutionConverter {
     public static SolutionDTO convert(Solution solution){
-        SolutionDTO dto = new SolutionDTO(solution.getId(), solution.getDesc(), solution.getAttr(), solution.getParentId(), solution.isGroup(), solution.getCreated(), solution.getModified(), solution.getStatus(), solution.getRevision());
+        SolutionDTO dto = new SolutionDTO(solution.getId(), solution.getDesc(), solution.getAttr(), solution.getParentId(), solution.isGroup(), solution.getCreated(), solution.getModified(), solution.getStatus(), solution.getRevision(), solution.getRootParentId());
         if(solution.getSolutions() != null){
             List<SolutionDTO> solutionDTOs = new ArrayList<SolutionDTO>();
             for (Solution s : solution.getSolutions()) {
