@@ -1,5 +1,6 @@
 package com.clas.starlite.webapp.controller;
 
+import com.clas.starlite.common.Constants;
 import com.clas.starlite.domain.Scenario;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
 import com.clas.starlite.webapp.dto.RestResultDTO;
@@ -31,7 +32,7 @@ public class ScenarioController extends ApplicationObjectSupport {
         return restResultDTO;
     }
     @RequestMapping(value = "/scenario/create", method= RequestMethod.POST, consumes="application/json", produces={"application/json"})
-    public RestResultDTO create(@RequestBody Scenario scenario, @RequestHeader(value="user", required = true) String userId) {
+    public RestResultDTO create(@RequestBody Scenario scenario, @RequestHeader(value= Constants.HTTP_HEADER_USER, required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();
         ErrorCodeMap errorCode = scenarioService.validate(scenario);
         if(errorCode != null){
@@ -45,7 +46,7 @@ public class ScenarioController extends ApplicationObjectSupport {
         return restResultDTO;
     }
     @RequestMapping(value = "/scenario/update", method= RequestMethod.POST, consumes="application/json", produces={"application/json"})
-    public RestResultDTO update(@RequestBody Scenario scenario, @RequestHeader(value="user", required = true) String userId) {
+    public RestResultDTO update(@RequestBody Scenario scenario, @RequestHeader(value=Constants.HTTP_HEADER_USER, required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();
         if(scenario == null || StringUtils.isBlank(scenario.getName())){
             restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_INVALID_PARAMS);
@@ -65,7 +66,7 @@ public class ScenarioController extends ApplicationObjectSupport {
     }
 
     @RequestMapping(value = "/scenario/delete/{id}", method= RequestMethod.GET, produces={"application/json"})
-    public RestResultDTO delete(@PathVariable("id") String scenarioId, @RequestHeader(value="user", required = true) String userId) {
+    public RestResultDTO delete(@PathVariable("id") String scenarioId, @RequestHeader(value=Constants.HTTP_HEADER_USER, required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();
         ScenarioDTO scenarioDTO = scenarioService.delete(scenarioId, userId);
         if(scenarioDTO != null){

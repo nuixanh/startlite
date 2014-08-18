@@ -1,5 +1,6 @@
 package com.clas.starlite.webapp.controller;
 
+import com.clas.starlite.common.Constants;
 import com.clas.starlite.common.Status;
 import com.clas.starlite.domain.Question;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
@@ -17,8 +18,9 @@ import org.springframework.web.bind.annotation.*;
 public class QuestionController {
 
     @RequestMapping(value = "/question/create", method= RequestMethod.POST, consumes="application/json", produces={"application/json"})
-    public RestResultDTO create(@RequestBody Question question, @RequestHeader(value="user", required = true) String userId) {
+    public RestResultDTO create(@RequestBody Question question, @RequestHeader(value=Constants.HTTP_HEADER_USER, required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();
+
         ErrorCodeMap errorCode = questionService.validate(question);
         if(errorCode != null){
             restResultDTO = RestUtils.createInvalidOutput(errorCode);
@@ -31,7 +33,7 @@ public class QuestionController {
     }
 
     @RequestMapping(value = "/question/approve/{id}", method= RequestMethod.GET, produces={"application/json"})
-    public RestResultDTO approve(@PathVariable("id") String questionId, @RequestHeader(value="user", required = true) String userId) {
+    public RestResultDTO approve(@PathVariable("id") String questionId, @RequestHeader(value=Constants.HTTP_HEADER_USER, required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();
         QuestionDTO questionDTO = questionService.updateStatus(questionId, userId, Status.ACTIVE.getValue());
         if(questionDTO != null){
@@ -44,7 +46,7 @@ public class QuestionController {
         return restResultDTO;
     }
     @RequestMapping(value = "/question/delete/{id}", method= RequestMethod.GET, produces={"application/json"})
-    public RestResultDTO delete(@PathVariable("id") String questionId, @RequestHeader(value="user", required = true) String userId) {
+    public RestResultDTO delete(@PathVariable("id") String questionId, @RequestHeader(value=Constants.HTTP_HEADER_USER, required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();
         QuestionDTO questionDTO = questionService.updateStatus(questionId, userId, Status.DEACTIVE.getValue());
         if(questionDTO != null){

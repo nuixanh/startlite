@@ -1,5 +1,6 @@
 package com.clas.starlite.webapp.controller;
 
+import com.clas.starlite.common.Constants;
 import com.clas.starlite.domain.Solution;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
 import com.clas.starlite.webapp.dto.RestResultDTO;
@@ -30,7 +31,7 @@ public class SolutionController {
     }
 
     @RequestMapping(value = "/solution/create", method= RequestMethod.POST, consumes="application/json", produces={"application/json"})
-    public RestResultDTO create(@RequestBody Solution solution, @RequestHeader(value="user", required = true) String userId) {
+    public RestResultDTO create(@RequestBody Solution solution, @RequestHeader(value= Constants.HTTP_HEADER_USER, required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();
         ErrorCodeMap errorCode = solutionService.validate(solution);
         if(errorCode != null){
