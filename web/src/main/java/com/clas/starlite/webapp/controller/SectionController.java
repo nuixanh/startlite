@@ -45,7 +45,7 @@ public class SectionController extends ApplicationObjectSupport {
         return restResultDTO;
     }
 
-    @RequestMapping(value = "/section/attach/{id}/{scenarioId}", method= RequestMethod.GET, consumes="application/json", produces={"application/json"})
+    @RequestMapping(value = "/section/attach/{id}/{scenarioId}", method= RequestMethod.GET, produces={"application/json"})
     public RestResultDTO create(@PathVariable("id") String sectionId,
                                 @PathVariable("scenarioId") String scenarioId,
                                 @RequestHeader(value= Constants.HTTP_HEADER_USER, required = true) String userId) {
