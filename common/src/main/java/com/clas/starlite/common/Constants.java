@@ -10,6 +10,7 @@ public class Constants {
     public static final String REVISION_TYPE_SCENARIO = "scenario";
     public static final String REVISION_TYPE_SECTION = "section";
     public static final String REVISION_TYPE_SOLUTION = "solution";
+    public static final String REVISION_TYPE_SOLUTION_RULE = "rule";
     public static final String REVISION_ACTION_ADD = "add";
     public static final String REVISION_ACTION_EDIT = "edit";
     public static final String REVISION_ACTION_DELETE = "delete";

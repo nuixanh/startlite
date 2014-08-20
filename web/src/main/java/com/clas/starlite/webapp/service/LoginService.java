@@ -64,14 +64,30 @@ public class LoginService {
         revisionMap.put(Constants.REVISION_TYPE_SCENARIO, 0L);
         revisionMap.put(Constants.REVISION_TYPE_SOLUTION, 0L);
         List<Revision> revisions = revisionDao.findAll();
+        Long ruleRevision = null, sectionVersion = null;
         for (Revision revision : revisions) {
             if(revisionMap.keySet().contains(revision.getType())){
                 revisionMap.put(revision.getType(), revision.getVersion());
+            }else if(revision.getType() == Constants.REVISION_TYPE_SOLUTION_RULE){
+                ruleRevision = revision.getVersion();
+            }else if(revision.getType() == Constants.REVISION_TYPE_SECTION){
+                sectionVersion = revision.getVersion();
             }
         }
-        Long sectionVersion = revisionDao.getCurrentVersion(Constants.REVISION_TYPE_SECTION, Constants.REVISION_ACTION_ADD);
-        if(sectionVersion > revisionMap.get(Constants.REVISION_TYPE_QUESTION)){
-            revisionMap.put(Constants.REVISION_TYPE_QUESTION, sectionVersion);
+        if(ruleRevision != null && ruleRevision > revisionMap.get(Constants.REVISION_TYPE_SOLUTION)){
+            revisionMap.put(Constants.REVISION_TYPE_SOLUTION, ruleRevision);
+        }
+        if (sectionVersion != null && sectionVersion > revisionMap.get(Constants.REVISION_TYPE_QUESTION)){
+            Long addSectionVersion = revisionDao.getCurrentVersion(Constants.REVISION_TYPE_SECTION, Constants.REVISION_ACTION_ADD);
+            if(addSectionVersion > revisionMap.get(Constants.REVISION_TYPE_QUESTION)){
+                revisionMap.put(Constants.REVISION_TYPE_QUESTION, addSectionVersion);
+            }
+        }
+        if (sectionVersion != null && sectionVersion > revisionMap.get(Constants.REVISION_TYPE_SCENARIO)){
+            Long attachSectionVersion = revisionDao.getCurrentVersion(Constants.REVISION_TYPE_SECTION, Constants.REVISION_ACTION_ATTACH);
+            if(attachSectionVersion > revisionMap.get(Constants.REVISION_TYPE_SCENARIO)){
+                revisionMap.put(Constants.REVISION_TYPE_SCENARIO, attachSectionVersion);
+            }
         }
 
         return revisionMap;

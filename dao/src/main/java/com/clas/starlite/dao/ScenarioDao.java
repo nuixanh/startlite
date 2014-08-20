@@ -17,14 +17,16 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
  */
 public class ScenarioDao extends BaseDao<Scenario, String>{
     public List<Scenario> getTree(Collection<String> scIds){
-        Criteria cr;
-        if(!CollectionUtils.isEmpty(scIds)){
-            cr = Criteria.where("id").in(scIds);
-        }else{
-            cr = Criteria.where("parentId").exists(Boolean.FALSE);
+        if(CollectionUtils.isEmpty(scIds)){
+            return new ArrayList<Scenario>();
         }
+        Criteria cr = Criteria.where("id").in(scIds);
         Query q = Query.query(cr);
         return template.find(q, Scenario.class);
+    }
+    public List<Scenario> getAllTrees(){
+        Criteria cr = Criteria.where("parentId").exists(Boolean.FALSE);
+        return template.find(Query.query(cr), Scenario.class);
     }
     public Set<String> getRootScenarioIdSet(Collection<String> scIds){
         Set<String> rs = new HashSet<String>();

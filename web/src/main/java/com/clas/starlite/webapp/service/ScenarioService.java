@@ -4,15 +4,18 @@ import com.clas.starlite.common.Constants;
 import com.clas.starlite.common.Status;
 import com.clas.starlite.dao.RevisionDao;
 import com.clas.starlite.dao.ScenarioDao;
+import com.clas.starlite.dao.SectionDao;
 import com.clas.starlite.domain.Revision;
 import com.clas.starlite.domain.RevisionHistory;
 import com.clas.starlite.domain.Scenario;
+import com.clas.starlite.domain.Section;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
 import com.clas.starlite.webapp.converter.ScenarioConverter;
 import com.clas.starlite.webapp.dto.ScenarioDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
@@ -33,10 +36,21 @@ public class ScenarioService {
         return null;
     }
     public List<ScenarioDTO> getList(String scenarioId, Long revision){
-        List<ScenarioDTO> output;
+        List<Scenario> scenarios;
+        if(StringUtils.isNotBlank(scenarioId)){
+            scenarios = new ArrayList<Scenario>();
+        }else{
+            scenarios = getList(revision);
+        }
+        return ScenarioConverter.convert(scenarios);
+    }
+    public List<Scenario> getList(Long revision){
+        List<Scenario> scenarios = new ArrayList<Scenario>();
         try {
             Set<String> scIdSet = new HashSet<String>();
-            if(revision != null && revision > 0){
+            if(revision == null || revision > 0){
+                scenarios = scenarioDao.getAllTrees();
+            }else if(revision != null && revision > 0){
                 List<RevisionHistory> rHistoryList = revisionDao.getHistory(Constants.REVISION_TYPE_SCENARIO, revision);
                 if(rHistoryList.size() > 0){
                     Set<String> entityIdSet = new HashSet<String>();
@@ -44,24 +58,38 @@ public class ScenarioService {
                         entityIdSet.add(rHistory.getEntityId());
                     }
                     scIdSet = scenarioDao.getRootScenarioIdSet(entityIdSet);
-                    if(StringUtils.isNotBlank(scenarioId)){
-                        scIdSet = new HashSet<String>();
-                        if(scIdSet.contains(scenarioId)){
-                            scIdSet.add(scenarioId);
-                        }
-                    }
                 }
 
-            }else if(StringUtils.isNotBlank(scenarioId)){
-                scIdSet.add(scenarioId);
+                rHistoryList = revisionDao.getHistory(Constants.REVISION_TYPE_SECTION, Constants.REVISION_ACTION_ATTACH, revision);
+                if(rHistoryList.size() > 0){
+                    Set<String> entityIdSet = new HashSet<String>();
+                    for (RevisionHistory rHistory : rHistoryList) {
+                        entityIdSet.add(rHistory.getEntityId());
+                    }
+                    List<Section> sections = sectionDao.find(entityIdSet);
+                    Set<String> scenarioIdSet = new HashSet<String>();
+                    for(Section section: sections){
+                        List<Scenario> scenarioList = section.getScenarios();
+                        if(scenarioList != null){
+                            for (Scenario sc : scenarioList) {
+                                scenarioIdSet.add(sc.getId());
+                            }
+                        }
+                    }
+                    if(scenarioIdSet.size() > 0){
+                        Set<String> rootScenarioIdSet = scenarioDao.getRootScenarioIdSet(scenarioIdSet);
+                        scIdSet.addAll(rootScenarioIdSet);
+                    }
+                }
+                if(!CollectionUtils.isEmpty(scIdSet)){
+                    scenarios = scenarioDao.getTree(scIdSet);
+                }
             }
-            List<Scenario> scenarios = scenarioDao.getTree(scIdSet);
-            output = ScenarioConverter.convert(scenarios);
         } catch (Exception e) {
             e.printStackTrace();
-            output = new ArrayList<ScenarioDTO>();
+            scenarios = new ArrayList<Scenario>();
         }
-        return output;
+        return scenarios;
     }
     public ScenarioDTO create(Scenario scenario, String userId){
         scenario.setId(UUID.randomUUID().toString());
@@ -122,5 +150,6 @@ public class ScenarioService {
     private ScenarioDao scenarioDao;
     @Autowired
     private RevisionDao revisionDao;
-
+    @Autowired
+    private SectionDao sectionDao;
 }
