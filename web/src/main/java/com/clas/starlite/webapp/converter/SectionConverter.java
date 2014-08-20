@@ -21,6 +21,9 @@ public class SectionConverter {
                 dto.getQuestions().add(qDTO);
             }
         }
+        if(section.getScenarios() != null){
+            dto.setScenarios(ScenarioConverter.convert(section.getScenarios()));
+        }
         return dto;
     }
     public static List<SectionDTO> convert(List<Section> sections){

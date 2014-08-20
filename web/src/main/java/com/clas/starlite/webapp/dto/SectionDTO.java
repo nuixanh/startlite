@@ -18,6 +18,7 @@ public class SectionDTO {
     private long revision;
 
     private List<QuestionDTO> questions;
+    private List<ScenarioDTO> scenarios;
 
     public SectionDTO(String id, String name, Map<String, String> nameMap, long created, String createdBy, String modifiedBy, long modified, int status, long revision) {
         this.id = id;
@@ -109,5 +110,13 @@ public class SectionDTO {
 
     public void setQuestions(List<QuestionDTO> questions) {
         this.questions = questions;
+    }
+
+    public List<ScenarioDTO> getScenarios() {
+        return scenarios;
+    }
+
+    public void setScenarios(List<ScenarioDTO> scenarios) {
+        this.scenarios = scenarios;
     }
 }
