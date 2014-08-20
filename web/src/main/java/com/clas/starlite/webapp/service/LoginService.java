@@ -68,9 +68,9 @@ public class LoginService {
         for (Revision revision : revisions) {
             if(revisionMap.keySet().contains(revision.getType())){
                 revisionMap.put(revision.getType(), revision.getVersion());
-            }else if(revision.getType() == Constants.REVISION_TYPE_SOLUTION_RULE){
+            }else if(revision.getType().equals(Constants.REVISION_TYPE_SOLUTION_RULE)){
                 ruleRevision = revision.getVersion();
-            }else if(revision.getType() == Constants.REVISION_TYPE_SECTION){
+            }else if(revision.getType().equals(Constants.REVISION_TYPE_SECTION)){
                 sectionVersion = revision.getVersion();
             }
         }

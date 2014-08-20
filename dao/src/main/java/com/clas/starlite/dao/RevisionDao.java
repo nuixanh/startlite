@@ -43,7 +43,7 @@ public class RevisionDao extends BaseDao<Revision, String>{
         return template.find(Query.query(cr), RevisionHistory.class);
     }
     public Long getCurrentVersion(String type, String action){
-        Query q = Query.query(Criteria.where("type").is(type).and("action").gt(action));
+        Query q = Query.query(Criteria.where("type").is(type).and("action").is(action));
         q.with(new Sort(Sort.Direction.DESC, "version"));
         q.limit(1);
         RevisionHistory rh = template.findOne(q, RevisionHistory.class);
