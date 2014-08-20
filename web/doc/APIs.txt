@@ -1,3 +1,5 @@
 curl -G "http://startlite.cloudapp.net:8088/starlite/login?email=test@live.com&password=test"
 curl -H "userId: f1abbc87-67c6-4f2a-957b-99b5f4a4aedd" -H "sessionId: d27ab675-334a-4af3-9ade-5996fb061fa7" http://clas-starlite.cloudapp.net:8088/starlite/sections | python -m json.tool
 curl -H "userId: f1abbc87-67c6-4f2a-957b-99b5f4a4aedd" -H "sessionId: d27ab675-334a-4af3-9ade-5996fb061fa7" http://clas-starlite.cloudapp.net:8088/starlite/section/attach/42c4dda5-340d-44c3-b5cd-1d61d6ffb92f/eef8594f-0d16-4379-b27a-ee27f9cf95a9 | python -m json.tool
+
+curl -H "userId: f1abbc87-67c6-4f2a-957b-99b5f4a4aedd" -H "sessionId: d27ab675-334a-4af3-9ade-5996fb061fa7" http://clas-starlite.cloudapp.net:8088/starlite/scenarios | python -m json.tool
