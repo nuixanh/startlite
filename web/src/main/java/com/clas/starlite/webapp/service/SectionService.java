@@ -48,7 +48,13 @@ public class SectionService {
             }else if(StringUtils.isNotBlank(sectionId)){
                 sIdSet.add(sectionId);
             }
-            List<Section> sections = sectionDao.find(sIdSet);
+            List<Section> sections;
+            if(sIdSet.size() > 0){
+                sections = sectionDao.find(sIdSet);
+            }else{
+                sections = sectionDao.findAll();
+            }
+
             output = SectionConverter.convert(sections);
         } catch (Exception e) {
             e.printStackTrace();
