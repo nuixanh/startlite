@@ -1,5 +1,6 @@
 package com.clas.starlite.domain;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -118,7 +119,7 @@ public class Scenario {
     }
 
     public String getRootParentId() {
-        return rootParentId;
+        return StringUtils.isBlank(rootParentId)? this.id : rootParentId;
     }
 
     public void setRootParentId(String rootParentId) {
