@@ -2,6 +2,7 @@ package com.clas.starlite.dao;
 
 import com.clas.starlite.domain.Revision;
 import com.clas.starlite.domain.RevisionHistory;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -36,5 +37,20 @@ public class RevisionDao extends BaseDao<Revision, String>{
     public List<RevisionHistory> getHistory(String type, Long revision){
         Criteria cr = Criteria.where("type").is(type).and("version").gt(revision);
         return template.find(Query.query(cr), RevisionHistory.class);
+    }
+    public List<RevisionHistory> getHistory(String type, String action, Long revision){
+        Criteria cr = Criteria.where("type").is(type).and("action").is(action).and("version").gt(revision);
+        return template.find(Query.query(cr), RevisionHistory.class);
+    }
+    public Long getCurrentVersion(String type, String action){
+        Query q = Query.query(Criteria.where("type").is(type).and("action").gt(action));
+        q.with(new Sort(Sort.Direction.DESC, "version"));
+        q.limit(1);
+        RevisionHistory rh = template.findOne(q, RevisionHistory.class);
+        if(rh != null){
+            return rh.getVersion();
+        }else{
+            return 0L;
+        }
     }
 }

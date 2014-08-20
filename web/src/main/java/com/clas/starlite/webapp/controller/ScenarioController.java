@@ -22,10 +22,9 @@ public class ScenarioController extends ApplicationObjectSupport {
 
     @RequestMapping(value = "/scenarios", method= RequestMethod.GET, produces={"application/json"})
     public RestResultDTO login(@RequestParam(value="revision", required=false) Long revision,
-                               @RequestParam(value="getQuestion", required=false, defaultValue = "false") Boolean getQuestion,
                                @RequestParam(value="id", required=false, defaultValue="") String scenarioId) {
         RestResultDTO restResultDTO = new RestResultDTO();
-        List<ScenarioDTO> scenarioList = scenarioService.getList(scenarioId, revision, getQuestion);
+        List<ScenarioDTO> scenarioList = scenarioService.getList(scenarioId, revision);
         restResultDTO.setData(scenarioList);
         restResultDTO.setSuccessful(true);
 

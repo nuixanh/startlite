@@ -1,30 +1,29 @@
 package com.clas.starlite.domain;
 
-import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * Created by sonnt4 on 8/15/2014.
+ * Created by Son on 8/19/14.
  */
-@Document(collection="question")
-public class Question {
+@Document(collection="section")
+public class Section {
     private String id;
-    private String desc;
-    private Map<String, String> descMap;
+    private String name;
+    private Map<String, String> nameMap;
     private long created;
     private String createdBy;
-    private long modified;
     private String modifiedBy;
-    @Indexed
-    private String sectionId;
+    private long modified;
     private int status;
-    private int type;
-    @Indexed
     private long revision;
-    private List<Answer> answers;
+    @DBRef
+    private List<Scenario> scenarios;
+    @DBRef
+    private List<Question> questions;
 
     public String getId() {
         return id;
@@ -34,20 +33,20 @@ public class Question {
         this.id = id;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getName() {
+        return name;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Map<String, String> getDescMap() {
-        return descMap;
+    public Map<String, String> getNameMap() {
+        return nameMap;
     }
 
-    public void setDescMap(Map<String, String> descMap) {
-        this.descMap = descMap;
+    public void setNameMap(Map<String, String> nameMap) {
+        this.nameMap = nameMap;
     }
 
     public long getCreated() {
@@ -64,6 +63,14 @@ public class Question {
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public String getModifiedBy() {
+        return modifiedBy;
+    }
+
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
     }
 
     public long getModified() {
@@ -90,35 +97,20 @@ public class Question {
         this.revision = revision;
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
+    public List<Question> getQuestions() {
+        return questions;
     }
 
-    public void setAnswers(List<Answer> answers) {
-        this.answers = answers;
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
     }
 
-    public String getModifiedBy() {
-        return modifiedBy;
+    public List<Scenario> getScenarios() {
+        return scenarios;
     }
 
-    public void setModifiedBy(String modifiedBy) {
-        this.modifiedBy = modifiedBy;
+    public void setScenarios(List<Scenario> scenarios) {
+        this.scenarios = scenarios;
     }
 
-    public String getSectionId() {
-        return sectionId;
-    }
-
-    public void setSectionId(String sectionId) {
-        this.sectionId = sectionId;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
 }

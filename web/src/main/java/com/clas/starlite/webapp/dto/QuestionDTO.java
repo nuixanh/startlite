@@ -11,18 +11,20 @@ public class QuestionDTO {
     private long created;
     private long modified;
     private long revision;
-    private String scenarioId;
+    private String sectionId;
     private int status;
+    private int type;
     private List<AnswerDTO> answers;
 
-    public QuestionDTO(String id, String desc, long created, long modified, long revision, String scenarioId, int status) {
+    public QuestionDTO(String id, String desc, long created, long modified, long revision, String sectionId, int status, int type) {
         this.id = id;
         this.desc = desc;
         this.created = created;
         this.modified = modified;
         this.revision = revision;
-        this.scenarioId = scenarioId;
+        this.sectionId = sectionId;
         this.status = status;
+        this.type = type;
     }
 
     public String getId() {
@@ -73,12 +75,12 @@ public class QuestionDTO {
         this.revision = revision;
     }
 
-    public String getScenarioId() {
-        return scenarioId;
+    public String getSectionId() {
+        return sectionId;
     }
 
-    public void setScenarioId(String scenarioId) {
-        this.scenarioId = scenarioId;
+    public void setSectionId(String sectionId) {
+        this.sectionId = sectionId;
     }
 
     public int getStatus() {
@@ -87,5 +89,13 @@ public class QuestionDTO {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 }

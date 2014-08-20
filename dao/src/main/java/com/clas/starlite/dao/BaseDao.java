@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.*;
 
 public class BaseDao<T, ID extends Serializable> {
     private static Logger log = LoggerFactory.getLogger(BaseDao.class);
@@ -28,6 +28,11 @@ public class BaseDao<T, ID extends Serializable> {
     public T findOne(ID id) {
         Query query = new Query(Criteria.where("id").is(id));
         return template.findOne(query, parameterizedType);
+    }
+    public List<T> find(Collection<ID> ids) {
+        Query query = new Query(Criteria.where("id").in((Object[])ids.toArray()));
+        List<T> rs = template.find(query, parameterizedType);
+        return rs;
     }
 
     public void delete(T entity) {

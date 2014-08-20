@@ -5,10 +5,8 @@ import com.clas.starlite.common.Status;
 import com.clas.starlite.dao.QuestionDao;
 import com.clas.starlite.dao.RevisionDao;
 import com.clas.starlite.dao.ScenarioDao;
-import com.clas.starlite.domain.Answer;
-import com.clas.starlite.domain.Question;
-import com.clas.starlite.domain.Revision;
-import com.clas.starlite.domain.Scenario;
+import com.clas.starlite.dao.SectionDao;
+import com.clas.starlite.domain.*;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
 import com.clas.starlite.webapp.converter.QuestionConverter;
 import com.clas.starlite.webapp.dto.QuestionDTO;
@@ -28,12 +26,12 @@ import java.util.UUID;
 public class QuestionService {
 
     public ErrorCodeMap validate(Question q){
-        if(q == null || StringUtils.isBlank(q.getDesc()) || q.getAnswers() == null || StringUtils.isBlank(q.getScenarioId())){
+        if(q == null || StringUtils.isBlank(q.getDesc()) || q.getAnswers() == null || StringUtils.isBlank(q.getSectionId())){
             return ErrorCodeMap.FAILURE_INVALID_PARAMS;
         }else {
-            Scenario scenario = scenarioDao.findOne(q.getScenarioId());
-            if(scenario == null){
-                return ErrorCodeMap.FAILURE_SCENARIO_NOT_FOUND;
+            Section section = sectionDao.findOne(q.getSectionId());
+            if(section == null){
+                return ErrorCodeMap.FAILURE_SECTION_NOT_FOUND;
             }
         }
         return null;
@@ -49,21 +47,15 @@ public class QuestionService {
             answer.setId(UUID.randomUUID().toString());
             answer.setModified(System.currentTimeMillis());
         }
-        if(StringUtils.isNoneBlank(q.getScenarioId())){
-            Scenario scenario = scenarioDao.findOne(q.getScenarioId());
-            if(scenario != null){
-                if(scenario.getQuestions() == null){
-                    scenario.setQuestions(new ArrayList<Question>());
+        if(StringUtils.isNoneBlank(q.getSectionId())){
+            Section section = sectionDao.findOne(q.getSectionId());
+            if(section != null){
+                if(section.getQuestions() == null){
+                    section.setQuestions(new ArrayList<Question>());
                 }
-                scenario.getQuestions().add(q);
-
-                if(StringUtils.isNotBlank(scenario.getRootParentId())){
-                    q.setRootParentId(scenario.getRootParentId());
-                }else{
-                    q.setRootParentId(q.getScenarioId());
-                }
+                section.getQuestions().add(q);
+                sectionDao.save(section);
             }
-            scenarioDao.save(scenario);
         }
         questionDao.save(q);
         return QuestionConverter.convert(q);
@@ -76,6 +68,19 @@ public class QuestionService {
             if(status == Status.ACTIVE.getValue()){
                 Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_ADD, q.getId());
                 q.setRevision(revision.getVersion());
+            }else if(status == Status.DEACTIVE.getValue()){
+                if(StringUtils.isNotBlank(q.getSectionId())){
+                    Section section = sectionDao.findOne(q.getSectionId());
+                    if(section != null && section.getQuestions() != null){
+                        for (int i = section.getQuestions().size() -1; i >= 0 ; i--) {
+                            Question question = section.getQuestions().get(i);
+                            if(questionId.equals(question.getId())){
+                                section.getQuestions().remove(i);
+                            }
+                        }
+                        sectionDao.save(section);
+                    }
+                }
             }
             questionDao.save(q);
             return QuestionConverter.convert(q);
@@ -89,5 +94,5 @@ public class QuestionService {
     @Autowired
     private RevisionDao revisionDao;
     @Autowired
-    private ScenarioDao scenarioDao;
+    private SectionDao sectionDao;
 }

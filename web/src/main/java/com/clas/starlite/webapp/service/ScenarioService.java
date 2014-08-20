@@ -32,7 +32,7 @@ public class ScenarioService {
         }
         return null;
     }
-    public List<ScenarioDTO> getList(String scenarioId, Long revision, Boolean getQuestion){
+    public List<ScenarioDTO> getList(String scenarioId, Long revision){
         List<ScenarioDTO> output;
         try {
             Set<String> scIdSet = new HashSet<String>();
@@ -56,7 +56,7 @@ public class ScenarioService {
                 scIdSet.add(scenarioId);
             }
             List<Scenario> scenarios = scenarioDao.getTree(scIdSet);
-            output = ScenarioConverter.convert(scenarios, getQuestion);
+            output = ScenarioConverter.convert(scenarios);
         } catch (Exception e) {
             e.printStackTrace();
             output = new ArrayList<ScenarioDTO>();
@@ -88,7 +88,7 @@ public class ScenarioService {
             }
         }
         scenarioDao.save(scenario);
-        return ScenarioConverter.convert(scenario, false);
+        return ScenarioConverter.convert(scenario);
     }
     public ScenarioDTO update(Scenario sc){
         Scenario scenario = scenarioDao.findOne(sc.getId());
@@ -99,7 +99,7 @@ public class ScenarioService {
             Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SCENARIO, Constants.REVISION_ACTION_EDIT, sc.getId());
             scenario.setRevision(revision.getVersion());
             scenarioDao.save(scenario);
-            return ScenarioConverter.convert(scenario, false);
+            return ScenarioConverter.convert(scenario);
         }else{
             return null;
         }
@@ -113,7 +113,7 @@ public class ScenarioService {
             scenario.setModifiedBy(userId);
             scenario.setModified(System.currentTimeMillis());
             scenarioDao.save(scenario);
-            return ScenarioConverter.convert(scenario, false);
+            return ScenarioConverter.convert(scenario);
         }else{
             return null;
         }

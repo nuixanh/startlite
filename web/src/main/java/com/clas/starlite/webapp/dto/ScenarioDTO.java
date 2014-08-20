@@ -1,6 +1,7 @@
 package com.clas.starlite.webapp.dto;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by sonnt4 on 8/15/2014.
@@ -10,23 +11,22 @@ public class ScenarioDTO {
     private String id;
     private String name;
     private long modified;
-    private boolean isSection;
     private String parentId;
     private long revision;
     private int status;
     private String rootParentId;
     private List<ScenarioDTO> scenarios;
-    private List<QuestionDTO> questions;
+    private Set<String> sections;
 
-    public ScenarioDTO(String id, String name, long modified, boolean isSection, String parentId, long revision, int status, String rootParentId) {
+    public ScenarioDTO(String id, String name, long modified, String parentId, long revision, int status, String rootParentId, Set<String> sections) {
         this.id = id;
         this.name = name;
         this.modified = modified;
-        this.isSection = isSection;
         this.parentId = parentId;
         this.revision = revision;
         this.status = status;
         this.rootParentId = rootParentId;
+        this.sections = sections;
     }
 
     public String getId() {
@@ -43,14 +43,6 @@ public class ScenarioDTO {
 
     public void setModified(long modified) {
         this.modified = modified;
-    }
-
-    public boolean isSection() {
-        return isSection;
-    }
-
-    public void setSection(boolean isSection) {
-        this.isSection = isSection;
     }
 
     public String getParentId() {
@@ -77,14 +69,6 @@ public class ScenarioDTO {
         this.scenarios = scenarios;
     }
 
-    public List<QuestionDTO> getQuestions() {
-        return questions;
-    }
-
-    public void setQuestions(List<QuestionDTO> questions) {
-        this.questions = questions;
-    }
-
     public long getRevision() {
         return revision;
     }
@@ -107,5 +91,13 @@ public class ScenarioDTO {
 
     public void setRootParentId(String rootParentId) {
         this.rootParentId = rootParentId;
+    }
+
+    public Set<String> getSections() {
+        return sections;
+    }
+
+    public void setSections(Set<String> sections) {
+        this.sections = sections;
     }
 }

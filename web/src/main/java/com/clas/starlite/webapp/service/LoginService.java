@@ -5,10 +5,7 @@ import com.clas.starlite.common.UserRole;
 import com.clas.starlite.dao.RevisionDao;
 import com.clas.starlite.dao.SessionDao;
 import com.clas.starlite.dao.UserDao;
-import com.clas.starlite.domain.Revision;
-import com.clas.starlite.domain.Scenario;
-import com.clas.starlite.domain.Session;
-import com.clas.starlite.domain.User;
+import com.clas.starlite.domain.*;
 import com.clas.starlite.util.CommonUtils;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
 import com.clas.starlite.webapp.dto.UserLoginDTO;
@@ -70,8 +67,15 @@ public class LoginService {
         revisionMap.put(Constants.REVISION_TYPE_SOLUTION, 0L);
         List<Revision> revisions = revisionDao.findAll();
         for (Revision revision : revisions) {
-            revisionMap.put(revision.getType(), revision.getVersion());
+            if(revisionMap.keySet().contains(revision.getType())){
+                revisionMap.put(revision.getType(), revision.getVersion());
+            }
         }
+        Long sectionVersion = revisionDao.getCurrentVersion(Constants.REVISION_TYPE_SECTION, Constants.REVISION_ACTION_ADD);
+        if(sectionVersion > revisionMap.get(Constants.REVISION_TYPE_QUESTION)){
+            revisionMap.put(Constants.REVISION_TYPE_QUESTION, sectionVersion);
+        }
+
         return revisionMap;
     }
     @Autowired
@@ -80,4 +84,5 @@ public class LoginService {
     private SessionDao sessionDao;
     @Autowired
     private RevisionDao revisionDao;
+
 }

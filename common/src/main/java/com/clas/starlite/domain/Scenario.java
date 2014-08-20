@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by sonnt4 on 8/15/2014.
@@ -19,16 +20,14 @@ public class Scenario {
     private String createdBy;
     private String modifiedBy;
     private long modified;
-    private boolean isSection;
     private String parentId;
     private String rootParentId;
+    private Set<String> sections;
     @Indexed
     private int status;
     private long revision;
     @DBRef
     private List<Scenario> scenarios;
-    @DBRef
-    private List<Question> questions;
 
     public String getId() {
         return id;
@@ -60,14 +59,6 @@ public class Scenario {
 
     public void setModified(long modified) {
         this.modified = modified;
-    }
-
-    public boolean isSection() {
-        return isSection;
-    }
-
-    public void setSection(boolean isSection) {
-        this.isSection = isSection;
     }
 
     public String getParentId() {
@@ -126,19 +117,19 @@ public class Scenario {
         this.scenarios = scenarios;
     }
 
-    public List<Question> getQuestions() {
-        return questions;
-    }
-
-    public void setQuestions(List<Question> questions) {
-        this.questions = questions;
-    }
-
     public String getRootParentId() {
         return rootParentId;
     }
 
     public void setRootParentId(String rootParentId) {
         this.rootParentId = rootParentId;
+    }
+
+    public Set<String> getSections() {
+        return sections;
+    }
+
+    public void setSections(Set<String> sections) {
+        this.sections = sections;
     }
 }

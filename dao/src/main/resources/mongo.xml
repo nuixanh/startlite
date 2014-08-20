@@ -33,4 +33,7 @@
     <bean id = "solutionDao" class="com.clas.starlite.dao.SolutionDao">
         <property name="parameterizedType" value="com.clas.starlite.domain.Solution"/>
     </bean>
+    <bean id = "sectionDao" class="com.clas.starlite.dao.SectionDao">
+        <property name="parameterizedType" value="com.clas.starlite.domain.Section"/>
+    </bean>
 </beans>

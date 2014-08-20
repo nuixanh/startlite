@@ -1,0 +1,65 @@
+package com.clas.starlite.webapp.controller;
+
+import com.clas.starlite.common.Constants;
+import com.clas.starlite.domain.Section;
+import com.clas.starlite.webapp.common.ErrorCodeMap;
+import com.clas.starlite.webapp.dto.RestResultDTO;
+import com.clas.starlite.webapp.dto.SectionDTO;
+import com.clas.starlite.webapp.service.SectionService;
+import com.clas.starlite.webapp.util.RestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ApplicationObjectSupport;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * Created by Son on 8/19/14.
+ */
+@RestController
+public class SectionController extends ApplicationObjectSupport {
+
+    @RequestMapping(value = "/sections", method= RequestMethod.GET, produces={"application/json"})
+    public RestResultDTO login(@RequestParam(value="revision", required=false) Long revision,
+                               @RequestParam(value="id", required=false, defaultValue="") String sectionId) {
+        RestResultDTO restResultDTO = new RestResultDTO();
+        List<SectionDTO> sectionDTOs = sectionService.getList(sectionId, revision);
+        restResultDTO.setData(sectionDTOs);
+        restResultDTO.setSuccessful(true);
+
+        return restResultDTO;
+    }
+
+    @RequestMapping(value = "/section/create", method= RequestMethod.POST, consumes="application/json", produces={"application/json"})
+    public RestResultDTO create(@RequestBody Section section, @RequestHeader(value= Constants.HTTP_HEADER_USER, required = true) String userId) {
+        RestResultDTO restResultDTO = new RestResultDTO();
+        ErrorCodeMap errorCode = sectionService.validate(section);
+        if(errorCode != null){
+            restResultDTO = RestUtils.createInvalidOutput(errorCode);
+            return restResultDTO;
+        }
+        SectionDTO sectionDTO = sectionService.create(section, userId);
+        restResultDTO.setData(sectionDTO);
+        restResultDTO.setSuccessful(true);
+
+        return restResultDTO;
+    }
+
+    @RequestMapping(value = "/section/attach/{id}/{scenarioId}", method= RequestMethod.GET, consumes="application/json", produces={"application/json"})
+    public RestResultDTO create(@PathVariable("id") String sectionId,
+                                @PathVariable("scenarioId") String scenarioId,
+                                @RequestHeader(value= Constants.HTTP_HEADER_USER, required = true) String userId) {
+        RestResultDTO restResultDTO = new RestResultDTO();
+        ErrorCodeMap errorCode = sectionService.attachToScenario(sectionId, scenarioId, userId);
+        if(errorCode != null){
+            restResultDTO = RestUtils.createInvalidOutput(errorCode);
+            return restResultDTO;
+        }
+        restResultDTO.setSuccessful(true);
+
+        return restResultDTO;
+    }
+
+    @Autowired
+    SectionService sectionService;
+}
