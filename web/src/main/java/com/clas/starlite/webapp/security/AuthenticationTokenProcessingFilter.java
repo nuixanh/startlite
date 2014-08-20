@@ -41,7 +41,7 @@ public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
         String token = httpServletRequest.getHeader(Constants.HTTP_HEADER_TOKEN);
         boolean hasError = false;
         String error = null;
-        if(StringUtils.isNotBlank(userId) && StringUtils.isNoneBlank(token)){
+        if(StringUtils.isNotBlank(userId) && StringUtils.isNotBlank(token)){
             try {
                 Session session = sessionDao.validate(token, userId, System.currentTimeMillis());
                 if(session != null){

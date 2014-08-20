@@ -31,6 +31,25 @@ public class QuestionController {
         restResultDTO.setSuccessful(true);
         return restResultDTO;
     }
+    @RequestMapping(value = "/question/update", method= RequestMethod.POST, consumes="application/json", produces={"application/json"})
+    public RestResultDTO update(@RequestBody Question question, @RequestHeader(value=Constants.HTTP_HEADER_USER, required = true) String userId) {
+        RestResultDTO restResultDTO = new RestResultDTO();
+
+        ErrorCodeMap errorCode = questionService.validate(question);
+        if(errorCode != null){
+            restResultDTO = RestUtils.createInvalidOutput(errorCode);
+        }else{
+            QuestionDTO questionDTO = questionService.update(question, userId);
+            if(questionDTO == null){
+                restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_OBJECT_NOT_FOUND);
+            }else{
+                restResultDTO.setData(questionDTO);
+                restResultDTO.setSuccessful(true);
+            }
+        }
+
+        return restResultDTO;
+    }
 
     @RequestMapping(value = "/question/approve/{id}", method= RequestMethod.GET, produces={"application/json"})
     public RestResultDTO approve(@PathVariable("id") String questionId, @RequestHeader(value=Constants.HTTP_HEADER_USER, required = true) String userId) {

@@ -24,17 +24,15 @@ import java.util.UUID;
  */
 @Component
 public class LoginService {
-    public ErrorCodeMap validate(String email, String password){
+    public ErrorCodeMap validateForSignup(String email, String password){
         if(StringUtils.isBlank(email) || StringUtils.isBlank(password)){
             return ErrorCodeMap.FAILURE_INVALID_PARAMS;
         }else if(!CommonUtils.isValidEmail(email)){
             return ErrorCodeMap.FAILURE_INVALID_EMAIL;
         }else{
             User user = userDao.findOneByEmail(email);
-            if(user == null){
-                return ErrorCodeMap.FAILURE_USER_NOT_FOUND;
-            }else if(!password.equals(user.getPassword())){
-                return ErrorCodeMap.FAILURE_LOGIN_FAIL;
+            if(user != null){
+                return ErrorCodeMap.FAILURE_EMAIL_EXISTED;
             }
         }
         return null;
@@ -46,7 +44,7 @@ public class LoginService {
     }
     public UserLoginDTO login(String email, String password){
         UserLoginDTO output = null;
-        if(StringUtils.isNotBlank(email) && StringUtils.isNoneBlank(password)){
+        if(StringUtils.isNotBlank(email) && StringUtils.isNotBlank(password)){
             User user = userDao.findOneByEmailAndPassword(email, password);
             if(user != null){
                 Session session = new Session(UUID.randomUUID().toString(), user.getId(), System.currentTimeMillis(),

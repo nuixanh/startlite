@@ -40,14 +40,15 @@ public class QuestionService {
         q.setId(UUID.randomUUID().toString());
         q.setCreated(System.currentTimeMillis());
         q.setModified(System.currentTimeMillis());
-        q.setStatus(Status.PENDING.getValue());
+        q.setStatus(Status.ACTIVE.getValue());
+        //TODO: will be changed to Status.PENDING
         q.setCreatedBy(userId);
         q.setModifiedBy(userId);
         for (Answer answer : q.getAnswers()) {
             answer.setId(UUID.randomUUID().toString());
             answer.setModified(System.currentTimeMillis());
         }
-        if(StringUtils.isNoneBlank(q.getSectionId())){
+        if(StringUtils.isNotBlank(q.getSectionId())){
             Section section = sectionDao.findOne(q.getSectionId());
             if(section != null){
                 if(section.getQuestions() == null){
@@ -59,6 +60,46 @@ public class QuestionService {
         }
         questionDao.save(q);
         return QuestionConverter.convert(q);
+    }
+
+    public QuestionDTO update(Question question, String userId){
+        Question oldQuestion = questionDao.findOne(question.getId());
+        if(oldQuestion == null){
+            return null;
+        }
+        oldQuestion.setModified(System.currentTimeMillis());
+        oldQuestion.setModifiedBy(userId);
+        for (Answer answer : question.getAnswers()) {
+            answer.setId(UUID.randomUUID().toString());
+            answer.setModified(System.currentTimeMillis());
+        }
+        oldQuestion.setAnswers(question.getAnswers());
+        if(StringUtils.isNotBlank(question.getSectionId())
+                && !question.getSectionId().equals(oldQuestion.getSectionId())){
+            Section section = sectionDao.findOne(question.getSectionId());
+            if(section != null){
+                if(section.getQuestions() == null){
+                    section.setQuestions(new ArrayList<Question>());
+                }
+                section.getQuestions().add(oldQuestion);
+                sectionDao.save(section);
+            }
+            if(StringUtils.isNotBlank(oldQuestion.getSectionId())){
+                Section oldSection = sectionDao.findOne(oldQuestion.getSectionId());
+                if(oldSection != null){
+                    if(oldSection.getQuestions() != null){
+                        for (int i = oldSection.getQuestions().size() - 1; i >= 0; i--) {
+                            if(oldSection.getQuestions().get(i).getId().equals(oldQuestion.getId())){
+                                oldSection.getQuestions().remove(i);
+                            }
+                        }
+                        sectionDao.save(oldSection);
+                    }
+                }
+            }
+        }
+        questionDao.save(oldQuestion);
+        return QuestionConverter.convert(oldQuestion);
     }
     public QuestionDTO updateStatus(String questionId, String userId, int status){
         Question q = questionDao.findOne(questionId);
