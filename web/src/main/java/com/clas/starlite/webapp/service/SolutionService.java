@@ -44,14 +44,22 @@ public class SolutionService {
         r.setStatus(Status.ACTIVE.getValue());
         r.setCreatedBy(userId);
         r.setModifiedBy(userId);
+        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SOLUTION, Constants.REVISION_ACTION_ADD_RULE, r.getId());
+        r.setRevision(revision.getVersion());
         Solution solution = solutionDao.findOne(r.getSolutionId());
         if(solution.getRules() == null){
             solution.setRules(new ArrayList<SolutionRule>());
         }
         solution.getRules().add(r);
+        String rootParentId = solution.getRootParentId();
+        if(!rootParentId.equals(solution.getId())){
+            Solution rootSolution = solutionDao.findOne(rootParentId);
+            rootSolution.setRevision(revision.getVersion());
+            solutionDao.save(rootSolution);
+        }else{
+            solution.setRevision(revision.getVersion());
+        }
         solutionDao.save(solution);
-        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SOLUTION_RULE, Constants.REVISION_ACTION_ADD, r.getId());
-        r.setRevision(revision.getVersion());
         solutionRuleDao.save(r);
 
         return SolutionConverter.convertRule(r);
@@ -69,8 +77,8 @@ public class SolutionService {
         }
         return null;
     }
-    public List<SolutionDTO> getList(String solutionId, Long revision){
-        return SolutionConverter.convert(solutionDao.getTree(solutionId, revision));
+    public List<SolutionDTO> getList(Long revision){
+        return SolutionConverter.convert(solutionDao.getTrees(revision));
     }
     public SolutionDTO create(Solution s, String userId){
         s.setId(UUID.randomUUID().toString());
@@ -96,6 +104,7 @@ public class SolutionService {
         }
         Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SOLUTION, Constants.REVISION_ACTION_ADD, s.getId());
         s.setRevision(revision.getVersion());
+        s.setMyRevision(revision.getVersion());
         solutionDao.save(s);
         return SolutionConverter.convert(s);
     }

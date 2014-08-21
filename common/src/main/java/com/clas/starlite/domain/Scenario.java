@@ -27,6 +27,7 @@ public class Scenario {
     @Indexed
     private int status;
     private long revision;
+    private long myRevision;
     @DBRef
     private List<Scenario> scenarios;
 
@@ -132,5 +133,13 @@ public class Scenario {
 
     public void setSections(Set<String> sections) {
         this.sections = sections;
+    }
+
+    public long getMyRevision() {
+        return myRevision;
+    }
+
+    public void setMyRevision(long myRevision) {
+        this.myRevision = myRevision;
     }
 }

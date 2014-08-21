@@ -34,7 +34,11 @@ public class RevisionDao extends BaseDao<Revision, String>{
         return incVersion(type, 1, action, entityId);
     }
 
-    public List<RevisionHistory> getHistory(String type, Long revision){
+    public void dropRevisionHistory(){
+        template.dropCollection(RevisionHistory.class);
+    }
+
+    /*public List<RevisionHistory> getHistory(String type, Long revision){
         Criteria cr = Criteria.where("type").is(type).and("version").gt(revision);
         return template.find(Query.query(cr), RevisionHistory.class);
     }
@@ -52,5 +56,5 @@ public class RevisionDao extends BaseDao<Revision, String>{
         }else{
             return 0L;
         }
-    }
+    }*/
 }

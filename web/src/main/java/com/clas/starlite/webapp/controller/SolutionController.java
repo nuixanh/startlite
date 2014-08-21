@@ -22,10 +22,9 @@ import java.util.List;
 public class SolutionController {
 
     @RequestMapping(value = "/solutions", method= RequestMethod.GET, produces={"application/json"})
-    public RestResultDTO login(@RequestParam(value="revision", required=false) Long revision,
-                               @RequestParam(value="id", required=false, defaultValue="") String solutionId) {
+    public RestResultDTO login(@RequestParam(value="revision", required=false) Long revision) {
         RestResultDTO restResultDTO = new RestResultDTO();
-        List<SolutionDTO> solutionList = solutionService.getList(solutionId, revision);
+        List<SolutionDTO> solutionList = solutionService.getList(revision);
         restResultDTO.setData(solutionList);
         restResultDTO.setSuccessful(true);
 

@@ -20,10 +20,9 @@ import java.util.List;
 public class SectionController extends ApplicationObjectSupport {
 
     @RequestMapping(value = "/sections", method= RequestMethod.GET, produces={"application/json"})
-    public RestResultDTO login(@RequestParam(value="revision", required=false) Long revision,
-                               @RequestParam(value="id", required=false, defaultValue="") String sectionId) {
+    public RestResultDTO login(@RequestParam(value="revision", required=false) Long revision) {
         RestResultDTO restResultDTO = new RestResultDTO();
-        List<SectionDTO> sectionDTOs = sectionService.getList(sectionId, revision);
+        List<SectionDTO> sectionDTOs = sectionService.getList(revision);
         restResultDTO.setData(sectionDTOs);
         restResultDTO.setSuccessful(true);
 

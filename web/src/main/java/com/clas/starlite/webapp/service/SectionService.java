@@ -22,45 +22,15 @@ import java.util.*;
 @Component
 public class SectionService {
 
-    public List<SectionDTO> getList(String sectionId, Long revision){
-        List<SectionDTO> output;
+    public List<SectionDTO> getList(Long revision){
+        List<Section> sections;
         try {
-            Set<String> sIdSet = new HashSet<String>();
-            if(revision != null && revision > 0){
-                List<RevisionHistory> rHistoryList = revisionDao.getHistory(Constants.REVISION_TYPE_QUESTION, revision);
-                if(rHistoryList.size() > 0){
-                    Set<String> entityIdSet = new HashSet<String>();
-                    for (RevisionHistory rHistory : rHistoryList) {
-                        entityIdSet.add(rHistory.getEntityId());
-                    }
-                    List<Question> qList = questionDao.find(entityIdSet);
-                    for (Question q : qList) {
-                        sIdSet.add(q.getSectionId());
-                    }
-                }
-                rHistoryList = revisionDao.getHistory(Constants.REVISION_TYPE_SECTION, Constants.REVISION_ACTION_ADD, revision);
-                if(rHistoryList.size() > 0){
-                    for (RevisionHistory rHistory : rHistoryList) {
-                        sIdSet.add(rHistory.getEntityId());
-                    }
-                }
-
-            }else if(StringUtils.isNotBlank(sectionId)){
-                sIdSet.add(sectionId);
-            }
-            List<Section> sections;
-            if(sIdSet.size() > 0){
-                sections = sectionDao.find(sIdSet);
-            }else{
-                sections = sectionDao.findAll();
-            }
-
-            output = SectionConverter.convert(sections);
+            sections = sectionDao.getTrees(revision);
         } catch (Exception e) {
             e.printStackTrace();
-            output = new ArrayList<SectionDTO>();
+            sections = new ArrayList<Section>();
         }
-        return output;
+        return SectionConverter.convert(sections);
     }
 
     public ErrorCodeMap validate(Section section){
@@ -76,8 +46,9 @@ public class SectionService {
         section.setCreatedBy(userId);
         section.setModifiedBy(userId);
         section.setStatus(Status.ACTIVE.getValue());
-        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SECTION, Constants.REVISION_ACTION_ADD, section.getId());
+        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_ADD_SECTION, section.getId());
         section.setRevision(revision.getVersion());
+        section.setMyRevision(revision.getVersion());
 
         sectionDao.save(section);
         return SectionConverter.convert(section);
@@ -91,35 +62,54 @@ public class SectionService {
         if(section == null){
             return ErrorCodeMap.FAILURE_SECTION_NOT_FOUND;
         }
-        Scenario scenario = scenarioDao.findOne(scenarioId);
-        if(scenario == null){
+        Scenario attachedScenario = scenarioDao.findOne(scenarioId);
+        if(attachedScenario == null){
             return ErrorCodeMap.FAILURE_SCENARIO_NOT_FOUND;
         }
         List<Scenario> parents = section.getScenarios();
         if(parents != null && parents.size() > 0){
             for (Scenario parent : parents) {
-                if(parent.getRootParentId().equals(scenario.getRootParentId())){
+                if(parent.getRootParentId().equals(attachedScenario.getRootParentId())){
                     return ErrorCodeMap.FAILURE_SECTION_BELONG_SAME_ROOT_SCENARIO;
                 }
             }
         }
 
-        if(scenario.getSections() == null){
-            scenario.setSections(new HashSet<String>());
+        if(attachedScenario.getSections() == null){
+            attachedScenario.setSections(new HashSet<String>());
         }
-        scenario.getSections().add(section.getId());
+        attachedScenario.getSections().add(section.getId());
 
         if(section.getScenarios() == null){
             section.setScenarios(new ArrayList<Scenario>());
         }
-        section.getScenarios().add(scenario);
+        section.getScenarios().add(attachedScenario);
         section.setModified(System.currentTimeMillis());
         section.setModifiedBy(userId);
-        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SECTION, Constants.REVISION_ACTION_ATTACH, section.getId());
+        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SCENARIO, Constants.REVISION_ACTION_ATTACH, section.getId());
         section.setRevision(revision.getVersion());
-
+        if(parents != null && parents.size() > 0){
+            for (Scenario parent : parents) {
+                if(parent.getRootParentId().equals(parent.getId())){
+                    parent.setRevision(revision.getVersion());
+                    scenarioDao.save(parent);
+                }else{
+                    Scenario rootParent = scenarioDao.findOne(parent.getRootParentId());
+                    rootParent.setRevision(revision.getVersion());
+                    scenarioDao.save(rootParent);
+                }
+            }
+        }
+        String rootParentId = attachedScenario.getRootParentId();
+        if(rootParentId.equals(attachedScenario.getId())){
+            attachedScenario.setRevision(revision.getVersion());
+        }else{
+            Scenario rootParent = scenarioDao.findOne(rootParentId);
+            rootParent.setRevision(revision.getVersion());
+            scenarioDao.save(rootParent);
+        }
         sectionDao.save(section);
-        scenarioDao.save(scenario);
+        scenarioDao.save(attachedScenario);
 
         return null;
     }

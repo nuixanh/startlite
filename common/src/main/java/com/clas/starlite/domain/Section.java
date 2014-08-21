@@ -20,6 +20,7 @@ public class Section {
     private long modified;
     private int status;
     private long revision;
+    private long myRevision;
     @DBRef
     private List<Scenario> scenarios;
     @DBRef
@@ -113,4 +114,11 @@ public class Section {
         this.scenarios = scenarios;
     }
 
+    public long getMyRevision() {
+        return myRevision;
+    }
+
+    public void setMyRevision(long myRevision) {
+        this.myRevision = myRevision;
+    }
 }

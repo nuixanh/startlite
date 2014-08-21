@@ -1,5 +1,6 @@
 package com.clas.starlite.domain;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -21,6 +22,7 @@ public class Solution {
     private long modified;
     private int status;
     private long revision;
+    private long myRevision;
     private String rootParentId;
 
     @DBRef
@@ -133,10 +135,18 @@ public class Solution {
     }
 
     public String getRootParentId() {
-        return rootParentId;
+        return StringUtils.isNotBlank(rootParentId)? rootParentId: id;
     }
 
     public void setRootParentId(String rootParentId) {
         this.rootParentId = rootParentId;
+    }
+
+    public long getMyRevision() {
+        return myRevision;
+    }
+
+    public void setMyRevision(long myRevision) {
+        this.myRevision = myRevision;
     }
 }

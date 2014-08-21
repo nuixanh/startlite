@@ -40,8 +40,13 @@ public class QuestionService {
         q.setId(UUID.randomUUID().toString());
         q.setCreated(System.currentTimeMillis());
         q.setModified(System.currentTimeMillis());
-        q.setStatus(Status.ACTIVE.getValue());
         //TODO: will be changed to Status.PENDING
+        q.setStatus(Status.ACTIVE.getValue());
+
+        //TODO: will be removed
+        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_ADD, q.getId());
+        q.setRevision(revision.getVersion());
+
         q.setCreatedBy(userId);
         q.setModifiedBy(userId);
         for (Answer answer : q.getAnswers()) {
@@ -55,6 +60,7 @@ public class QuestionService {
                     section.setQuestions(new ArrayList<Question>());
                 }
                 section.getQuestions().add(q);
+                section.setRevision(revision.getVersion());
                 sectionDao.save(section);
             }
         }
@@ -74,26 +80,34 @@ public class QuestionService {
             answer.setModified(System.currentTimeMillis());
         }
         oldQuestion.setAnswers(question.getAnswers());
-        if(StringUtils.isNotBlank(question.getSectionId())
-                && !question.getSectionId().equals(oldQuestion.getSectionId())){
+        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_EDIT, oldQuestion.getId());
+        oldQuestion.setRevision(revision.getVersion());
+
+        if(StringUtils.isNotBlank(question.getSectionId())){
             Section section = sectionDao.findOne(question.getSectionId());
             if(section != null){
-                if(section.getQuestions() == null){
-                    section.setQuestions(new ArrayList<Question>());
-                }
-                section.getQuestions().add(oldQuestion);
+                section.setRevision(revision.getVersion());
                 sectionDao.save(section);
             }
-            if(StringUtils.isNotBlank(oldQuestion.getSectionId())){
-                Section oldSection = sectionDao.findOne(oldQuestion.getSectionId());
-                if(oldSection != null){
-                    if(oldSection.getQuestions() != null){
-                        for (int i = oldSection.getQuestions().size() - 1; i >= 0; i--) {
-                            if(oldSection.getQuestions().get(i).getId().equals(oldQuestion.getId())){
-                                oldSection.getQuestions().remove(i);
+            if(!question.getSectionId().equals(oldQuestion.getSectionId())){
+                if(section != null){
+                    if(section.getQuestions() == null){
+                        section.setQuestions(new ArrayList<Question>());
+                    }
+                    section.getQuestions().add(oldQuestion);
+                    sectionDao.save(section);
+                }
+                if(StringUtils.isNotBlank(oldQuestion.getSectionId())){
+                    Section oldSection = sectionDao.findOne(oldQuestion.getSectionId());
+                    if(oldSection != null){
+                        if(oldSection.getQuestions() != null){
+                            for (int i = oldSection.getQuestions().size() - 1; i >= 0; i--) {
+                                if(oldSection.getQuestions().get(i).getId().equals(oldQuestion.getId())){
+                                    oldSection.getQuestions().remove(i);
+                                }
                             }
+                            sectionDao.save(oldSection);
                         }
-                        sectionDao.save(oldSection);
                     }
                 }
             }
@@ -110,6 +124,8 @@ public class QuestionService {
                 Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_ADD, q.getId());
                 q.setRevision(revision.getVersion());
             }else if(status == Status.DEACTIVE.getValue()){
+                Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_DELETE, q.getId());
+                q.setRevision(revision.getVersion());
                 if(StringUtils.isNotBlank(q.getSectionId())){
                     Section section = sectionDao.findOne(q.getSectionId());
                     if(section != null && section.getQuestions() != null){
@@ -119,8 +135,9 @@ public class QuestionService {
                                 section.getQuestions().remove(i);
                             }
                         }
-                        sectionDao.save(section);
                     }
+                    section.setRevision(revision.getVersion());
+                    sectionDao.save(section);
                 }
             }
             questionDao.save(q);
