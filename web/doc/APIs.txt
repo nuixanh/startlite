@@ -1,8 +1,17 @@
 curl -G "http://clas-starlite.cloudapp.net:8088/starlite/login?email=son@live.com&password=test" | python -m json.tool
+
+---------------------------------------------- SECTION ------------------------------------------------------------------------------
+
 curl -H "userId: 4d9d51aa-c3d8-47d1-b62d-5f4862c7a838" -H "sessionId: 646867be-ecd1-433d-a85a-2ee21b4d90be" http://clas-starlite.cloudapp.net:8088/starlite/sections | python -m json.tool
 curl -H "userId: 4d9d51aa-c3d8-47d1-b62d-5f4862c7a838" -H "sessionId: 646867be-ecd1-433d-a85a-2ee21b4d90be" http://clas-starlite.cloudapp.net:8088/starlite/section/attach/42c4dda5-340d-44c3-b5cd-1d61d6ffb92f/eef8594f-0d16-4379-b27a-ee27f9cf95a9 | python -m json.tool
 
+---------------------------------------------- SCENARIO ------------------------------------------------------------------------------
+
 curl -H "userId: 4d9d51aa-c3d8-47d1-b62d-5f4862c7a838" -H "sessionId: 646867be-ecd1-433d-a85a-2ee21b4d90be" http://clas-starlite.cloudapp.net:8088/starlite/scenarios | python -m json.tool
 
-curl -d '{"solutionId":"3062a88f-a312-4157-8d4d-34d52dd12d18","type": 1,"conditions": [{"operator":1,"questionId":"7c26dc33-481e-4e98-8e52-c3505cfd5d05","scoreList": [2,3]}]}' -H "userId: 4d9d51aa-c3d8-47d1-b62d-5f4862c7a838" -H "sessionId: 646867be-ecd1-433d-a85a-2ee21b4d90be" -H "Content-Type: application/json" "http://clas-starlite.cloudapp.net:8088/starlite/solution/rule/create" | python -m json.tool
+
+---------------------------------------------- SOLUTION ------------------------------------------------------------------------------
+
+curl -d '{"solutionId":"3062a88f-a312-4157-8d4d-34d52dd12d18","type": 1,"conditions": [{"questionId":"7c26dc33-481e-4e98-8e52-c3505cfd5d05","answerIds": [["ba8a868d-ccfc-42ad-ade0-876e22d09446","fe661cf5-1e5d-457d-a12e-cadf6bcae4b5"]]}]}' -H "userId: 4d9d51aa-c3d8-47d1-b62d-5f4862c7a838" -H "sessionId: 646867be-ecd1-433d-a85a-2ee21b4d90be" -H "Content-Type: application/json" "http://clas-starlite.cloudapp.net:8088/starlite/solution/rule/create" | python -m json.tool
+
 curl -H "userId: 4d9d51aa-c3d8-47d1-b62d-5f4862c7a838" -H "sessionId: 646867be-ecd1-433d-a85a-2ee21b4d90be" http://clas-starlite.cloudapp.net:8088/starlite/solutions | python -m json.tool
