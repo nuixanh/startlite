@@ -1,20 +1,17 @@
 package com.clas.starlite.domain;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.util.List;
 
 /**
  * Created by Son on 8/17/14.
  */
-@Document(collection="rule_condition")
+
 public class RuleCondition {
     private String id;
     private String solutionRuleId;
     private String questionId;
     private List<Integer> scoreList;
     private int operator;
-    private long created;
     private long modified;
 
     public String getId() {
@@ -55,14 +52,6 @@ public class RuleCondition {
 
     public void setOperator(int operator) {
         this.operator = operator;
-    }
-
-    public long getCreated() {
-        return created;
-    }
-
-    public void setCreated(long created) {
-        this.created = created;
     }
 
     public long getModified() {

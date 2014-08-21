@@ -17,13 +17,8 @@ public class SolutionConverter {
     public static SolutionDTO convert(Solution solution){
         if(solution == null) return null;
         SolutionDTO dto = new SolutionDTO(solution.getId(), solution.getDesc(), solution.getAttr(), solution.getParentId(), solution.isGroup(), solution.getCreated(), solution.getModified(), solution.getStatus(), solution.getRevision(), solution.getRootParentId());
-        if(solution.getSolutions() != null){
-            List<SolutionDTO> solutionDTOs = new ArrayList<SolutionDTO>();
-            for (Solution s : solution.getSolutions()) {
-                solutionDTOs.add(convert(s));
-            }
-            dto.setSolutions(solutionDTOs);
-        }
+        dto.setSolutions(convert(solution.getSolutions()));
+        dto.setRules(convertRules(solution.getRules()));
         return dto;
     }
     public static List<SolutionDTO> convert(List<Solution> solutions){
@@ -36,7 +31,7 @@ public class SolutionConverter {
     }
 
     public static RuleConditionDTO convertCondition(RuleCondition ruleCondition){
-        RuleConditionDTO dto = new RuleConditionDTO(ruleCondition.getId(), ruleCondition.getSolutionRuleId(), ruleCondition.getQuestionId(), ruleCondition.getScoreList(), ruleCondition.getOperator(), ruleCondition.getCreated(), ruleCondition.getModified());
+        RuleConditionDTO dto = new RuleConditionDTO(ruleCondition.getId(), ruleCondition.getSolutionRuleId(), ruleCondition.getQuestionId(), ruleCondition.getScoreList(), ruleCondition.getOperator(), ruleCondition.getModified());
         return dto;
     }
     public static List<RuleConditionDTO> convertConditions(List<RuleCondition> conditions){
@@ -52,5 +47,13 @@ public class SolutionConverter {
         if(rule == null) return null;
         SolutionRuleDTO dto = new SolutionRuleDTO(rule.getId(), rule.getType(), rule.getSolutionId(), rule.getCreated(), rule.getCreatedBy(), rule.getModifiedBy(), rule.getModified(), rule.getStatus(), rule.getRevision(), convertConditions(rule.getConditions()));
         return dto;
+    }
+    public static List<SolutionRuleDTO> convertRules(List<SolutionRule> rules){
+        if(rules == null) return null;
+        List<SolutionRuleDTO> dtos = new ArrayList<SolutionRuleDTO>();
+        for (SolutionRule rule : rules) {
+            dtos.add(convertRule(rule));
+        }
+        return dtos;
     }
 }

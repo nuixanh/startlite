@@ -11,16 +11,14 @@ public class RuleConditionDTO {
     private String questionId;
     private List<Integer> scoreList;
     private int operator;
-    private long created;
     private long modified;
 
-    public RuleConditionDTO(String id, String solutionRuleId, String questionId, List<Integer> scoreList, int operator, long created, long modified) {
+    public RuleConditionDTO(String id, String solutionRuleId, String questionId, List<Integer> scoreList, int operator, long modified) {
         this.id = id;
         this.solutionRuleId = solutionRuleId;
         this.questionId = questionId;
         this.scoreList = scoreList;
         this.operator = operator;
-        this.created = created;
         this.modified = modified;
     }
 
@@ -62,14 +60,6 @@ public class RuleConditionDTO {
 
     public void setOperator(int operator) {
         this.operator = operator;
-    }
-
-    public long getCreated() {
-        return created;
-    }
-
-    public void setCreated(long created) {
-        this.created = created;
     }
 
     public long getModified() {

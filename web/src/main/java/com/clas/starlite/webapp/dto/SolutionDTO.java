@@ -17,6 +17,7 @@ public class SolutionDTO {
     private long revision;
     private String rootParentId;
     private List<SolutionDTO> solutions;
+    private List<SolutionRuleDTO> rules;
 
     public SolutionDTO(String id, String desc, String attr, String parentId, boolean isGroup, long created, long modified, int status, long revision, String rootParentId) {
         this.id = id;
@@ -117,5 +118,13 @@ public class SolutionDTO {
 
     public void setRootParentId(String rootParentId) {
         this.rootParentId = rootParentId;
+    }
+
+    public List<SolutionRuleDTO> getRules() {
+        return rules;
+    }
+
+    public void setRules(List<SolutionRuleDTO> rules) {
+        this.rules = rules;
     }
 }

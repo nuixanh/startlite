@@ -6,6 +6,7 @@ import com.clas.starlite.dao.RevisionDao;
 import com.clas.starlite.dao.SolutionDao;
 import com.clas.starlite.dao.SolutionRuleDao;
 import com.clas.starlite.domain.Revision;
+import com.clas.starlite.domain.RuleCondition;
 import com.clas.starlite.domain.Solution;
 import com.clas.starlite.domain.SolutionRule;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
@@ -29,10 +30,17 @@ public class SolutionService {
         if(rule == null || StringUtils.isBlank(rule.getSolutionId()) || rule.getConditions() == null
                 || rule.getConditions().size() == 0){
             return ErrorCodeMap.FAILURE_INVALID_PARAMS;
-        }else if(StringUtils.isNotBlank(rule.getSolutionId())){
+        }
+        if(StringUtils.isNotBlank(rule.getSolutionId())){
             Solution s = solutionDao.findOne(rule.getSolutionId());
             if(s == null){
                 return ErrorCodeMap.FAILURE_SOLUTION_NOT_FOUND;
+            }
+        }
+        for (RuleCondition condition : rule.getConditions()) {
+            if(condition.getScoreList() == null || condition.getScoreList().size() == 0
+                    || StringUtils.isBlank(condition.getQuestionId())){
+                return ErrorCodeMap.FAILURE_INVALID_CONDITIONS;
             }
         }
         return null;
@@ -46,6 +54,13 @@ public class SolutionService {
         r.setModifiedBy(userId);
         Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SOLUTION, Constants.REVISION_ACTION_ADD_RULE, r.getId());
         r.setRevision(revision.getVersion());
+
+        for (RuleCondition condition : r.getConditions()) {
+            condition.setId(UUID.randomUUID().toString());
+            condition.setSolutionRuleId(r.getId());
+            condition.setModified(System.currentTimeMillis());
+        }
+
         Solution solution = solutionDao.findOne(r.getSolutionId());
         if(solution.getRules() == null){
             solution.setRules(new ArrayList<SolutionRule>());

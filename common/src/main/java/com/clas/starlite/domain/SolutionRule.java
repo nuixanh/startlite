@@ -1,7 +1,6 @@
 package com.clas.starlite.domain;
 
 import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -22,7 +21,6 @@ public class SolutionRule {
     private int status;
     private long revision;
 
-    @DBRef
     private List<RuleCondition> conditions;
 
     public String getId() {
