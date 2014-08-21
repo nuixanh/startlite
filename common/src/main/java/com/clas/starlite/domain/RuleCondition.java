@@ -7,28 +7,8 @@ import java.util.List;
  */
 
 public class RuleCondition {
-    private String id;
-    private String solutionRuleId;
     private String questionId;
-    private List<Integer> scoreList;
-    private int operator;
-    private long modified;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getSolutionRuleId() {
-        return solutionRuleId;
-    }
-
-    public void setSolutionRuleId(String solutionRuleId) {
-        this.solutionRuleId = solutionRuleId;
-    }
+    private List<List<String>> answerIds;
 
     public String getQuestionId() {
         return questionId;
@@ -38,27 +18,11 @@ public class RuleCondition {
         this.questionId = questionId;
     }
 
-    public List<Integer> getScoreList() {
-        return scoreList;
+    public List<List<String>> getAnswerIds() {
+        return answerIds;
     }
 
-    public void setScoreList(List<Integer> scoreList) {
-        this.scoreList = scoreList;
-    }
-
-    public int getOperator() {
-        return operator;
-    }
-
-    public void setOperator(int operator) {
-        this.operator = operator;
-    }
-
-    public long getModified() {
-        return modified;
-    }
-
-    public void setModified(long modified) {
-        this.modified = modified;
+    public void setAnswerIds(List<List<String>> answerIds) {
+        this.answerIds = answerIds;
     }
 }

@@ -2,13 +2,11 @@ package com.clas.starlite.webapp.service;
 
 import com.clas.starlite.common.Constants;
 import com.clas.starlite.common.Status;
+import com.clas.starlite.dao.QuestionDao;
 import com.clas.starlite.dao.RevisionDao;
 import com.clas.starlite.dao.SolutionDao;
 import com.clas.starlite.dao.SolutionRuleDao;
-import com.clas.starlite.domain.Revision;
-import com.clas.starlite.domain.RuleCondition;
-import com.clas.starlite.domain.Solution;
-import com.clas.starlite.domain.SolutionRule;
+import com.clas.starlite.domain.*;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
 import com.clas.starlite.webapp.converter.SolutionConverter;
 import com.clas.starlite.webapp.dto.SolutionDTO;
@@ -17,9 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by Son on 8/17/14.
@@ -37,10 +33,28 @@ public class SolutionService {
                 return ErrorCodeMap.FAILURE_SOLUTION_NOT_FOUND;
             }
         }
+
         for (RuleCondition condition : rule.getConditions()) {
-            if(condition.getScoreList() == null || condition.getScoreList().size() == 0
+            if(condition.getAnswerIds() == null || condition.getAnswerIds().size() == 0
                     || StringUtils.isBlank(condition.getQuestionId())){
                 return ErrorCodeMap.FAILURE_INVALID_CONDITIONS;
+            }else{
+                Question q = questionDao.findOne(condition.getQuestionId());
+                if(q == null){
+                    return ErrorCodeMap.FAILURE_INVALID_CONDITIONS;
+                }
+                List<Answer> answers = q.getAnswers();
+                Set<String> answerIds = new HashSet<String>();
+                for (Answer answer : answers) {
+                    answerIds.add(answer.getId());
+                }
+                for(List<String> aIds: condition.getAnswerIds()){
+                    for (String aId : aIds) {
+                        if(!answerIds.contains(aId)){
+                            return ErrorCodeMap.FAILURE_INVALID_CONDITIONS;
+                        }
+                    }
+                }
             }
         }
         return null;
@@ -54,12 +68,6 @@ public class SolutionService {
         r.setModifiedBy(userId);
         Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SOLUTION, Constants.REVISION_ACTION_ADD_RULE, r.getId());
         r.setRevision(revision.getVersion());
-
-        for (RuleCondition condition : r.getConditions()) {
-            condition.setId(UUID.randomUUID().toString());
-            condition.setSolutionRuleId(r.getId());
-            condition.setModified(System.currentTimeMillis());
-        }
 
         Solution solution = solutionDao.findOne(r.getSolutionId());
         if(solution.getRules() == null){
@@ -130,4 +138,6 @@ public class SolutionService {
     private RevisionDao revisionDao;
     @Autowired
     private SolutionRuleDao solutionRuleDao;
+    @Autowired
+    private QuestionDao questionDao;
 }

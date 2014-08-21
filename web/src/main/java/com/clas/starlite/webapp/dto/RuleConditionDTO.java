@@ -6,36 +6,12 @@ import java.util.List;
  * Created by sonnt4 on 8/20/2014.
  */
 public class RuleConditionDTO {
-    private String id;
-    private String solutionRuleId;
     private String questionId;
-    private List<Integer> scoreList;
-    private int operator;
-    private long modified;
+    private List<List<String>> answerIds;
 
-    public RuleConditionDTO(String id, String solutionRuleId, String questionId, List<Integer> scoreList, int operator, long modified) {
-        this.id = id;
-        this.solutionRuleId = solutionRuleId;
+    public RuleConditionDTO(String questionId, List<List<String>> answerIds) {
         this.questionId = questionId;
-        this.scoreList = scoreList;
-        this.operator = operator;
-        this.modified = modified;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getSolutionRuleId() {
-        return solutionRuleId;
-    }
-
-    public void setSolutionRuleId(String solutionRuleId) {
-        this.solutionRuleId = solutionRuleId;
+        this.answerIds = answerIds;
     }
 
     public String getQuestionId() {
@@ -46,27 +22,11 @@ public class RuleConditionDTO {
         this.questionId = questionId;
     }
 
-    public List<Integer> getScoreList() {
-        return scoreList;
+    public List<List<String>> getAnswerIds() {
+        return answerIds;
     }
 
-    public void setScoreList(List<Integer> scoreList) {
-        this.scoreList = scoreList;
-    }
-
-    public int getOperator() {
-        return operator;
-    }
-
-    public void setOperator(int operator) {
-        this.operator = operator;
-    }
-
-    public long getModified() {
-        return modified;
-    }
-
-    public void setModified(long modified) {
-        this.modified = modified;
+    public void setAnswerIds(List<List<String>> answerIds) {
+        this.answerIds = answerIds;
     }
 }
