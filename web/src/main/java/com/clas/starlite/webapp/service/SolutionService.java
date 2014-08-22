@@ -67,11 +67,13 @@ public class SolutionService {
         if(oldRule == null){
             return null;
         }
+        oldRule.setType(r.getType());
+        oldRule.setConditions(r.getConditions());
         oldRule.setModified(System.currentTimeMillis());
         oldRule.setModifiedBy(userId);
         Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SOLUTION, Constants.REVISION_ACTION_EDIT_RULE, r.getId());
-        r.setRevision(revision.getVersion());
-        Solution solution = solutionDao.findOne(r.getSolutionId());
+        oldRule.setRevision(revision.getVersion());
+        Solution solution = solutionDao.findOne(oldRule.getSolutionId());
         String rootParentId = solution.getRootParentId();
         if(!rootParentId.equals(solution.getId())){
             Solution rootSolution = solutionDao.findOne(rootParentId);
