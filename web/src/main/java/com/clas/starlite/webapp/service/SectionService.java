@@ -67,6 +67,7 @@ public class SectionService {
         oldSection.setName(section.getName());
         oldSection.setModifiedBy(userId);
         oldSection.setModified(System.currentTimeMillis());
+        sectionDao.save(oldSection);
         return SectionConverter.convert(oldSection);
     }
 
