@@ -76,11 +76,11 @@ public class ScenarioService {
         scenarioDao.save(scenario);
         return ScenarioConverter.convert(scenario);
     }
-    public ScenarioDTO update(Scenario sc){
+    public ScenarioDTO update(Scenario sc, String userId){
         Scenario scenario = scenarioDao.findOne(sc.getId());
         if(scenario != null){
             scenario.setName(sc.getName());
-            scenario.setModifiedBy(sc.getModifiedBy());
+            scenario.setModifiedBy(userId);
             scenario.setModified(System.currentTimeMillis());
             Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SCENARIO, Constants.REVISION_ACTION_EDIT, sc.getId());
             scenario.setRevision(revision.getVersion());

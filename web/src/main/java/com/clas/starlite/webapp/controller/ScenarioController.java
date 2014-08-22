@@ -51,8 +51,7 @@ public class ScenarioController extends ApplicationObjectSupport {
             return restResultDTO;
         }
 
-        scenario.setModifiedBy(userId);
-        ScenarioDTO scenarioDTO = scenarioService.update(scenario);
+        ScenarioDTO scenarioDTO = scenarioService.update(scenario, userId);
         if(scenarioDTO != null){
             restResultDTO.setData(scenarioDTO);
             restResultDTO.setSuccessful(true);

@@ -59,6 +59,40 @@ public class SolutionService {
         }
         return null;
     }
+    public SolutionRuleDTO deleteRule(String ruleId, String userId){
+        SolutionRule rule = solutionRuleDao.findOne(ruleId);
+        if(rule != null){
+            rule.setStatus(Status.DEACTIVE.getValue());
+            Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SOLUTION, Constants.REVISION_ACTION_DELETE_RULE, rule.getId());
+            rule.setRevision(revision.getVersion());
+            rule.setModifiedBy(userId);
+            rule.setModified(System.currentTimeMillis());
+
+            if(StringUtils.isNotBlank(rule.getSolutionId())){
+                Solution solution = solutionDao.findOne(rule.getSolutionId());
+                if(solution != null){
+                    String rootParentId = solution.getRootParentId();
+                    if(!rootParentId.equals(solution.getId())){
+                        Solution rootSolution = solutionDao.findOne(rootParentId);
+                        rootSolution.setRevision(revision.getVersion());
+                        solutionDao.save(rootSolution);
+                    }else{
+                        solution.setRevision(revision.getVersion());
+                    }
+                    for (int i = solution.getRules().size() - 1; i >= 0 ; i--) {
+                        if(solution.getRules().get(i).getId().equals(ruleId)){
+                            solution.getRules().remove(i);
+                        }
+                    }
+                    solutionDao.save(solution);
+                }
+            }
+            solutionRuleDao.save(rule);
+            return SolutionConverter.convertRule(rule);
+        }else{
+            return null;
+        }
+    }
     public SolutionRuleDTO updateRule(SolutionRule r, String userId){
         if(StringUtils.isBlank(r.getId())){
             return null;
@@ -128,6 +162,64 @@ public class SolutionService {
     }
     public List<SolutionDTO> getList(Long revision){
         return SolutionConverter.convert(solutionDao.getTrees(revision));
+    }
+    public SolutionDTO delete(String sId, String userId){
+        Solution s = solutionDao.findOne(sId);
+        if(s != null){
+            s.setStatus(Status.DEACTIVE.getValue());
+            Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SOLUTION, Constants.REVISION_ACTION_DELETE, s.getId());
+            s.setRevision(revision.getVersion());
+            s.setMyRevision(revision.getVersion());
+            s.setModifiedBy(userId);
+            s.setModified(System.currentTimeMillis());
+            String rootParentId = s.getRootParentId();
+            if(!rootParentId.equals(s.getId())){
+                Solution rootSolution = solutionDao.findOne(rootParentId);
+                rootSolution.setRevision(revision.getVersion());
+                solutionDao.save(rootSolution);
+            }
+            if(StringUtils.isNotBlank(s.getParentId())){
+                Solution parent = solutionDao.findOne(s.getParentId());
+                if(parent != null && parent.getSolutions() != null && parent.getSolutions().size() > 0){
+                    for (int i = parent.getSolutions().size() - 1; i >= 0 ; i--) {
+                        if(parent.getSolutions().get(i).getId().equals(sId)){
+                            parent.getSolutions().remove(i);
+                        }
+                    }
+                    solutionDao.save(parent);
+                }
+            }
+            s.setRules(null);
+            solutionDao.save(s);
+            return SolutionConverter.convert(s);
+        }else{
+            return null;
+        }
+    }
+    public SolutionDTO update(Solution s, String userId){
+        if(StringUtils.isBlank(s.getId())){
+            return null;
+        }
+        Solution oldSolution = solutionDao.findOne(s.getId());
+        if(oldSolution == null){
+            return null;
+        }
+        oldSolution.setModified(System.currentTimeMillis());
+        oldSolution.setModifiedBy(userId);
+        oldSolution.setDesc(s.getDesc());
+        oldSolution.setAttr(s.getAttr());
+        oldSolution.setGroup(s.isGroup());
+        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SOLUTION, Constants.REVISION_ACTION_EDIT, oldSolution.getId());
+        oldSolution.setRevision(revision.getVersion());
+        oldSolution.setMyRevision(revision.getVersion());
+        String rootParentId = oldSolution.getRootParentId();
+        if(!rootParentId.equals(oldSolution.getId())){
+            Solution rootSolution = solutionDao.findOne(rootParentId);
+            rootSolution.setRevision(revision.getVersion());
+            solutionDao.save(rootSolution);
+        }
+        solutionDao.save(oldSolution);
+        return SolutionConverter.convert(oldSolution);
     }
     public SolutionDTO create(Solution s, String userId){
         s.setId(UUID.randomUUID().toString());
