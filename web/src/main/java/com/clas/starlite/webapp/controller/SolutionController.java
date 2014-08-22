@@ -46,7 +46,7 @@ public class SolutionController {
     }
 
     @RequestMapping(value = "/solution/rule/create", method= RequestMethod.POST, consumes="application/json", produces={"application/json"})
-    public RestResultDTO create(@RequestBody SolutionRule solutionRule, @RequestHeader(value= Constants.HTTP_HEADER_USER, required = true) String userId) {
+    public RestResultDTO createRule(@RequestBody SolutionRule solutionRule, @RequestHeader(value= Constants.HTTP_HEADER_USER, required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();
         ErrorCodeMap errorCode = solutionService.validateRule(solutionRule);
         if(errorCode != null){
@@ -54,6 +54,20 @@ public class SolutionController {
             return restResultDTO;
         }
         SolutionRuleDTO solutionRuleDTO = solutionService.createRule(solutionRule, userId);
+        restResultDTO.setData(solutionRuleDTO);
+        restResultDTO.setSuccessful(true);
+        return restResultDTO;
+    }
+
+    @RequestMapping(value = "/solution/rule/update", method= RequestMethod.POST, consumes="application/json", produces={"application/json"})
+    public RestResultDTO updateRule(@RequestBody SolutionRule solutionRule, @RequestHeader(value= Constants.HTTP_HEADER_USER, required = true) String userId) {
+        RestResultDTO restResultDTO = new RestResultDTO();
+        ErrorCodeMap errorCode = solutionService.validateRule(solutionRule);
+        if(errorCode != null){
+            restResultDTO = RestUtils.createInvalidOutput(errorCode);
+            return restResultDTO;
+        }
+        SolutionRuleDTO solutionRuleDTO = solutionService.updateRule(solutionRule, userId);
         restResultDTO.setData(solutionRuleDTO);
         restResultDTO.setSuccessful(true);
         return restResultDTO;

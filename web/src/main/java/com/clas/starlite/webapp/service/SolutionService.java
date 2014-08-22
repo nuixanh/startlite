@@ -59,6 +59,30 @@ public class SolutionService {
         }
         return null;
     }
+    public SolutionRuleDTO updateRule(SolutionRule r, String userId){
+        if(StringUtils.isBlank(r.getId())){
+            return null;
+        }
+        SolutionRule oldRule = solutionRuleDao.findOne(r.getId());
+        if(oldRule == null){
+            return null;
+        }
+        oldRule.setModified(System.currentTimeMillis());
+        oldRule.setModifiedBy(userId);
+        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SOLUTION, Constants.REVISION_ACTION_EDIT_RULE, r.getId());
+        r.setRevision(revision.getVersion());
+        Solution solution = solutionDao.findOne(r.getSolutionId());
+        String rootParentId = solution.getRootParentId();
+        if(!rootParentId.equals(solution.getId())){
+            Solution rootSolution = solutionDao.findOne(rootParentId);
+            rootSolution.setRevision(revision.getVersion());
+            solutionDao.save(rootSolution);
+        }else{
+            solution.setRevision(revision.getVersion());
+        }
+        solutionRuleDao.save(oldRule);
+        return SolutionConverter.convertRule(oldRule);
+    }
     public SolutionRuleDTO createRule(SolutionRule r, String userId){
         r.setId(UUID.randomUUID().toString());
         r.setCreated(System.currentTimeMillis());
