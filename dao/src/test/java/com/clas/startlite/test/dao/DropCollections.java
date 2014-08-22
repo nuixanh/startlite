@@ -24,6 +24,8 @@ public class DropCollections extends BaseDaoTest{
         solutionRuleDao.deleteAll();
         sectionDao.deleteAll();
         questionDao.deleteAll();
+//        userDao.deleteAll();
+//        sessionDao.deleteAll();
     }
     @Autowired
     private RevisionDao revisionDao;
@@ -37,4 +39,8 @@ public class DropCollections extends BaseDaoTest{
     private QuestionDao questionDao;
     @Autowired
     private ScenarioDao scenarioDao;
+    @Autowired
+    private UserDao userDao;
+    @Autowired
+    private SessionDao sessionDao;
 }

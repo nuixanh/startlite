@@ -43,6 +43,20 @@ public class SectionController extends ApplicationObjectSupport {
 
         return restResultDTO;
     }
+    @RequestMapping(value = "/section/update", method= RequestMethod.POST, consumes="application/json", produces={"application/json"})
+    public RestResultDTO update(@RequestBody Section section, @RequestHeader(value= Constants.HTTP_HEADER_USER, required = true) String userId) {
+        RestResultDTO restResultDTO = new RestResultDTO();
+        ErrorCodeMap errorCode = sectionService.validate(section);
+        if(errorCode != null){
+            restResultDTO = RestUtils.createInvalidOutput(errorCode);
+            return restResultDTO;
+        }
+        SectionDTO sectionDTO = sectionService.update(section, userId);
+        restResultDTO.setData(sectionDTO);
+        restResultDTO.setSuccessful(true);
+
+        return restResultDTO;
+    }
 
     @RequestMapping(value = "/section/attach/{id}/{scenarioId}", method= RequestMethod.GET, produces={"application/json"})
     public RestResultDTO create(@PathVariable("id") String sectionId,

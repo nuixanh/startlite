@@ -69,10 +69,14 @@ public class QuestionService {
     }
 
     public QuestionDTO update(Question question, String userId){
+        if(StringUtils.isBlank(question.getId())){
+            return null;
+        }
         Question oldQuestion = questionDao.findOne(question.getId());
         if(oldQuestion == null){
             return null;
         }
+        oldQuestion.setDesc(question.getDesc());
         oldQuestion.setModified(System.currentTimeMillis());
         oldQuestion.setModifiedBy(userId);
         for (Answer answer : question.getAnswers()) {

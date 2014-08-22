@@ -53,6 +53,22 @@ public class SectionService {
         sectionDao.save(section);
         return SectionConverter.convert(section);
     }
+    public SectionDTO update(Section section, String userId){
+        if(StringUtils.isBlank(section.getId())){
+            return null;
+        }
+        Section oldSection = sectionDao.findOne(section.getId());
+        if(oldSection == null){
+            return null;
+        }
+        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_EDIT_SECTION, oldSection.getId());
+        oldSection.setRevision(revision.getVersion());
+        oldSection.setMyRevision(revision.getVersion());
+        oldSection.setName(section.getName());
+        oldSection.setModifiedBy(userId);
+        oldSection.setModified(System.currentTimeMillis());
+        return SectionConverter.convert(oldSection);
+    }
 
     public ErrorCodeMap attachToScenario(String sectionId, String scenarioId, String userId){
         if(StringUtils.isBlank(sectionId) || StringUtils.isBlank(scenarioId)){

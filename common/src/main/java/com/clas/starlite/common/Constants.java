@@ -15,6 +15,7 @@ public class Constants {
     public static final String REVISION_ACTION_ADD_RULE = "add_rule";
     public static final String REVISION_ACTION_ADD_SECTION = "add_section";
     public static final String REVISION_ACTION_EDIT = "edit";
+    public static final String REVISION_ACTION_EDIT_SECTION = "edit_section";
     public static final String REVISION_ACTION_DELETE = "delete";
     public static final String REVISION_ACTION_ATTACH = "attach";
     public static final String REVISION_ACTION_DETACH = "detach";
