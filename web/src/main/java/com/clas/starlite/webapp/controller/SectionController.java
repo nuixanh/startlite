@@ -74,7 +74,7 @@ public class SectionController extends ApplicationObjectSupport {
         return restResultDTO;
     }
 
-    @RequestMapping(value = "/scenario/delete/{id}", method= RequestMethod.GET, produces={"application/json"})
+    @RequestMapping(value = "/section/delete/{id}", method= RequestMethod.GET, produces={"application/json"})
     public RestResultDTO delete(@PathVariable("id") String sectionId, @RequestHeader(value=Constants.HTTP_HEADER_USER, required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();
         SectionDTO dto = sectionService.delete(sectionId, userId);
