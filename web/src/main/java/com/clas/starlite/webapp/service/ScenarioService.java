@@ -31,6 +31,29 @@ public class ScenarioService {
                 return ErrorCodeMap.FAILURE_SCENARIO_NOT_FOUND;
             }
         }
+        if(StringUtils.isBlank(sc.getParentId())){
+            List<Scenario> scenarios = scenarioDao.getActiveByName(sc.getName().trim());
+            for (Scenario scenario : scenarios) {
+                if(!scenario.getId().equals(sc.getId())){
+                    return ErrorCodeMap.FAILURE_DUPLICATED_NAME;
+                }
+            }
+        }
+
+        return null;
+    }
+    public ErrorCodeMap validateForUpdate(Scenario sc){
+        if(sc == null || StringUtils.isBlank(sc.getName()) || StringUtils.isBlank(sc.getId())){
+            return ErrorCodeMap.FAILURE_INVALID_PARAMS;
+        }
+        if(StringUtils.isBlank(sc.getParentId())){
+            List<Scenario> scenarios = scenarioDao.getActiveByName(sc.getName().trim());
+            for (Scenario scenario : scenarios) {
+                if(!scenario.getId().equals(sc.getId())){
+                    return ErrorCodeMap.FAILURE_DUPLICATED_NAME;
+                }
+            }
+        }
         return null;
     }
     public List<ScenarioDTO> getList(Long revision){
@@ -49,6 +72,7 @@ public class ScenarioService {
         scenario.setModified(System.currentTimeMillis());
         scenario.setCreatedBy(userId);
         scenario.setModifiedBy(userId);
+        scenario.setName(scenario.getName().trim());
         scenario.setStatus(Status.ACTIVE.getValue());
         Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SCENARIO, Constants.REVISION_ACTION_ADD, scenario.getId());
         scenario.setRevision(revision.getVersion());
@@ -79,7 +103,7 @@ public class ScenarioService {
     public ScenarioDTO update(Scenario sc, String userId){
         Scenario scenario = scenarioDao.findOne(sc.getId());
         if(scenario != null){
-            scenario.setName(sc.getName());
+            scenario.setName(sc.getName().trim());
             scenario.setModifiedBy(userId);
             scenario.setModified(System.currentTimeMillis());
             Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SCENARIO, Constants.REVISION_ACTION_EDIT, sc.getId());

@@ -46,8 +46,9 @@ public class ScenarioController extends ApplicationObjectSupport {
     @RequestMapping(value = "/scenario/update", method= RequestMethod.POST, consumes="application/json", produces={"application/json"})
     public RestResultDTO update(@RequestBody Scenario scenario, @RequestHeader(value=Constants.HTTP_HEADER_USER, required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();
-        if(scenario == null || StringUtils.isBlank(scenario.getName())){
-            restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_INVALID_PARAMS);
+        ErrorCodeMap errorCode = scenarioService.validateForUpdate(scenario);
+        if(errorCode != null){
+            restResultDTO = RestUtils.createInvalidOutput(errorCode);
             return restResultDTO;
         }
 

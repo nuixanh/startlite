@@ -1,5 +1,6 @@
 package com.clas.starlite.webapp.converter;
 
+import com.clas.starlite.common.Status;
 import com.clas.starlite.domain.RuleCondition;
 import com.clas.starlite.domain.Solution;
 import com.clas.starlite.domain.SolutionRule;
@@ -25,7 +26,9 @@ public class SolutionConverter {
         if(solutions == null) return null;
         List<SolutionDTO> dtos = new ArrayList<SolutionDTO>();
         for (Solution solution : solutions) {
-            dtos.add(convert(solution));
+            if(solution.getStatus() == Status.ACTIVE.getValue()){
+                dtos.add(convert(solution));
+            }
         }
         return dtos;
     }
@@ -52,7 +55,9 @@ public class SolutionConverter {
         if(rules == null) return null;
         List<SolutionRuleDTO> dtos = new ArrayList<SolutionRuleDTO>();
         for (SolutionRule rule : rules) {
-            dtos.add(convertRule(rule));
+            if(rule.getStatus() == Status.ACTIVE.getValue()){
+                dtos.add(convertRule(rule));
+            }
         }
         return dtos;
     }

@@ -1,4 +1,5 @@
 package com.clas.starlite.webapp.converter;
+import com.clas.starlite.common.Status;
 import com.clas.starlite.domain.Question;
 import com.clas.starlite.domain.Section;
 import com.clas.starlite.webapp.dto.QuestionDTO;
@@ -17,8 +18,9 @@ public class SectionConverter {
         if(section.getQuestions() != null){
             dto.setQuestions(new ArrayList<QuestionDTO>());
             for(Question question: section.getQuestions()){
-                QuestionDTO qDTO = QuestionConverter.convert(question);
-                dto.getQuestions().add(qDTO);
+                if(question.getStatus() == Status.ACTIVE.getValue()){
+                    dto.getQuestions().add(QuestionConverter.convert(question));
+                }
             }
         }
         if(section.getScenarios() != null){
@@ -29,7 +31,9 @@ public class SectionConverter {
     public static List<SectionDTO> convert(List<Section> sections){
         List<SectionDTO> output = new ArrayList<SectionDTO>();
         for (Section section : sections) {
-            output.add(convert(section));
+            if(section.getStatus() == Status.ACTIVE.getValue()){
+                output.add(convert(section));
+            }
         }
         return output;
     }

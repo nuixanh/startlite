@@ -1,5 +1,6 @@
 package com.clas.starlite.dao;
 
+import com.clas.starlite.common.Status;
 import com.clas.starlite.domain.Section;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -15,6 +16,11 @@ public class SectionDao extends BaseDao<Section, String>{
         if(revision != null && revision > 0){
             cr = cr.and("revision").gt(revision);
         }
+        Query q = Query.query(cr);
+        return template.find(q, Section.class);
+    }
+    public List<Section> getActiveByName(String name){
+        Criteria cr = Criteria.where("name").is(name).and("status").is(Status.ACTIVE.getValue());
         Query q = Query.query(cr);
         return template.find(q, Section.class);
     }

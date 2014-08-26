@@ -1,6 +1,8 @@
 package com.clas.starlite.dao;
 
+import com.clas.starlite.common.Status;
 import com.clas.starlite.domain.Scenario;
+import com.clas.starlite.domain.Section;
 import com.clas.starlite.domain.Solution;
 import com.clas.starlite.domain.User;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +26,11 @@ public class ScenarioDao extends BaseDao<Scenario, String>{
         Query q = Query.query(cr);
         return template.find(q, Scenario.class);
     }
+    public List<Scenario> getActiveByName(String name){
+        Criteria cr = Criteria.where("name").is(name).and("status").is(Status.ACTIVE.getValue());
+        Query q = Query.query(cr);
+        return template.find(q, Scenario.class);
+    }
     /*public List<Scenario> getTree(Collection<String> scIds){
         if(CollectionUtils.isEmpty(scIds)){
             return new ArrayList<Scenario>();
@@ -36,7 +43,7 @@ public class ScenarioDao extends BaseDao<Scenario, String>{
         Criteria cr = Criteria.where("parentId").exists(Boolean.FALSE);
         return template.find(Query.query(cr), Scenario.class);
     }*/
-    public Set<String> getRootScenarioIdSet(Collection<String> scIds){
+    /*public Set<String> getRootScenarioIdSet(Collection<String> scIds){
         Set<String> rs = new HashSet<String>();
         Criteria cr = Criteria.where("id").in(scIds);
         Query q = Query.query(cr);
@@ -50,5 +57,5 @@ public class ScenarioDao extends BaseDao<Scenario, String>{
             }
         }
         return rs;
-    }
+    }*/
 }

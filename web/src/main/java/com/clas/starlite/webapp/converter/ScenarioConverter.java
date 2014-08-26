@@ -1,5 +1,6 @@
 package com.clas.starlite.webapp.converter;
 
+import com.clas.starlite.common.Status;
 import com.clas.starlite.domain.Question;
 import com.clas.starlite.domain.Scenario;
 import com.clas.starlite.webapp.dto.QuestionDTO;
@@ -15,8 +16,9 @@ public class ScenarioConverter {
     public static List<ScenarioDTO> convert(List<Scenario> scenarios){
         List<ScenarioDTO> output = new ArrayList<ScenarioDTO>();
         for (Scenario scenario : scenarios) {
-            ScenarioDTO dto = convert(scenario);
-            output.add(dto);
+            if(scenario.getStatus() == Status.ACTIVE.getValue()){
+                output.add(convert(scenario));
+            }
         }
         return output;
     }
@@ -25,7 +27,9 @@ public class ScenarioConverter {
         if(scenario.getScenarios() != null){
             dto.setScenarios(new ArrayList<ScenarioDTO>());
             for (Scenario sc : scenario.getScenarios()) {
-                dto.getScenarios().add(convert(sc));
+                if(sc.getStatus() == Status.ACTIVE.getValue()){
+                    dto.getScenarios().add(convert(sc));
+                }
             }
         }
         return dto;

@@ -37,6 +37,12 @@ public class SectionService {
         if(section == null || StringUtils.isBlank(section.getName())){
             return ErrorCodeMap.FAILURE_INVALID_PARAMS;
         }
+        List<Section> sections = sectionDao.getActiveByName(section.getName().trim());
+        for (Section s : sections) {
+            if(!s.getId().equals(section.getId())){
+                return ErrorCodeMap.FAILURE_DUPLICATED_NAME;
+            }
+        }
         return null;
     }
     public SectionDTO create(Section section, String userId){
@@ -45,6 +51,7 @@ public class SectionService {
         section.setModified(System.currentTimeMillis());
         section.setCreatedBy(userId);
         section.setModifiedBy(userId);
+        section.setName(section.getName().trim());
         section.setStatus(Status.ACTIVE.getValue());
         Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_ADD_SECTION, section.getId());
         section.setRevision(revision.getVersion());
@@ -64,11 +71,50 @@ public class SectionService {
         Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_EDIT_SECTION, oldSection.getId());
         oldSection.setRevision(revision.getVersion());
         oldSection.setMyRevision(revision.getVersion());
-        oldSection.setName(section.getName());
+        oldSection.setName(section.getName().trim());
         oldSection.setModifiedBy(userId);
         oldSection.setModified(System.currentTimeMillis());
         sectionDao.save(oldSection);
         return SectionConverter.convert(oldSection);
+    }
+    public SectionDTO delete(String sectionId, String userId){
+        Section section = sectionDao.findOne(sectionId);
+        if(section != null){
+            section.setStatus(Status.DEACTIVE.getValue());
+            Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_DELETE_SECTION, section.getId());
+            section.setRevision(revision.getVersion());
+            section.setMyRevision(revision.getVersion());
+            section.setModifiedBy(userId);
+            section.setModified(System.currentTimeMillis());
+            section.setQuestions(null);
+            revision = revisionDao.incVersion(Constants.REVISION_TYPE_SCENARIO, Constants.REVISION_ACTION_DELETE_SECTION, section.getId());
+            if(section.getScenarios() != null){
+                for (Scenario sc : section.getScenarios()) {
+                    Scenario rootParent = scenarioDao.findOne(sc.getRootParentId());
+                    rootParent.setRevision(revision.getVersion());
+                    scenarioDao.save(rootParent);
+                    Set<String> sectionSet = sc.getSections();
+                    if(sectionSet != null && sectionSet.size() > 0){
+                        Set<String> newSectionSet = new HashSet<String>();
+                        for (String sID : sectionSet) {
+                            if(!sID.equals(sectionId)){
+                                newSectionSet.add(sID);
+                            }
+                        }
+                        if(newSectionSet.size() > 0){
+                            sc.setSections(newSectionSet);
+                        }else{
+                            sc.setSections(null);
+                        }
+                        scenarioDao.save(sc);
+                    }
+                }
+            }
+            sectionDao.save(section);
+            return SectionConverter.convert(section);
+        }else{
+            return null;
+        }
     }
 
     public ErrorCodeMap attachToScenario(String sectionId, String scenarioId, String userId){

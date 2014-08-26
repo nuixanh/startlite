@@ -4,6 +4,7 @@ import com.clas.starlite.common.Constants;
 import com.clas.starlite.domain.Section;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
 import com.clas.starlite.webapp.dto.RestResultDTO;
+import com.clas.starlite.webapp.dto.ScenarioDTO;
 import com.clas.starlite.webapp.dto.SectionDTO;
 import com.clas.starlite.webapp.service.SectionService;
 import com.clas.starlite.webapp.util.RestUtils;
@@ -69,6 +70,20 @@ public class SectionController extends ApplicationObjectSupport {
             return restResultDTO;
         }
         restResultDTO.setSuccessful(true);
+
+        return restResultDTO;
+    }
+
+    @RequestMapping(value = "/scenario/delete/{id}", method= RequestMethod.GET, produces={"application/json"})
+    public RestResultDTO delete(@PathVariable("id") String sectionId, @RequestHeader(value=Constants.HTTP_HEADER_USER, required = true) String userId) {
+        RestResultDTO restResultDTO = new RestResultDTO();
+        SectionDTO dto = sectionService.delete(sectionId, userId);
+        if(dto != null){
+            restResultDTO.setData(dto);
+            restResultDTO.setSuccessful(true);
+        }else{
+            restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_OBJECT_NOT_FOUND);
+        }
 
         return restResultDTO;
     }

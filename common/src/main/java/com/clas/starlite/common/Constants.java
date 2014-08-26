@@ -19,6 +19,7 @@ public class Constants {
     public static final String REVISION_ACTION_EDIT_SECTION = "edit_section";
     public static final String REVISION_ACTION_DELETE = "delete";
     public static final String REVISION_ACTION_DELETE_RULE = "delete_rule";
+    public static final String REVISION_ACTION_DELETE_SECTION = "delete_section";
     public static final String REVISION_ACTION_ATTACH = "attach";
     public static final String REVISION_ACTION_DETACH = "detach";
     public static final long SESSION_WITHOUT_EXPIRATION = -1;
