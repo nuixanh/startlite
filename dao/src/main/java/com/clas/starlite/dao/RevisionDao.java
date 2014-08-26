@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,8 +31,26 @@ public class RevisionDao extends BaseDao<Revision, String>{
         template.save(rHistory);
         return revision;
     }
+    private Revision incVersion(String type, long inc, String action, Collection<String> entityIdSet){
+        Update update = Update.update("whenUpdated", Calendar.getInstance().getTime()).inc("version", inc);
+        //return the modified object rather than the original
+        Revision revision = template.findAndModify(query(where("type").is(type)),
+                update, FindAndModifyOptions.options().returnNew(true).upsert(true), Revision.class);
+        updateRevisionHistory(type, action, revision.getVersion(), entityIdSet);
+        return revision;
+    }
     public Revision incVersion(String type, String action, String entityId){
         return incVersion(type, 1, action, entityId);
+    }
+    public Revision incVersion(String type, String action, Collection<String> entityIdSet){
+        return incVersion(type, 1, action, entityIdSet);
+    }
+    private void updateRevisionHistory(String type, String action, long revision, Collection<String> entityIdSet){
+        for (String entityId : entityIdSet) {
+            RevisionHistory rHistory = new RevisionHistory(UUID.randomUUID().toString(), type, revision,
+                    action, entityId, Calendar.getInstance().getTime());
+            template.save(rHistory);
+        }
     }
 
     public void dropRevisionHistory(){

@@ -15,9 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by Son on 8/17/14.
@@ -119,6 +117,7 @@ public class QuestionService {
         questionDao.save(oldQuestion);
         return QuestionConverter.convert(oldQuestion);
     }
+
     public QuestionDTO updateStatus(String questionId, String userId, int status){
         Question q = questionDao.findOne(questionId);
         if(q != null){
@@ -145,6 +144,9 @@ public class QuestionService {
                 }
             }
             questionDao.save(q);
+            Set<String> qIds = new HashSet<String>();
+            qIds.add(questionId);
+            solutionService.updateSolutionRuleFromDeletedQuestions(qIds);
             return QuestionConverter.convert(q);
         }else{
             return null;
@@ -157,4 +159,6 @@ public class QuestionService {
     private RevisionDao revisionDao;
     @Autowired
     private SectionDao sectionDao;
+    @Autowired
+    private SolutionService solutionService;
 }

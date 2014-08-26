@@ -59,6 +59,25 @@ public class SolutionService {
         }
         return null;
     }
+    private void removeRuleFromSolution(String ruleId, String solutionId, Revision revision){
+        Solution solution = solutionDao.findOne(solutionId);
+        if(solution != null){
+            String rootParentId = solution.getRootParentId();
+            if(!rootParentId.equals(solution.getId())){
+                Solution rootSolution = solutionDao.findOne(rootParentId);
+                rootSolution.setRevision(revision.getVersion());
+                solutionDao.save(rootSolution);
+            }else{
+                solution.setRevision(revision.getVersion());
+            }
+            for (int i = solution.getRules().size() - 1; i >= 0 ; i--) {
+                if(solution.getRules().get(i).getId().equals(ruleId)){
+                    solution.getRules().remove(i);
+                }
+            }
+            solutionDao.save(solution);
+        }
+    }
     public SolutionRuleDTO deleteRule(String ruleId, String userId){
         SolutionRule rule = solutionRuleDao.findOne(ruleId);
         if(rule != null){
@@ -69,23 +88,7 @@ public class SolutionService {
             rule.setModified(System.currentTimeMillis());
 
             if(StringUtils.isNotBlank(rule.getSolutionId())){
-                Solution solution = solutionDao.findOne(rule.getSolutionId());
-                if(solution != null){
-                    String rootParentId = solution.getRootParentId();
-                    if(!rootParentId.equals(solution.getId())){
-                        Solution rootSolution = solutionDao.findOne(rootParentId);
-                        rootSolution.setRevision(revision.getVersion());
-                        solutionDao.save(rootSolution);
-                    }else{
-                        solution.setRevision(revision.getVersion());
-                    }
-                    for (int i = solution.getRules().size() - 1; i >= 0 ; i--) {
-                        if(solution.getRules().get(i).getId().equals(ruleId)){
-                            solution.getRules().remove(i);
-                        }
-                    }
-                    solutionDao.save(solution);
-                }
+                removeRuleFromSolution(rule.getId(), rule.getSolutionId(), revision);
             }
             solutionRuleDao.save(rule);
             return SolutionConverter.convertRule(rule);
@@ -248,6 +251,19 @@ public class SolutionService {
         s.setMyRevision(revision.getVersion());
         solutionDao.save(s);
         return SolutionConverter.convert(s);
+    }
+
+    public void updateSolutionRuleFromDeletedQuestions(Collection<String> qIDs){
+        List<SolutionRule> rules = solutionRuleDao.getRulesByQuestionIds(qIDs);
+        if(rules != null && rules.size() > 0){
+            Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SOLUTION, Constants.REVISION_ACTION_DELETE_QUESTION, qIDs);
+            for (SolutionRule rule : rules) {
+                rule.setStatus(Status.DEACTIVE.getValue());
+                rule.setRevision(revision.getVersion());
+                solutionRuleDao.save(rule);
+                removeRuleFromSolution(rule.getId(), rule.getSolutionId(), revision);
+            }
+        }
     }
 
     @Autowired

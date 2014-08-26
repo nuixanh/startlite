@@ -86,6 +86,7 @@ public class SectionService {
             section.setMyRevision(revision.getVersion());
             section.setModifiedBy(userId);
             section.setModified(System.currentTimeMillis());
+            List<Question> questions = section.getQuestions();
             section.setQuestions(null);
             revision = revisionDao.incVersion(Constants.REVISION_TYPE_SCENARIO, Constants.REVISION_ACTION_DELETE_SECTION, section.getId());
             if(section.getScenarios() != null){
@@ -111,6 +112,17 @@ public class SectionService {
                 }
             }
             sectionDao.save(section);
+            if(questions != null && questions.size() > 0){
+                Set<String> qIds = new HashSet<String>();
+                for (Question question : questions) {
+                    qIds.add(question.getId());
+                    question.setStatus(Status.DEACTIVE.getValue());
+                    questionDao.save(question);
+                }
+                solutionService.updateSolutionRuleFromDeletedQuestions(qIds);
+            }
+
+
             return SectionConverter.convert(section);
         }else{
             return null;
@@ -185,4 +197,6 @@ public class SectionService {
     private ScenarioDao scenarioDao;
     @Autowired
     private QuestionDao questionDao;
+    @Autowired
+    private SolutionService solutionService;
 }
