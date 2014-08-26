@@ -117,6 +117,8 @@ public class SectionService {
                 for (Question question : questions) {
                     qIds.add(question.getId());
                     question.setStatus(Status.DEACTIVE.getValue());
+                    question.setModifiedBy(userId);
+                    question.setModified(System.currentTimeMillis());
                     questionDao.save(question);
                 }
                 solutionService.updateSolutionRuleFromDeletedQuestions(qIds);
