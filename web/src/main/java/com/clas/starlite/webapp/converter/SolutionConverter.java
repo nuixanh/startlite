@@ -18,6 +18,14 @@ public class SolutionConverter {
     public static SolutionDTO convert(Solution solution){
         if(solution == null) return null;
         SolutionDTO dto = new SolutionDTO(solution.getId(), solution.getDesc(), solution.getAttr(), solution.getParentId(), solution.isGroup(), solution.getCreated(), solution.getModified(), solution.getStatus(), solution.getRevision(), solution.getRootParentId());
+        if(solution.getSolutions() != null){
+            dto.setSolutions(new ArrayList<SolutionDTO>());
+            for (Solution childSol : solution.getSolutions()) {
+                if(childSol.getStatus() == Status.ACTIVE.getValue()){
+                    dto.getSolutions().add(convert(childSol));
+                }
+            }
+        }
         dto.setSolutions(convert(solution.getSolutions()));
         dto.setRules(convertRules(solution.getRules()));
         return dto;
