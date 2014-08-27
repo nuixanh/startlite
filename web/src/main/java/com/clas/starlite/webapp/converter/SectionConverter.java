@@ -31,9 +31,10 @@ public class SectionConverter {
     public static List<SectionDTO> convert(List<Section> sections){
         List<SectionDTO> output = new ArrayList<SectionDTO>();
         for (Section section : sections) {
-            if(section.getStatus() == Status.ACTIVE.getValue()){
+            output.add(convert(section));
+            /*if(section.getStatus() == Status.ACTIVE.getValue()){
                 output.add(convert(section));
-            }
+            }*/
         }
         return output;
     }

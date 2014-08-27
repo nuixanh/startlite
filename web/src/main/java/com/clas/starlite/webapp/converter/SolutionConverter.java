@@ -26,9 +26,10 @@ public class SolutionConverter {
         if(solutions == null) return null;
         List<SolutionDTO> dtos = new ArrayList<SolutionDTO>();
         for (Solution solution : solutions) {
-            if(solution.getStatus() == Status.ACTIVE.getValue()){
+            dtos.add(convert(solution));
+            /*if(solution.getStatus() == Status.ACTIVE.getValue()){
                 dtos.add(convert(solution));
-            }
+            }*/
         }
         return dtos;
     }

@@ -16,9 +16,10 @@ public class ScenarioConverter {
     public static List<ScenarioDTO> convert(List<Scenario> scenarios){
         List<ScenarioDTO> output = new ArrayList<ScenarioDTO>();
         for (Scenario scenario : scenarios) {
-            if(scenario.getStatus() == Status.ACTIVE.getValue()){
+            output.add(convert(scenario));
+            /*if(scenario.getStatus() == Status.ACTIVE.getValue()){
                 output.add(convert(scenario));
-            }
+            }*/
         }
         return output;
     }
