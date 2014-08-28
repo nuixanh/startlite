@@ -74,6 +74,21 @@ public class SectionController extends ApplicationObjectSupport {
         return restResultDTO;
     }
 
+    @RequestMapping(value = "/section/detach/{id}/{scenarioId}", method= RequestMethod.GET, produces={"application/json"})
+    public RestResultDTO detach(@PathVariable("id") String sectionId,
+                                @PathVariable("scenarioId") String scenarioId,
+                                @RequestHeader(value= Constants.HTTP_HEADER_USER, required = true) String userId) {
+        RestResultDTO restResultDTO = new RestResultDTO();
+        ErrorCodeMap errorCode = sectionService.detachToScenario(sectionId, scenarioId, userId);
+        if(errorCode != null){
+            restResultDTO = RestUtils.createInvalidOutput(errorCode);
+            return restResultDTO;
+        }
+        restResultDTO.setSuccessful(true);
+
+        return restResultDTO;
+    }
+
     @RequestMapping(value = "/section/delete/{id}", method= RequestMethod.GET, produces={"application/json"})
     public RestResultDTO delete(@PathVariable("id") String sectionId, @RequestHeader(value=Constants.HTTP_HEADER_USER, required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();

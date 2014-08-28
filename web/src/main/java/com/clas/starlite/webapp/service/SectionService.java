@@ -89,7 +89,7 @@ public class SectionService {
             List<Question> questions = section.getQuestions();
             section.setQuestions(null);
             revision = revisionDao.incVersion(Constants.REVISION_TYPE_SCENARIO, Constants.REVISION_ACTION_DELETE_SECTION, section.getId());
-            if(section.getScenarios() != null){
+            if(section.getScenarios() != null && section.getScenarios().size() > 0){
                 for (Scenario sc : section.getScenarios()) {
                     Scenario rootParent = scenarioDao.findOne(sc.getRootParentId());
                     rootParent.setRevision(revision.getVersion());
@@ -111,6 +111,7 @@ public class SectionService {
                     }
                 }
             }
+            section.setScenarios(null);
             sectionDao.save(section);
             if(questions != null && questions.size() > 0){
                 Set<String> qIds = new HashSet<String>();
@@ -124,11 +125,62 @@ public class SectionService {
                 solutionService.updateSolutionRuleFromDeletedQuestions(qIds);
             }
 
-
             return SectionConverter.convert(section);
         }else{
             return null;
         }
+    }
+    public ErrorCodeMap detachToScenario(String sectionId, String scenarioId, String userId){
+        if(StringUtils.isBlank(sectionId) || StringUtils.isBlank(scenarioId)){
+            return ErrorCodeMap.FAILURE_INVALID_PARAMS;
+        }
+        Section section = sectionDao.findOne(sectionId);
+        if(section == null){
+            return ErrorCodeMap.FAILURE_SECTION_NOT_FOUND;
+        }
+        Scenario detachedScenario = scenarioDao.findOne(scenarioId);
+        if(detachedScenario == null){
+            return ErrorCodeMap.FAILURE_SCENARIO_NOT_FOUND;
+        }
+        Set<String> sectionSet = detachedScenario.getSections();
+        if(sectionSet != null && sectionSet.size() > 0){
+            Set<String> newSectionSet = new HashSet<String>();
+            for (String sID : sectionSet) {
+                if(!sID.equals(sectionId)){
+                    newSectionSet.add(sID);
+                }
+            }
+            if(newSectionSet.size() > 0){
+                detachedScenario.setSections(newSectionSet);
+            }else{
+                detachedScenario.setSections(null);
+            }
+        }
+        if(section.getScenarios() != null && section.getScenarios().size() > 0){
+            for (int i = section.getScenarios().size() - 1; i >= 0 ; i--) {
+                Scenario scOfSection = section.getScenarios().get(i);
+                if(scOfSection.getId().equals(scenarioId)){
+                    section.getScenarios().remove(i);
+                    break;
+                }
+            }
+        }
+
+        section.setModified(System.currentTimeMillis());
+        section.setModifiedBy(userId);
+        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SCENARIO, Constants.REVISION_ACTION_DETACH, section.getId());
+        section.setRevision(revision.getVersion());
+        String rootParentId = detachedScenario.getRootParentId();
+        if(rootParentId.equals(detachedScenario.getId())){
+            detachedScenario.setRevision(revision.getVersion());
+        }else{
+            Scenario rootParent = scenarioDao.findOne(rootParentId);
+            rootParent.setRevision(revision.getVersion());
+            scenarioDao.save(rootParent);
+        }
+        sectionDao.save(section);
+        scenarioDao.save(detachedScenario);
+        return null;
     }
 
     public ErrorCodeMap attachToScenario(String sectionId, String scenarioId, String userId){
