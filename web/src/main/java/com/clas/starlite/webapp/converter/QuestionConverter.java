@@ -1,5 +1,6 @@
 package com.clas.starlite.webapp.converter;
 
+import com.clas.starlite.common.Status;
 import com.clas.starlite.domain.Answer;
 import com.clas.starlite.domain.Question;
 import com.clas.starlite.webapp.dto.AnswerDTO;
@@ -26,8 +27,10 @@ public class QuestionConverter {
         if(answers != null){
             dtos = new ArrayList<AnswerDTO>();
             for (Answer answer : answers) {
-                AnswerDTO dto = convert(answer);
-                dtos.add(dto);
+                if(answer.getStatus() == Status.ACTIVE.getValue()){
+                    AnswerDTO dto = convert(answer);
+                    dtos.add(dto);
+                }
             }
         }
         return dtos;

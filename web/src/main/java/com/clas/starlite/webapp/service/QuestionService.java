@@ -50,6 +50,7 @@ public class QuestionService {
         for (Answer answer : q.getAnswers()) {
             answer.setId(UUID.randomUUID().toString());
             answer.setModified(System.currentTimeMillis());
+            answer.setStatus(Status.ACTIVE.getValue());
         }
         if(StringUtils.isNotBlank(q.getSectionId())){
             Section section = sectionDao.findOne(q.getSectionId());
@@ -77,11 +78,39 @@ public class QuestionService {
         oldQuestion.setDesc(question.getDesc());
         oldQuestion.setModified(System.currentTimeMillis());
         oldQuestion.setModifiedBy(userId);
-        for (Answer answer : question.getAnswers()) {
-            answer.setId(UUID.randomUUID().toString());
-            answer.setModified(System.currentTimeMillis());
+        List<Answer> oldAnswers = oldQuestion.getAnswers();
+        Map<String, Answer> oldAnswerMap = new HashMap<String, Answer>();
+        for (Answer oldAnswer : oldAnswers) {
+            oldAnswerMap.put(oldAnswer.getId(), oldAnswer);
         }
-        oldQuestion.setAnswers(question.getAnswers());
+        Set<String> ansIDSet = new HashSet<String>();
+        for (Answer answer : question.getAnswers()) {
+            String ansId = answer.getId();
+            if(StringUtils.isBlank(ansId)){
+                ansId = UUID.randomUUID().toString();
+                answer.setId(ansId);
+                answer.setStatus(Status.ACTIVE.getValue());
+                answer.setModified(System.currentTimeMillis());
+                oldAnswers.add(answer);
+            }else if(!oldAnswerMap.containsKey(ansId)){
+                answer.setStatus(Status.ACTIVE.getValue());
+                answer.setModified(System.currentTimeMillis());
+                oldAnswers.add(answer);
+            }else{
+                Answer oldAnswer = oldAnswerMap.get(ansId);
+                oldAnswer.setDesc(answer.getDesc());
+                oldAnswer.setScore(answer.getScore());
+                oldAnswer.setStatus(Status.ACTIVE.getValue());
+                oldAnswer.setModified(System.currentTimeMillis());
+            }
+            ansIDSet.add(ansId);
+        }
+        for (Answer oldAnswer : oldAnswers) {
+            if(!ansIDSet.contains(oldAnswer.getId())){
+                oldAnswer.setStatus(Status.DEACTIVE.getValue());
+            }
+        }
+
         Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_EDIT, oldQuestion.getId());
         oldQuestion.setRevision(revision.getVersion());
 
