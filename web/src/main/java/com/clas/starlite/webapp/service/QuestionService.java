@@ -76,6 +76,7 @@ public class QuestionService {
             return null;
         }
         oldQuestion.setDesc(question.getDesc());
+        oldQuestion.setType(question.getType());
         oldQuestion.setModified(System.currentTimeMillis());
         oldQuestion.setModifiedBy(userId);
         List<Answer> oldAnswers = oldQuestion.getAnswers();
