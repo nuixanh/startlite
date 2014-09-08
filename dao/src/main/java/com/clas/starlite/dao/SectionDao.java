@@ -24,4 +24,9 @@ public class SectionDao extends BaseDao<Section, String>{
         Query q = Query.query(cr);
         return template.find(q, Section.class);
     }
+    public Section getOneActiveByName(String name){
+        Criteria cr = Criteria.where("name").is(name).and("status").is(Status.ACTIVE.getValue());
+        Query q = Query.query(cr);
+        return template.findOne(q, Section.class);
+    }
 }

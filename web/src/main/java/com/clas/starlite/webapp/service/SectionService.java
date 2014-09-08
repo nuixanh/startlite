@@ -60,50 +60,65 @@ public class SectionService {
         sectionDao.save(section);
         return SectionConverter.convert(section);
     }
-    public ErrorCodeMap validateForBatchUpload(Section section){
 
-        return null;
-    }
     public Map<String, Object> batchUpload(Section section, String userId){
+        Map<String, Object> output = new HashMap<String, Object>();
         ErrorCodeMap errorCode = null;
         if(section == null || StringUtils.isBlank(section.getName()) || section.getQuestions() == null
                 || section.getQuestions().size() == 0){
             errorCode = ErrorCodeMap.FAILURE_INVALID_PARAMS;
         }else{
-            List<Section> sections = sectionDao.getActiveByName(section.getName().trim());
-            for (Section s : sections) {
-                if(!s.getId().equals(section.getId())){
-                    errorCode = ErrorCodeMap.FAILURE_DUPLICATED_NAME;
-                    break;
-                }
-            }
-
+            Section oldSection = sectionDao.getOneActiveByName(section.getName().trim());
+            Map<String, Question> descMap = new HashMap<String, Question>();
             if(errorCode == null){
-                Map<String, Question> descMap = new HashMap<String, Question>();
                 for (Question question : section.getQuestions()) {
+                    if(descMap.containsKey(question.getDesc())){
+                        errorCode = ErrorCodeMap.FAILURE_DUPLICATED_QUESTION;
+                        break;
+                    }
                     descMap.put(question.getDesc(), question);
                 }
+            }
+            if(errorCode == null){
+                if(oldSection != null){
+                    for (Question oldQuestion : oldSection.getQuestions()) {
 
+                    }
+                }else{
+                    for (Question question : section.getQuestions()) {
+//                        q.setId(UUID.randomUUID().toString());
+//                        q.setCreated(System.currentTimeMillis());
+//                        q.setModified(System.currentTimeMillis());
+//                        //TODO: will be changed to Status.PENDING
+//                        q.setStatus(Status.ACTIVE.getValue());
+//
+//                        //TODO: will be removed
+//                        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_ADD, q.getId());
+//                        q.setRevision(revision.getVersion());
+//
+//                        q.setCreatedBy(userId);
+//                        q.setModifiedBy(userId);
+//                        for (Answer answer : q.getAnswers()) {
+//                            answer.setId(UUID.randomUUID().toString());
+//                            answer.setModified(System.currentTimeMillis());
+//                            answer.setStatus(Status.ACTIVE.getValue());
+//                        }
+                    }
+                }
 
             }
         }
-
-
-        if(StringUtils.isBlank(section.getId())){
-            return null;
+        if(errorCode != null){
+            output.put(Constants.ERROR_CODE, errorCode);
         }
-        Section oldSection = sectionDao.findOne(section.getId());
-        if(oldSection == null){
-            return null;
-        }
-        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_BATCH_UPLOAD_SECTION, oldSection.getId());
-        oldSection.setRevision(revision.getVersion());
-        oldSection.setMyRevision(revision.getVersion());
-        oldSection.setName(section.getName().trim());
-        oldSection.setModifiedBy(userId);
-        oldSection.setModified(System.currentTimeMillis());
-        sectionDao.save(oldSection);
-        return null;
+//        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_BATCH_UPLOAD_SECTION, oldSection.getId());
+//        oldSection.setRevision(revision.getVersion());
+//        oldSection.setMyRevision(revision.getVersion());
+//        oldSection.setName(section.getName().trim());
+//        oldSection.setModifiedBy(userId);
+//        oldSection.setModified(System.currentTimeMillis());
+//        sectionDao.save(oldSection);
+        return output;
     }
     public SectionDTO update(Section section, String userId){
         if(StringUtils.isBlank(section.getId())){
