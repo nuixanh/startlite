@@ -60,6 +60,51 @@ public class SectionService {
         sectionDao.save(section);
         return SectionConverter.convert(section);
     }
+    public ErrorCodeMap validateForBatchUpload(Section section){
+
+        return null;
+    }
+    public Map<String, Object> batchUpload(Section section, String userId){
+        ErrorCodeMap errorCode = null;
+        if(section == null || StringUtils.isBlank(section.getName()) || section.getQuestions() == null
+                || section.getQuestions().size() == 0){
+            errorCode = ErrorCodeMap.FAILURE_INVALID_PARAMS;
+        }else{
+            List<Section> sections = sectionDao.getActiveByName(section.getName().trim());
+            for (Section s : sections) {
+                if(!s.getId().equals(section.getId())){
+                    errorCode = ErrorCodeMap.FAILURE_DUPLICATED_NAME;
+                    break;
+                }
+            }
+
+            if(errorCode == null){
+                Map<String, Question> descMap = new HashMap<String, Question>();
+                for (Question question : section.getQuestions()) {
+                    descMap.put(question.getDesc(), question);
+                }
+
+
+            }
+        }
+
+
+        if(StringUtils.isBlank(section.getId())){
+            return null;
+        }
+        Section oldSection = sectionDao.findOne(section.getId());
+        if(oldSection == null){
+            return null;
+        }
+        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_BATCH_UPLOAD_SECTION, oldSection.getId());
+        oldSection.setRevision(revision.getVersion());
+        oldSection.setMyRevision(revision.getVersion());
+        oldSection.setName(section.getName().trim());
+        oldSection.setModifiedBy(userId);
+        oldSection.setModified(System.currentTimeMillis());
+        sectionDao.save(oldSection);
+        return null;
+    }
     public SectionDTO update(Section section, String userId){
         if(StringUtils.isBlank(section.getId())){
             return null;

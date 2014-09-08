@@ -16,9 +16,9 @@ public class SolutionRuleDTO {
     private int status;
     private long revision;
 
-    private List<RuleConditionDTO> conditions;
+    private List<List<RuleConditionDTO>> conditions;
 
-    public SolutionRuleDTO(String id, int type, String solutionId, long created, String createdBy, String modifiedBy, long modified, int status, long revision, List<RuleConditionDTO> conditions) {
+    public SolutionRuleDTO(String id, int type, String solutionId, long created, String createdBy, String modifiedBy, long modified, int status, long revision, List<List<RuleConditionDTO>> conditions) {
         this.id = id;
         this.type = type;
         this.solutionId = solutionId;
@@ -103,11 +103,11 @@ public class SolutionRuleDTO {
         this.revision = revision;
     }
 
-    public List<RuleConditionDTO> getConditions() {
+    public List<List<RuleConditionDTO>> getConditions() {
         return conditions;
     }
 
-    public void setConditions(List<RuleConditionDTO> conditions) {
+    public void setConditions(List<List<RuleConditionDTO>> conditions) {
         this.conditions = conditions;
     }
 }

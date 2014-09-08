@@ -17,6 +17,7 @@ public class Constants {
     public static final String REVISION_ACTION_EDIT = "edit";
     public static final String REVISION_ACTION_EDIT_RULE = "edit_rule";
     public static final String REVISION_ACTION_EDIT_SECTION = "edit_section";
+    public static final String REVISION_ACTION_BATCH_UPLOAD_SECTION = "batch_upload_section";
     public static final String REVISION_ACTION_DELETE = "delete";
     public static final String REVISION_ACTION_DELETE_RULE = "delete_rule";
     public static final String REVISION_ACTION_DELETE_SECTION = "delete_section";
@@ -24,5 +25,8 @@ public class Constants {
     public static final String REVISION_ACTION_ATTACH = "attach";
     public static final String REVISION_ACTION_DETACH = "detach";
     public static final long SESSION_WITHOUT_EXPIRATION = -1;
+
+    public static final String ERROR_CODE = "error_code";
+    public static final String DTO = "dto";
 
 }

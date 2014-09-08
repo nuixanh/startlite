@@ -21,7 +21,7 @@ public class SolutionRule {
     private int status;
     private long revision;
 
-    private List<RuleCondition> conditions;
+    private List<List<RuleCondition>> conditions;
 
     public String getId() {
         return id;
@@ -95,11 +95,11 @@ public class SolutionRule {
         this.revision = revision;
     }
 
-    public List<RuleCondition> getConditions() {
+    public List<List<RuleCondition>> getConditions() {
         return conditions;
     }
 
-    public void setConditions(List<RuleCondition> conditions) {
+    public void setConditions(List<List<RuleCondition>> conditions) {
         this.conditions = conditions;
     }
 }

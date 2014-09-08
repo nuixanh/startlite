@@ -46,12 +46,18 @@ public class SolutionConverter {
         RuleConditionDTO dto = new RuleConditionDTO(ruleCondition.getQuestionId(), ruleCondition.getAnswerIds());
         return dto;
     }
-    public static List<RuleConditionDTO> convertConditions(List<RuleCondition> conditions){
+    public static List<List<RuleConditionDTO>> convertConditions(List<List<RuleCondition>> conditions){
         if(conditions == null) return null;
 
-        List<RuleConditionDTO> dtos = new ArrayList<RuleConditionDTO>();
-        for (RuleCondition condition : conditions) {
-            dtos.add(convertCondition(condition));
+        List<List<RuleConditionDTO>> dtos = new ArrayList<List<RuleConditionDTO>>();
+        for (List<RuleCondition> conditionList : conditions) {
+            if(conditionList != null && conditionList.size() > 0){
+                List<RuleConditionDTO> dtoConditionList = new ArrayList<RuleConditionDTO>();
+                for (RuleCondition condition : conditionList) {
+                    dtoConditionList.add(convertCondition(condition));
+                }
+                dtos.add(dtoConditionList);
+            }
         }
         return dtos;
     }
