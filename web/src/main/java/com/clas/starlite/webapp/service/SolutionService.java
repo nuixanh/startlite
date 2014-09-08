@@ -34,24 +34,26 @@ public class SolutionService {
             }
         }
 
-        for (RuleCondition condition : rule.getConditions()) {
-            if(condition.getAnswerIds() == null || condition.getAnswerIds().size() == 0
-                    || StringUtils.isBlank(condition.getQuestionId())){
-                return ErrorCodeMap.FAILURE_INVALID_CONDITIONS;
-            }else{
-                Question q = questionDao.findOne(condition.getQuestionId());
-                if(q == null){
+        for (List<RuleCondition> conditionList : rule.getConditions()) {
+            for (RuleCondition condition : conditionList) {
+                if(condition.getAnswerIds() == null || condition.getAnswerIds().size() == 0
+                        || StringUtils.isBlank(condition.getQuestionId())){
                     return ErrorCodeMap.FAILURE_INVALID_CONDITIONS;
-                }
-                List<Answer> answers = q.getAnswers();
-                Set<String> answerIds = new HashSet<String>();
-                for (Answer answer : answers) {
-                    answerIds.add(answer.getId());
-                }
-                for(List<String> aIds: condition.getAnswerIds()){
-                    for (String aId : aIds) {
-                        if(!answerIds.contains(aId)){
-                            return ErrorCodeMap.FAILURE_INVALID_CONDITIONS;
+                }else{
+                    Question q = questionDao.findOne(condition.getQuestionId());
+                    if(q == null){
+                        return ErrorCodeMap.FAILURE_INVALID_CONDITIONS;
+                    }
+                    List<Answer> answers = q.getAnswers();
+                    Set<String> answerIds = new HashSet<String>();
+                    for (Answer answer : answers) {
+                        answerIds.add(answer.getId());
+                    }
+                    for(List<String> aIds: condition.getAnswerIds()){
+                        for (String aId : aIds) {
+                            if(!answerIds.contains(aId)){
+                                return ErrorCodeMap.FAILURE_INVALID_CONDITIONS;
+                            }
                         }
                     }
                 }
