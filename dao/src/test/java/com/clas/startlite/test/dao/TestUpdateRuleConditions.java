@@ -21,8 +21,8 @@ public class TestUpdateRuleConditions extends BaseDaoTest{
         List<SolutionRule> rules = solutionRuleDao.findAll();
         System.out.println("------- number of rules: " + rules.size());
         for (SolutionRule rule : rules) {
-            rule.setConditions(rule.getNewConditions());
-            solutionRuleDao.save(rule);
+
+//            solutionRuleDao.save(rule);
         }
     }
     @Autowired
