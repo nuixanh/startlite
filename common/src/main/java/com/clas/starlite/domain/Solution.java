@@ -28,7 +28,7 @@ public class Solution {
     private long revision;
     private long myRevision;
     private String rootParentId;
-
+    private List<String> precedenceIds;
     @DBRef
     private List<Solution> solutions;
     @DBRef
@@ -184,5 +184,13 @@ public class Solution {
 
     public void setTrial(String trial) {
         this.trial = trial;
+    }
+
+    public List<String> getPrecedenceIds() {
+        return precedenceIds;
+    }
+
+    public void setPrecedenceIds(List<String> precedenceIds) {
+        this.precedenceIds = precedenceIds;
     }
 }

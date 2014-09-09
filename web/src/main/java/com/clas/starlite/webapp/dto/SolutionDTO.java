@@ -20,10 +20,11 @@ public class SolutionDTO {
     private int status;
     private long revision;
     private String rootParentId;
+    private List<String> precedenceIds;
     private List<SolutionDTO> solutions;
     private List<SolutionRuleDTO> rules;
 
-    public SolutionDTO(String id, String desc, String attr, List<String> infoUrl, List<String> caseStudy, List<String> video, String trial, String parentId, boolean isGroup, long created, long modified, int status, long revision, String rootParentId) {
+    public SolutionDTO(String id, String desc, String attr, List<String> infoUrl, List<String> caseStudy, List<String> video, String trial, String parentId, boolean isGroup, long created, long modified, int status, long revision, String rootParentId, List<String> precedenceIds) {
         this.id = id;
         this.desc = desc;
         this.attr = attr;
@@ -38,6 +39,7 @@ public class SolutionDTO {
         this.status = status;
         this.revision = revision;
         this.rootParentId = rootParentId;
+        this.precedenceIds = precedenceIds;
     }
 
     public String getId() {
@@ -166,5 +168,13 @@ public class SolutionDTO {
 
     public void setTrial(String trial) {
         this.trial = trial;
+    }
+
+    public List<String> getPrecedenceIds() {
+        return precedenceIds;
+    }
+
+    public void setPrecedenceIds(List<String> precedenceIds) {
+        this.precedenceIds = precedenceIds;
     }
 }
