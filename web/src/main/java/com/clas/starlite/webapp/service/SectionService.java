@@ -112,6 +112,7 @@ public class SectionService {
                         }else{//new question to an existing section
                             questionService.addMoreInfoToQuestion(question, userId);
                             question.setRevision(revision.getVersion());
+                            question.setSectionId(oldSection.getId());
                             oldSection.getQuestions().add(question);
                         }
                     }
@@ -122,20 +123,21 @@ public class SectionService {
                     oldSection.setModified(System.currentTimeMillis());
                     sectionDao.save(oldSection);
                     output.put(Constants.DTO, SectionConverter.convert(oldSection));
-                }else{
-                    for (Question question : section.getQuestions()) {
-                        questionService.addMoreInfoToQuestion(question, userId);
-                        question.setRevision(revision.getVersion());
-                    }
+                }else{//new Section
+                    section.setId(UUID.randomUUID().toString());
                     section.setRevision(revision.getVersion());
                     section.setMyRevision(revision.getVersion());
                     section.setName(section.getName().trim());
                     section.setModifiedBy(userId);
                     section.setModified(System.currentTimeMillis());
+                    for (Question question : section.getQuestions()) {
+                        questionService.addMoreInfoToQuestion(question, userId);
+                        question.setRevision(revision.getVersion());
+                        question.setSectionId(section.getId());
+                    }
                     sectionDao.save(section);
                     output.put(Constants.DTO, SectionConverter.convert(section));
                 }
-
             }
         }
         if(errorCode != null){
