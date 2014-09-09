@@ -130,6 +130,7 @@ public class SectionService {
                     section.setMyRevision(revision.getVersion());
                     section.setName(section.getName().trim());
                     section.setModifiedBy(userId);
+                    section.setCreatedBy(userId);
                     section.setModified(System.currentTimeMillis());
                     for (Question question : section.getQuestions()) {
                         questionService.addMoreInfoToQuestion(question, userId);
