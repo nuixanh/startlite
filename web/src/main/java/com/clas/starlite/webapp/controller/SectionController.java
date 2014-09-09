@@ -68,6 +68,8 @@ public class SectionController extends ApplicationObjectSupport {
         ErrorCodeMap errorCode = (ErrorCodeMap) output.get(Constants.ERROR_CODE);
         if(errorCode != null){
             restResultDTO = RestUtils.createInvalidOutput(errorCode);
+            Long errorLine = (Long) output.get(Constants.ERROR_LINE);
+            restResultDTO.setData(String.valueOf(errorLine));
             return restResultDTO;
         }
         SectionDTO sectionDTO = (SectionDTO) output.get(Constants.DTO);

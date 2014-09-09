@@ -27,6 +27,7 @@ public class Constants {
     public static final long SESSION_WITHOUT_EXPIRATION = -1;
 
     public static final String ERROR_CODE = "error_code";
+    public static final String ERROR_LINE = "error_line";
     public static final String DTO = "dto";
 
 }
