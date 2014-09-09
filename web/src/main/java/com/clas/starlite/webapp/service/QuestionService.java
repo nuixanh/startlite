@@ -34,17 +34,12 @@ public class QuestionService {
         }
         return null;
     }
-    public QuestionDTO create(Question q, String userId){
+    public void addMoreInfoToQuestion(Question q, String userId){
         q.setId(UUID.randomUUID().toString());
         q.setCreated(System.currentTimeMillis());
         q.setModified(System.currentTimeMillis());
         //TODO: will be changed to Status.PENDING
         q.setStatus(Status.ACTIVE.getValue());
-
-        //TODO: will be removed
-        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_ADD, q.getId());
-        q.setRevision(revision.getVersion());
-
         q.setCreatedBy(userId);
         q.setModifiedBy(userId);
         for (Answer answer : q.getAnswers()) {
@@ -52,6 +47,13 @@ public class QuestionService {
             answer.setModified(System.currentTimeMillis());
             answer.setStatus(Status.ACTIVE.getValue());
         }
+    }
+    public QuestionDTO create(Question q, String userId){
+        addMoreInfoToQuestion(q, userId);
+
+        //TODO: will be removed
+        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_ADD, q.getId());
+        q.setRevision(revision.getVersion());
         if(StringUtils.isNotBlank(q.getSectionId())){
             Section section = sectionDao.findOne(q.getSectionId());
             if(section != null){

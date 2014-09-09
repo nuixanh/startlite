@@ -69,41 +69,71 @@ public class SectionService {
             errorCode = ErrorCodeMap.FAILURE_INVALID_PARAMS;
         }else{
             Section oldSection = sectionDao.getOneActiveByName(section.getName().trim());
-            Map<String, Question> descMap = new HashMap<String, Question>();
+            Map<String, Question> descQuestionMap = new HashMap<String, Question>();
             if(errorCode == null){
                 for (Question question : section.getQuestions()) {
-                    if(descMap.containsKey(question.getDesc())){
+                    if(descQuestionMap.containsKey(question.getDesc())){
                         errorCode = ErrorCodeMap.FAILURE_DUPLICATED_QUESTION;
                         break;
                     }
-                    descMap.put(question.getDesc(), question);
+                    descQuestionMap.put(question.getDesc(), question);
                 }
             }
             if(errorCode == null){
+                Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_BATCH_UPLOAD_SECTION, oldSection.getId());
                 if(oldSection != null){
+                    Map<String, Question> oldDescQuestionMap = new HashMap<String, Question>();
                     for (Question oldQuestion : oldSection.getQuestions()) {
-
+                        oldDescQuestionMap.put(oldQuestion.getDesc(), oldQuestion);
                     }
+                    for (Question question : section.getQuestions()) {
+                        Question oldQuestion = oldDescQuestionMap.get(question.getDesc());
+                        if(oldQuestion != null){
+                            oldQuestion.setType(question.getType());
+                            oldQuestion.setRevision(revision.getVersion());
+                            oldQuestion.setModifiedBy(userId);
+                            oldQuestion.setModified(System.currentTimeMillis());
+                            Map<String, Answer> oldDescAnswerMap = new HashMap<String, Answer>();
+                            for(Answer answer: oldQuestion.getAnswers()){
+                                oldDescAnswerMap.put(answer.getDesc(), answer);
+                            }
+                            for(Answer answer: question.getAnswers()){
+                                Answer oldAnswer = oldDescAnswerMap.get(answer.getDesc());
+                                if(oldAnswer != null){
+                                    oldAnswer.setScore(answer.getScore());
+                                    oldAnswer.setModified(System.currentTimeMillis());
+                                }else{
+                                    answer.setId(UUID.randomUUID().toString());
+                                    answer.setModified(System.currentTimeMillis());
+                                    answer.setStatus(Status.ACTIVE.getValue());
+                                    oldQuestion.getAnswers().add(answer);
+                                }
+                            }
+                        }else{//new question to an existing section
+                            questionService.addMoreInfoToQuestion(question, userId);
+                            question.setRevision(revision.getVersion());
+                            oldSection.getQuestions().add(question);
+                        }
+                    }
+
+                    oldSection.setRevision(revision.getVersion());
+                    oldSection.setMyRevision(revision.getVersion());
+                    oldSection.setModifiedBy(userId);
+                    oldSection.setModified(System.currentTimeMillis());
+                    sectionDao.save(oldSection);
+                    output.put(Constants.DTO, SectionConverter.convert(oldSection));
                 }else{
                     for (Question question : section.getQuestions()) {
-//                        q.setId(UUID.randomUUID().toString());
-//                        q.setCreated(System.currentTimeMillis());
-//                        q.setModified(System.currentTimeMillis());
-//                        //TODO: will be changed to Status.PENDING
-//                        q.setStatus(Status.ACTIVE.getValue());
-//
-//                        //TODO: will be removed
-//                        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_ADD, q.getId());
-//                        q.setRevision(revision.getVersion());
-//
-//                        q.setCreatedBy(userId);
-//                        q.setModifiedBy(userId);
-//                        for (Answer answer : q.getAnswers()) {
-//                            answer.setId(UUID.randomUUID().toString());
-//                            answer.setModified(System.currentTimeMillis());
-//                            answer.setStatus(Status.ACTIVE.getValue());
-//                        }
+                        questionService.addMoreInfoToQuestion(question, userId);
+                        question.setRevision(revision.getVersion());
                     }
+                    section.setRevision(revision.getVersion());
+                    section.setMyRevision(revision.getVersion());
+                    section.setName(section.getName().trim());
+                    section.setModifiedBy(userId);
+                    section.setModified(System.currentTimeMillis());
+                    sectionDao.save(section);
+                    output.put(Constants.DTO, SectionConverter.convert(section));
                 }
 
             }
@@ -111,13 +141,6 @@ public class SectionService {
         if(errorCode != null){
             output.put(Constants.ERROR_CODE, errorCode);
         }
-//        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_BATCH_UPLOAD_SECTION, oldSection.getId());
-//        oldSection.setRevision(revision.getVersion());
-//        oldSection.setMyRevision(revision.getVersion());
-//        oldSection.setName(section.getName().trim());
-//        oldSection.setModifiedBy(userId);
-//        oldSection.setModified(System.currentTimeMillis());
-//        sectionDao.save(oldSection);
         return output;
     }
     public SectionDTO update(Section section, String userId){
@@ -313,4 +336,6 @@ public class SectionService {
     private QuestionDao questionDao;
     @Autowired
     private SolutionService solutionService;
+    @Autowired
+    private QuestionService questionService;
 }
