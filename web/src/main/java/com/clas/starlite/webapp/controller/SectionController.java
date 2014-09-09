@@ -13,6 +13,7 @@ import org.springframework.context.support.ApplicationObjectSupport;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Son on 8/19/14.
@@ -53,6 +54,23 @@ public class SectionController extends ApplicationObjectSupport {
             return restResultDTO;
         }
         SectionDTO sectionDTO = sectionService.update(section, userId);
+        restResultDTO.setData(sectionDTO);
+        restResultDTO.setSuccessful(true);
+
+        return restResultDTO;
+    }
+
+    @RequestMapping(value = "/section/batch", method= RequestMethod.POST, consumes="application/json", produces={"application/json"})
+    public RestResultDTO batch(@RequestBody Section section, @RequestHeader(value= Constants.HTTP_HEADER_USER, required = true) String userId) {
+        RestResultDTO restResultDTO = new RestResultDTO();
+
+        Map<String, Object> output = sectionService.batchUpload(section, userId);
+        ErrorCodeMap errorCode = (ErrorCodeMap) output.get(Constants.ERROR_CODE);
+        if(errorCode != null){
+            restResultDTO = RestUtils.createInvalidOutput(errorCode);
+            return restResultDTO;
+        }
+        SectionDTO sectionDTO = (SectionDTO) output.get(Constants.DTO);
         restResultDTO.setData(sectionDTO);
         restResultDTO.setSuccessful(true);
 
