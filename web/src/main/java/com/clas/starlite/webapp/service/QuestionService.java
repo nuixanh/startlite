@@ -31,6 +31,14 @@ public class QuestionService {
             if(section == null){
                 return ErrorCodeMap.FAILURE_SECTION_NOT_FOUND;
             }
+            List<Question> questions = section.getQuestions();
+            if(questions != null && questions.size() > 0){
+                for (Question question : questions) {
+                    if(question.getDesc().equals(q.getDesc()) && !question.getId().equals(q.getId())){
+                        return ErrorCodeMap.FAILURE_DUPLICATED_QUESTION;
+                    }
+                }
+            }
         }
         return null;
     }
