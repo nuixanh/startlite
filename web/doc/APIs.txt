@@ -6,6 +6,7 @@ curl -G "http://starlite.clas.mobi:9099/starlite/login?email=son@live.com&passwo
 curl -H "userId: 4d9d51aa-c3d8-47d1-b62d-5f4862c7a838" -H "sessionId: 646867be-ecd1-433d-a85a-2ee21b4d90be" http://clas-starlite.cloudapp.net:9099/starlite/sections | python -m json.tool
 curl -H "userId: 4d9d51aa-c3d8-47d1-b62d-5f4862c7a838" -H "sessionId: 646867be-ecd1-433d-a85a-2ee21b4d90be" http://clas-starlite.cloudapp.net:9099/starlite/section/attach/42c4dda5-340d-44c3-b5cd-1d61d6ffb92f/eef8594f-0d16-4379-b27a-ee27f9cf95a9 | python -m json.tool
 
+curl -H "userId: 4d9d51aa-c3d8-47d1-b62d-5f4862c7a838" -H "sessionId: 646867be-ecd1-433d-a85a-2ee21b4d90be" -H "Content-Type: application/json" http://clas-starlite.cloudapp.net:9099/starlite/section/batch -d '{"name":"Son Section 1",	"questions":[{"desc": "Son Question 1","type": 1,"answers":[  {"desc": "Answer 1","score": 3  },  {"desc": "Answer 2","score": 2  }]},{"desc": "Son Question 2","type": 1,"answers":[  {"desc": "Answer 1","score": 3  },  {"desc": "Answer 2","score": 2  }]}]}' | python -m json.tool
 ---------------------------------------------- SCENARIO ------------------------------------------------------------------------------
 
 curl -H "userId: 4d9d51aa-c3d8-47d1-b62d-5f4862c7a838" -H "sessionId: 646867be-ecd1-433d-a85a-2ee21b4d90be" http://clas-starlite.cloudapp.net:9099/starlite/scenarios | python -m json.tool

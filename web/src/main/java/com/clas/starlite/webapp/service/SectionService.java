@@ -79,8 +79,9 @@ public class SectionService {
                     descQuestionMap.put(question.getDesc(), question);
                 }
             }
+            String sectionId = oldSection != null? oldSection.getId(): UUID.randomUUID().toString();
             if(errorCode == null){
-                Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_BATCH_UPLOAD_SECTION, oldSection.getId());
+                Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_BATCH_UPLOAD_SECTION, sectionId);
                 if(oldSection != null){
                     Map<String, Question> oldDescQuestionMap = new HashMap<String, Question>();
                     for (Question oldQuestion : oldSection.getQuestions()) {
@@ -124,7 +125,7 @@ public class SectionService {
                     sectionDao.save(oldSection);
                     output.put(Constants.DTO, SectionConverter.convert(oldSection));
                 }else{//new Section
-                    section.setId(UUID.randomUUID().toString());
+                    section.setId(sectionId);
                     section.setRevision(revision.getVersion());
                     section.setMyRevision(revision.getVersion());
                     section.setName(section.getName().trim());
