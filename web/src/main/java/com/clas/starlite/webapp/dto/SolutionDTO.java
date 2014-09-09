@@ -9,6 +9,10 @@ public class SolutionDTO {
     private String id;
     private String desc;
     private String attr;
+    private List<String> infoUrl;
+    private List<String> caseStudy;
+    private List<String> video;
+    private String trial;
     private String parentId;
     private boolean isGroup;
     private long created;
@@ -19,10 +23,14 @@ public class SolutionDTO {
     private List<SolutionDTO> solutions;
     private List<SolutionRuleDTO> rules;
 
-    public SolutionDTO(String id, String desc, String attr, String parentId, boolean isGroup, long created, long modified, int status, long revision, String rootParentId) {
+    public SolutionDTO(String id, String desc, String attr, List<String> infoUrl, List<String> caseStudy, List<String> video, String trial, String parentId, boolean isGroup, long created, long modified, int status, long revision, String rootParentId) {
         this.id = id;
         this.desc = desc;
         this.attr = attr;
+        this.infoUrl = infoUrl;
+        this.caseStudy = caseStudy;
+        this.video = video;
+        this.trial = trial;
         this.parentId = parentId;
         this.isGroup = isGroup;
         this.created = created;
@@ -126,5 +134,37 @@ public class SolutionDTO {
 
     public void setRules(List<SolutionRuleDTO> rules) {
         this.rules = rules;
+    }
+
+    public List<String> getInfoUrl() {
+        return infoUrl;
+    }
+
+    public void setInfoUrl(List<String> infoUrl) {
+        this.infoUrl = infoUrl;
+    }
+
+    public List<String> getCaseStudy() {
+        return caseStudy;
+    }
+
+    public void setCaseStudy(List<String> caseStudy) {
+        this.caseStudy = caseStudy;
+    }
+
+    public List<String> getVideo() {
+        return video;
+    }
+
+    public void setVideo(List<String> video) {
+        this.video = video;
+    }
+
+    public String getTrial() {
+        return trial;
+    }
+
+    public void setTrial(String trial) {
+        this.trial = trial;
     }
 }
