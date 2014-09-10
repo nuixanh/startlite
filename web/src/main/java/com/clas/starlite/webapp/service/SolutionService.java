@@ -153,14 +153,20 @@ public class SolutionService {
         return SolutionConverter.convertRule(r);
     }
     public ErrorCodeMap validate(Solution s){
-        if(s == null || StringUtils.isBlank(s.getDesc())
-                || (!s.isGroup() && StringUtils.isBlank(s.getAttr()))
+        if(s == null || StringUtils.isBlank(s.getAttr())
+                || (!s.isGroup() && StringUtils.isBlank(s.getDesc()))
                 || (!s.isGroup() && StringUtils.isBlank(s.getParentId()))){
             return ErrorCodeMap.FAILURE_INVALID_PARAMS;
         }else if(StringUtils.isNotBlank(s.getParentId())){
             Solution solution = solutionDao.findOne(s.getParentId());
             if(solution == null){
                 return ErrorCodeMap.FAILURE_SOLUTION_NOT_FOUND;
+            }
+        }
+        List<Solution> solutions = solutionDao.getActiveByAttr(s.getAttr(), s.isGroup());
+        for (Solution solution : solutions) {
+            if(!solution.getId().equals(s.getId())){
+                return ErrorCodeMap.FAILURE_DUPLICATED_NAME;
             }
         }
         return null;
