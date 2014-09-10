@@ -213,6 +213,11 @@ public class SolutionService {
         oldSolution.setModifiedBy(userId);
         oldSolution.setDesc(s.getDesc());
         oldSolution.setAttr(s.getAttr());
+        oldSolution.setInfoUrl(s.getInfoUrl());
+        oldSolution.setCaseStudy(s.getCaseStudy());
+        oldSolution.setVideo(s.getVideo());
+        oldSolution.setTrial(s.getTrial());
+        oldSolution.setPrecedenceIds(s.getPrecedenceIds());
         oldSolution.setGroup(s.isGroup());
         Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SOLUTION, Constants.REVISION_ACTION_EDIT, oldSolution.getId());
         oldSolution.setRevision(revision.getVersion());
