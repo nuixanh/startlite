@@ -42,6 +42,15 @@ public class LoginService {
                 System.currentTimeMillis(), null, System.currentTimeMillis(), link, locale);
         userDao.save(user);
     }
+    public ErrorCodeMap setRole(String email, int role){
+        User user = userDao.findOneByEmail(email);
+        if(user == null){
+            return ErrorCodeMap.FAILURE_USER_NOT_FOUND;
+        }
+        user.setRole(role);
+        userDao.save(user);
+        return null;
+    }
     public UserLoginDTO login(String email, String password){
         UserLoginDTO output = null;
         if(StringUtils.isNotBlank(email) && StringUtils.isNotBlank(password)){

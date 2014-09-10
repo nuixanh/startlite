@@ -1,6 +1,5 @@
 package com.clas.starlite.webapp.controller;
 
-import com.clas.starlite.common.RijndaelCrypt;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
 import com.clas.starlite.webapp.dto.RestResultDTO;
 import com.clas.starlite.webapp.dto.UserLoginDTO;
@@ -40,6 +39,25 @@ public class LoginController extends ApplicationObjectSupport {
             }else{
                 restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_LOGIN_FAIL);
             }
+        }else{
+            restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_INVALID_PARAMS);
+        }
+
+        return restResultDTO;
+    }
+
+    @RequestMapping(value = "/setRole", method= RequestMethod.GET, produces={"application/json"})
+    public RestResultDTO setRole(@RequestParam(value="email", required=true, defaultValue="") String email,
+                               @RequestParam(value="role", required=true, defaultValue="0") int role) {
+        RestResultDTO restResultDTO = new RestResultDTO();
+
+        if(StringUtils.isNotBlank(email)){
+            ErrorCodeMap errorCode = loginService.setRole(email, role);
+            if(errorCode != null){
+                restResultDTO = RestUtils.createInvalidOutput(errorCode);
+                return restResultDTO;
+            }
+            restResultDTO.setSuccessful(true);
         }else{
             restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_INVALID_PARAMS);
         }
