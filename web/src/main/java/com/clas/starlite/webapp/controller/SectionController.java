@@ -22,7 +22,7 @@ import java.util.Map;
 public class SectionController extends ApplicationObjectSupport {
 
     @RequestMapping(value = "/sections", method= RequestMethod.GET, produces={"application/json"})
-    public RestResultDTO login(@RequestParam(value="revision", required=false) Long revision) {
+    public RestResultDTO list(@RequestParam(value="revision", required=false) Long revision) {
         RestResultDTO restResultDTO = new RestResultDTO();
         List<SectionDTO> sectionDTOs = sectionService.getList(revision);
         restResultDTO.setData(sectionDTOs);
@@ -80,7 +80,7 @@ public class SectionController extends ApplicationObjectSupport {
     }
 
     @RequestMapping(value = "/section/attach/{id}/{scenarioId}", method= RequestMethod.GET, produces={"application/json"})
-    public RestResultDTO create(@PathVariable("id") String sectionId,
+    public RestResultDTO attach(@PathVariable("id") String sectionId,
                                 @PathVariable("scenarioId") String scenarioId,
                                 @RequestHeader(value= Constants.HTTP_HEADER_USER, required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();

@@ -283,7 +283,7 @@ public class SectionService {
         List<Scenario> parents = section.getScenarios();
         if(parents != null && parents.size() > 0){
             for (Scenario parent : parents) {
-                if(parent.getRootParentId().equals(attachedScenario.getRootParentId())){
+                if(parent.getStatus() == Status.ACTIVE.getValue() && parent.getRootParentId().equals(attachedScenario.getRootParentId())){
                     return ErrorCodeMap.FAILURE_SECTION_BELONG_SAME_ROOT_SCENARIO;
                 }
             }
