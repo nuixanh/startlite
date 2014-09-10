@@ -267,6 +267,9 @@ public class SolutionService {
                         s.setRevision(revision.getVersion());
                         s.setMyRevision(revision.getVersion());
                         s.setParentId(groupId);
+                        if(oldGroup.getSolutions() == null){
+                            oldGroup.setSolutions(new ArrayList<Solution>());
+                        }
                         oldGroup.getSolutions().add(s);
                         solutionDao.save(s);
                     }
@@ -285,12 +288,14 @@ public class SolutionService {
                     group.setModifiedBy(userId);
                     group.setCreatedBy(userId);
                     group.setModified(System.currentTimeMillis());
-                    for (Solution s : group.getSolutions()) {
-                        addMoreInfoToSolution(s, userId);
-                        s.setRevision(revision.getVersion());
-                        s.setMyRevision(revision.getVersion());
-                        s.setParentId(groupId);
-                        solutionDao.save(s);
+                    if(group.getSolutions() != null){
+                        for (Solution s : group.getSolutions()) {
+                            addMoreInfoToSolution(s, userId);
+                            s.setRevision(revision.getVersion());
+                            s.setMyRevision(revision.getVersion());
+                            s.setParentId(groupId);
+                            solutionDao.save(s);
+                        }
                     }
                     solutionDao.save(group);
                     output.put(Constants.DTO, SolutionConverter.convert(group));

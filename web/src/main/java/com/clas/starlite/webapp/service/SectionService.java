@@ -107,6 +107,9 @@ public class SectionService {
                         questionService.addMoreInfoToQuestion(question, userId);
                         question.setRevision(revision.getVersion());
                         question.setSectionId(oldSection.getId());
+                        if(oldSection.getQuestions() == null){
+                            oldSection.setQuestions(new ArrayList<Question>());
+                        }
                         oldSection.getQuestions().add(question);
                         questionDao.save(question);
                     }
