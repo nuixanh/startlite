@@ -73,8 +73,8 @@ public class SolutionController {
             restResultDTO.setData(String.valueOf(errorLine));
             return restResultDTO;
         }
-        SectionDTO sectionDTO = (SectionDTO) output.get(Constants.DTO);
-        restResultDTO.setData(sectionDTO);
+        SolutionDTO solutionDTO = (SolutionDTO) output.get(Constants.DTO);
+        restResultDTO.setData(solutionDTO);
         restResultDTO.setSuccessful(true);
 
         return restResultDTO;
