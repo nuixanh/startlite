@@ -1,5 +1,6 @@
 curl -G "http://clas-starlite.cloudapp.net:9099/starlite/login?email=son@live.com&password=test" | python -m json.tool
 curl -G "http://starlite.clas.mobi:9099/starlite/login?email=son@live.com&password=test" | python -m json.tool
+curl -G "http://clas-starlite.cloudapp.net:9099/starlite/setRole?email=abc.com&role=0" -H "userId: 4d9d51aa-c3d8-47d1-b62d-5f4862c7a838" -H "sessionId: 646867be-ecd1-433d-a85a-2ee21b4d90be" | python -m json.tool
 
 ---------------------------------------------- SECTION ------------------------------------------------------------------------------
 
@@ -19,3 +20,4 @@ curl -d '{"solutionId":"3062a88f-a312-4157-8d4d-34d52dd12d18","type": 1,"conditi
 curl -H "userId: 4d9d51aa-c3d8-47d1-b62d-5f4862c7a838" -H "sessionId: 646867be-ecd1-433d-a85a-2ee21b4d90be" -H "Content-Type: application/json" http://clas-starlite.cloudapp.net:9099/starlite/solution/batch -d '{"name":"Son group","group": true,"solutions":[{"name":"Solution 1","desc":"Solution Desc 1","infoUrl": ["http://abc.com"],"trial":"test"}]}' | python -m json.tool
 
 curl -H "userId: 4d9d51aa-c3d8-47d1-b62d-5f4862c7a838" -H "sessionId: 646867be-ecd1-433d-a85a-2ee21b4d90be" http://clas-starlite.cloudapp.net:9099/starlite/solutions | python -m json.tool
+
