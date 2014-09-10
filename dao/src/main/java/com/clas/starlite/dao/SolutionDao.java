@@ -40,4 +40,12 @@ public class SolutionDao extends BaseDao<Solution, String>{
         Query q = Query.query(cr);
         return template.find(q, Solution.class);
     }
+    public List<Solution> getAllActive(Boolean isGroup){
+        Criteria cr = Criteria.where("status").is(Status.ACTIVE.getValue());
+        if(isGroup != null){
+            cr = cr.and("isGroup").is(isGroup);
+        }
+        Query q = Query.query(cr);
+        return template.find(q, Solution.class);
+    }
 }

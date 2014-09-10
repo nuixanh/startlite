@@ -4,16 +4,14 @@ import com.clas.starlite.common.Constants;
 import com.clas.starlite.domain.Solution;
 import com.clas.starlite.domain.SolutionRule;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
-import com.clas.starlite.webapp.dto.RestResultDTO;
-import com.clas.starlite.webapp.dto.ScenarioDTO;
-import com.clas.starlite.webapp.dto.SolutionDTO;
-import com.clas.starlite.webapp.dto.SolutionRuleDTO;
+import com.clas.starlite.webapp.dto.*;
 import com.clas.starlite.webapp.service.SolutionService;
 import com.clas.starlite.webapp.util.RestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Son on 8/17/14.
@@ -60,6 +58,25 @@ public class SolutionController {
         }else{
             restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_OBJECT_NOT_FOUND);
         }
+        return restResultDTO;
+    }
+
+    @RequestMapping(value = "/solution/batch", method= RequestMethod.POST, consumes="application/json", produces={"application/json"})
+    public RestResultDTO batch(@RequestBody Solution group, @RequestHeader(value= Constants.HTTP_HEADER_USER, required = true) String userId) {
+        RestResultDTO restResultDTO = new RestResultDTO();
+
+        Map<String, Object> output = solutionService.batchUpload(group, userId);
+        ErrorCodeMap errorCode = (ErrorCodeMap) output.get(Constants.ERROR_CODE);
+        if(errorCode != null){
+            restResultDTO = RestUtils.createInvalidOutput(errorCode);
+            Long errorLine = (Long) output.get(Constants.ERROR_LINE);
+            restResultDTO.setData(String.valueOf(errorLine));
+            return restResultDTO;
+        }
+        SectionDTO sectionDTO = (SectionDTO) output.get(Constants.DTO);
+        restResultDTO.setData(sectionDTO);
+        restResultDTO.setSuccessful(true);
+
         return restResultDTO;
     }
 

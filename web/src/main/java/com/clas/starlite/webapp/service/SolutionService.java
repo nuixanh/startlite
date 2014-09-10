@@ -209,77 +209,80 @@ public class SolutionService {
         }
     }
 
-    /*public Map<String, Object> batchUpload(Solution solution, String userId){
+    public Map<String, Object> batchUpload(Solution group, String userId){
         Map<String, Object> output = new HashMap<String, Object>();
         ErrorCodeMap errorCode = null;
         Long errorLine = new Long(-1);
-        if(solution == null || StringUtils.isBlank(solution.getAttr()) || !solution.isGroup()){
+        if(group == null || StringUtils.isBlank(group.getName()) || !group.isGroup()){
             errorCode = ErrorCodeMap.FAILURE_INVALID_PARAMS;
         }else{
-            Solution oldSolution = solutionDao.getOneActiveByAttr(solution.getAttr().trim(), true);
-            Map<String, Question> descQuestionMap = new HashMap<String, Question>();
+            Map<String, Solution> nameSolutionMap = new HashMap<String, Solution>();
             if(errorCode == null){
                 long idx = 1;
-                for (Solution s : oldSolution.getSolutions()) {
-                    if(descQuestionMap.containsKey(question.getDesc())){
-                        errorCode = ErrorCodeMap.FAILURE_DUPLICATED_QUESTION_CSV;
+                for (Solution s : group.getSolutions()) {
+                    if(nameSolutionMap.containsKey(s.getName())){
+                        errorCode = ErrorCodeMap.FAILURE_DUPLICATED_SOLUTION_CSV;
                         errorLine = idx;
                         idx++;
                         break;
                     }
-                    descQuestionMap.put(question.getDesc(), question);
+                    nameSolutionMap.put(s.getName(), s);
                 }
             }
-            if(errorCode == null && oldSection != null){
-                Map<String, Question> oldDescQuestionMap = new HashMap<String, Question>();
-                for (Question oldQuestion : oldSection.getQuestions()) {
-                    oldDescQuestionMap.put(oldQuestion.getDesc(), oldQuestion);
+            Solution oldGroup = solutionDao.getOneActiveByName(group.getName().trim(), true);
+            if(errorCode == null && oldGroup != null){
+                List<Solution> allActiveSolutions = solutionDao.getAllActive(false);
+                Map<String, Solution> activeNameSolutionMap = new HashMap<String, Solution>();
+                for (Solution activeSolution : allActiveSolutions) {
+                    activeNameSolutionMap.put(activeSolution.getName(), activeSolution);
                 }
                 long idx = 1;
-                for (Question question : section.getQuestions()) {
-                    if(oldDescQuestionMap.containsKey(question.getDesc())){
-                        errorCode = ErrorCodeMap.FAILURE_DUPLICATED_QUESTION;
+                for (Solution s : group.getSolutions()) {
+                    if(activeNameSolutionMap.containsKey(s.getName())){
+                        errorCode = ErrorCodeMap.FAILURE_DUPLICATED_SOLUTION;
                         errorLine = idx;
                         idx++;
                         break;
                     }
                 }
             }
-            String sectionId = oldSection != null? oldSection.getId(): UUID.randomUUID().toString();
+            String groupId = oldGroup != null? oldGroup.getId(): UUID.randomUUID().toString();
             if(errorCode == null){
-                Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_BATCH_UPLOAD_SECTION, sectionId);
-                if(oldSection != null){
-                    for (Question question : section.getQuestions()) {
-                        //new question to an existing section
-                        questionService.addMoreInfoToQuestion(question, userId);
-                        question.setRevision(revision.getVersion());
-                        question.setSectionId(oldSection.getId());
-                        oldSection.getQuestions().add(question);
-                        questionDao.save(question);
+                Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SOLUTION, Constants.REVISION_ACTION_BATCH_UPLOAD_SOLUTION, groupId);
+                if(oldGroup != null){
+                    for (Solution s : group.getSolutions()) {
+                        //new Solution to an existing group
+                        addMoreInfoToSolution(s, userId);
+                        s.setRevision(revision.getVersion());
+                        s.setMyRevision(revision.getVersion());
+                        s.setParentId(groupId);
+                        oldGroup.getSolutions().add(s);
+                        solutionDao.save(s);
                     }
-                    oldSection.setRevision(revision.getVersion());
-                    oldSection.setMyRevision(revision.getVersion());
-                    oldSection.setModifiedBy(userId);
-                    oldSection.setModified(System.currentTimeMillis());
-                    sectionDao.save(oldSection);
-                    output.put(Constants.DTO, SectionConverter.convert(oldSection));
-                }else{//new Section
-                    section.setId(sectionId);
-                    section.setStatus(Status.ACTIVE.getValue());
-                    section.setRevision(revision.getVersion());
-                    section.setMyRevision(revision.getVersion());
-                    section.setName(section.getName().trim());
-                    section.setModifiedBy(userId);
-                    section.setCreatedBy(userId);
-                    section.setModified(System.currentTimeMillis());
-                    for (Question question : section.getQuestions()) {
-                        questionService.addMoreInfoToQuestion(question, userId);
-                        question.setRevision(revision.getVersion());
-                        question.setSectionId(section.getId());
-                        questionDao.save(question);
+                    oldGroup.setRevision(revision.getVersion());
+                    oldGroup.setMyRevision(revision.getVersion());
+                    oldGroup.setModifiedBy(userId);
+                    oldGroup.setModified(System.currentTimeMillis());
+                    solutionDao.save(oldGroup);
+                    output.put(Constants.DTO, SolutionConverter.convert(oldGroup));
+                }else{//new GROUP
+                    group.setId(groupId);
+                    group.setStatus(Status.ACTIVE.getValue());
+                    group.setRevision(revision.getVersion());
+                    group.setMyRevision(revision.getVersion());
+                    group.setName(group.getName().trim());
+                    group.setModifiedBy(userId);
+                    group.setCreatedBy(userId);
+                    group.setModified(System.currentTimeMillis());
+                    for (Solution s : group.getSolutions()) {
+                        addMoreInfoToSolution(s, userId);
+                        s.setRevision(revision.getVersion());
+                        s.setMyRevision(revision.getVersion());
+                        s.setParentId(groupId);
+                        solutionDao.save(s);
                     }
-                    sectionDao.save(section);
-                    output.put(Constants.DTO, SectionConverter.convert(section));
+                    solutionDao.save(group);
+                    output.put(Constants.DTO, SolutionConverter.convert(group));
                 }
             }
         }
@@ -288,7 +291,7 @@ public class SolutionService {
         }
         output.put(Constants.ERROR_LINE, errorLine);
         return output;
-    }*/
+    }
     public SolutionDTO update(Solution s, String userId){
         if(StringUtils.isBlank(s.getId())){
             return null;
@@ -319,13 +322,16 @@ public class SolutionService {
         solutionDao.save(oldSolution);
         return SolutionConverter.convert(oldSolution);
     }
-    public SolutionDTO create(Solution s, String userId){
+    private void addMoreInfoToSolution(Solution s, String userId){
         s.setId(UUID.randomUUID().toString());
         s.setCreated(System.currentTimeMillis());
         s.setModified(System.currentTimeMillis());
         s.setStatus(Status.ACTIVE.getValue());
         s.setCreatedBy(userId);
         s.setModifiedBy(userId);
+    }
+    public SolutionDTO create(Solution s, String userId){
+        addMoreInfoToSolution(s, userId);
         if(StringUtils.isNotBlank(s.getParentId())){
             Solution parent = solutionDao.findOne(s.getParentId());
             if(parent != null){
