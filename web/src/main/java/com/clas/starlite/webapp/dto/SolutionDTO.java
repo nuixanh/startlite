@@ -7,8 +7,8 @@ import java.util.List;
  */
 public class SolutionDTO {
     private String id;
+    private String name;
     private String desc;
-    private String attr;
     private List<String> infoUrl;
     private List<String> caseStudy;
     private List<String> video;
@@ -24,10 +24,10 @@ public class SolutionDTO {
     private List<SolutionDTO> solutions;
     private List<SolutionRuleDTO> rules;
 
-    public SolutionDTO(String id, String desc, String attr, List<String> infoUrl, List<String> caseStudy, List<String> video, String trial, String parentId, boolean isGroup, long created, long modified, int status, long revision, String rootParentId, List<String> precedenceIds) {
+    public SolutionDTO(String id, String desc, String name, List<String> infoUrl, List<String> caseStudy, List<String> video, String trial, String parentId, boolean isGroup, long created, long modified, int status, long revision, String rootParentId, List<String> precedenceIds) {
         this.id = id;
         this.desc = desc;
-        this.attr = attr;
+        this.name = name;
         this.infoUrl = infoUrl;
         this.caseStudy = caseStudy;
         this.video = video;
@@ -58,12 +58,12 @@ public class SolutionDTO {
         this.desc = desc;
     }
 
-    public String getAttr() {
-        return attr;
+    public String getName() {
+        return name;
     }
 
-    public void setAttr(String attr) {
-        this.attr = attr;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getParentId() {

@@ -12,8 +12,8 @@ import java.util.List;
 @Document(collection="solution")
 public class Solution {
     private String id;
+    private String name;
     private String desc;
-    private String attr;
     private List<String> infoUrl;
     private List<String> caseStudy;
     private List<String> video;
@@ -48,14 +48,6 @@ public class Solution {
 
     public void setDesc(String desc) {
         this.desc = desc;
-    }
-
-    public String getAttr() {
-        return attr;
-    }
-
-    public void setAttr(String attr) {
-        this.attr = attr;
     }
 
     public String getParentId() {
@@ -192,5 +184,13 @@ public class Solution {
 
     public void setPrecedenceIds(List<String> precedenceIds) {
         this.precedenceIds = precedenceIds;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

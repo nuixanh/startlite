@@ -23,8 +23,8 @@ public class SolutionDao extends BaseDao<Solution, String>{
         return template.find(q, Solution.class);
     }
 
-    public Solution getOneActiveByAttr(String attr, Boolean isGroup){
-        Criteria cr = Criteria.where("attr").is(attr).and("status").is(Status.ACTIVE.getValue());
+    public Solution getOneActiveByName(String name, Boolean isGroup){
+        Criteria cr = Criteria.where("name").is(name).and("status").is(Status.ACTIVE.getValue());
         if(isGroup != null){
             cr = cr.and("isGroup").is(isGroup);
         }
@@ -32,8 +32,8 @@ public class SolutionDao extends BaseDao<Solution, String>{
         return template.findOne(q, Solution.class);
     }
 
-    public List<Solution> getActiveByAttr(String attr, Boolean isGroup){
-        Criteria cr = Criteria.where("attr").is(attr).and("status").is(Status.ACTIVE.getValue());
+    public List<Solution> getActiveByName(String name, Boolean isGroup){
+        Criteria cr = Criteria.where("name").is(name).and("status").is(Status.ACTIVE.getValue());
         if(isGroup != null){
             cr = cr.and("isGroup").is(isGroup);
         }
