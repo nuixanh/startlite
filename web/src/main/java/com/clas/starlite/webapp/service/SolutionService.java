@@ -220,6 +220,17 @@ public class SolutionService {
             if(errorCode == null){
                 long idx = 1;
                 for (Solution s : group.getSolutions()) {
+                    if(StringUtils.isBlank(s.getName()) || StringUtils.isBlank(s.getDesc())){
+                        errorCode = ErrorCodeMap.FAILURE_BLANK_VALUE;
+                        errorLine = idx;
+                        idx++;
+                        break;
+                    }
+                }
+            }
+            if(errorCode == null){
+                long idx = 1;
+                for (Solution s : group.getSolutions()) {
                     if(nameSolutionMap.containsKey(s.getName())){
                         errorCode = ErrorCodeMap.FAILURE_DUPLICATED_SOLUTION_CSV;
                         errorLine = idx;
