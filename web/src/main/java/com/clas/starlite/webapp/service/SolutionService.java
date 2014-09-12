@@ -155,7 +155,6 @@ public class SolutionService {
     }
     public ErrorCodeMap validate(Solution s){
         if(s == null || StringUtils.isBlank(s.getName())
-                || (!s.isGroup() && StringUtils.isBlank(s.getDesc()))
                 || (!s.isGroup() && StringUtils.isBlank(s.getParentId()))){
             return ErrorCodeMap.FAILURE_INVALID_PARAMS;
         }else if(StringUtils.isNotBlank(s.getParentId())){
@@ -220,7 +219,7 @@ public class SolutionService {
             if(errorCode == null){
                 long idx = 1;
                 for (Solution s : group.getSolutions()) {
-                    if(StringUtils.isBlank(s.getName()) || StringUtils.isBlank(s.getDesc())){
+                    if(StringUtils.isBlank(s.getName())){
                         errorCode = ErrorCodeMap.FAILURE_BLANK_VALUE;
                         errorLine = idx;
                         idx++;
