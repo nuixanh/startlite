@@ -162,7 +162,9 @@ public class SectionService {
         sectionDao.save(oldSection);
         return SectionConverter.convert(oldSection);
     }
-    public SectionDTO delete(String sectionId, String userId){
+    public Map<String, Object> delete(String sectionId, String userId){
+        Map<String, Object> output = new HashMap<String, Object>();
+        boolean updateRule = false;
         Section section = sectionDao.findOne(sectionId);
         if(section != null){
             section.setStatus(Status.DEACTIVE.getValue());
@@ -207,13 +209,12 @@ public class SectionService {
                     question.setModified(System.currentTimeMillis());
                     questionDao.save(question);
                 }
-                solutionService.updateSolutionRuleFromDeletedQuestions(qIds);
+                updateRule = solutionService.updateSolutionRuleFromDeletedQuestions(qIds);
             }
-
-            return SectionConverter.convert(section);
-        }else{
-            return null;
+            output.put(Constants.DTO, SectionConverter.convert(section));
+            output.put(Constants.FLAG, updateRule);
         }
+        return output;
     }
     public ErrorCodeMap detachToScenario(String sectionId, String scenarioId, String userId){
         if(StringUtils.isBlank(sectionId) || StringUtils.isBlank(scenarioId)){

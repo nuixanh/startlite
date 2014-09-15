@@ -30,5 +30,6 @@ public class Constants {
     public static final String ERROR_CODE = "error_code";
     public static final String ERROR_LINE = "error_line";
     public static final String DTO = "dto";
+    public static final String FLAG = "flag";
 
 }

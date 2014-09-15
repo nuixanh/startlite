@@ -112,9 +112,10 @@ public class SectionController extends ApplicationObjectSupport {
     @RequestMapping(value = "/section/delete/{id}", method= RequestMethod.GET, produces={"application/json"})
     public RestResultDTO delete(@PathVariable("id") String sectionId, @RequestHeader(value=Constants.HTTP_HEADER_USER, required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();
-        SectionDTO dto = sectionService.delete(sectionId, userId);
+        Map<String, Object> output = sectionService.delete(sectionId, userId);
+        SectionDTO dto = (SectionDTO)output.get(Constants.DTO);
         if(dto != null){
-            restResultDTO.setData(dto);
+            restResultDTO.setData(output);
             restResultDTO.setSuccessful(true);
         }else{
             restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_OBJECT_NOT_FOUND);

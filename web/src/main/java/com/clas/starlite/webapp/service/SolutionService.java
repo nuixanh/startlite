@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.concurrent.locks.Condition;
 
 /**
  * Created by Son on 8/17/14.
@@ -368,18 +369,74 @@ public class SolutionService {
         solutionDao.save(s);
         return SolutionConverter.convert(s);
     }
-
-    public void updateSolutionRuleFromDeletedQuestions(Collection<String> qIDs){
+    public boolean updateSolutionRuleFromDeletedAnswers(String qID, Collection<String> aIDs){
+        boolean rs = false;
+        Set<String> qIDs = new HashSet<String>();
+        qIDs.add(qID);
         List<SolutionRule> rules = solutionRuleDao.getRulesByQuestionIds(qIDs);
         if(rules != null && rules.size() > 0){
             Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SOLUTION, Constants.REVISION_ACTION_DELETE_QUESTION, qIDs);
             for (SolutionRule rule : rules) {
-                rule.setStatus(Status.DEACTIVE.getValue());
                 rule.setRevision(revision.getVersion());
+                for(List<RuleCondition> conditions: rule.getConditions()){
+                    for(RuleCondition condition: conditions){
+                        if(qID.equals(condition.getQuestionId())){
+                            List<List<String>> answerIDList = new ArrayList<List<String>>();
+
+                            for(List<String> answerIDs: condition.getAnswerIds()){
+                                boolean deleteAnswer = false;
+                                for(String aID: answerIDs){
+                                    if(aIDs.contains(aID)){
+                                        deleteAnswer = true;
+                                        rs = true;
+                                    }
+                                }
+                                if(!deleteAnswer){
+                                    answerIDList.add(answerIDs);
+                                }
+                            }
+                            condition.setAnswerIds(answerIDList);
+                        }
+                    }
+                }
+
                 solutionRuleDao.save(rule);
-                removeRuleFromSolution(rule.getId(), rule.getSolutionId(), revision);
             }
         }
+        return rs;
+    }
+    public boolean updateSolutionRuleFromDeletedQuestions(Collection<String> qIDs){
+        boolean rs = false;
+        List<SolutionRule> rules = solutionRuleDao.getRulesByQuestionIds(qIDs);
+        if(rules != null && rules.size() > 0){
+            Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_SOLUTION, Constants.REVISION_ACTION_DELETE_QUESTION, qIDs);
+            for (SolutionRule rule : rules) {
+                rule.setRevision(revision.getVersion());
+                List<List<RuleCondition>> conditionList = new ArrayList<List<RuleCondition>>();
+                for(List<RuleCondition> conditions: rule.getConditions()){
+                    boolean deleteCondition = false;
+                    for(RuleCondition condition: conditions){
+                        if(qIDs.contains(condition.getQuestionId())){
+                            deleteCondition = true;
+                            rs = true;
+                            break;
+                        }
+                    }
+                    if(!deleteCondition){
+                        conditionList.add(conditions);
+                    }
+                }
+                if(conditionList.size() == 0){
+                    rule.setStatus(Status.DEACTIVE.getValue());
+                    rule.setConditions(null);
+                    removeRuleFromSolution(rule.getId(), rule.getSolutionId(), revision);
+                }else{
+                    rule.setConditions(conditionList);
+                }
+                solutionRuleDao.save(rule);
+            }
+        }
+        return rs;
     }
 
     @Autowired

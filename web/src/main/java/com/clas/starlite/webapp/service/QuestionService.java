@@ -9,6 +9,7 @@ import com.clas.starlite.dao.SectionDao;
 import com.clas.starlite.domain.*;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
 import com.clas.starlite.webapp.converter.QuestionConverter;
+import com.clas.starlite.webapp.converter.SectionConverter;
 import com.clas.starlite.webapp.dto.QuestionDTO;
 import com.clas.starlite.webapp.util.RestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -77,13 +78,15 @@ public class QuestionService {
         return QuestionConverter.convert(q);
     }
 
-    public QuestionDTO update(Question question, String userId){
+    public Map<String, Object> update(Question question, String userId){
+        Map<String, Object> output = new HashMap<String, Object>();
+        boolean updateRule = false;
         if(StringUtils.isBlank(question.getId())){
-            return null;
+            return output;
         }
         Question oldQuestion = questionDao.findOne(question.getId());
         if(oldQuestion == null){
-            return null;
+            return output;
         }
         oldQuestion.setDesc(question.getDesc());
         oldQuestion.setType(question.getType());
@@ -116,10 +119,15 @@ public class QuestionService {
             }
             ansIDSet.add(ansId);
         }
+        Set<String> deletedAnswerIds = new HashSet<String>();
         for (Answer oldAnswer : oldAnswers) {
-            if(!ansIDSet.contains(oldAnswer.getId())){
+            if(!ansIDSet.contains(oldAnswer.getId()) && oldAnswer.getStatus() == Status.ACTIVE.getValue()){
                 oldAnswer.setStatus(Status.DEACTIVE.getValue());
+                deletedAnswerIds.add(oldAnswer.getId());
             }
+        }
+        if(deletedAnswerIds.size() > 0){
+            updateRule = solutionService.updateSolutionRuleFromDeletedAnswers(question.getId(), deletedAnswerIds);
         }
 
         Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_EDIT, oldQuestion.getId());
@@ -155,11 +163,15 @@ public class QuestionService {
             }
         }
         questionDao.save(oldQuestion);
-        return QuestionConverter.convert(oldQuestion);
+        output.put(Constants.FLAG, new Boolean(updateRule));
+        output.put(Constants.DTO, QuestionConverter.convert(oldQuestion));
+        return output;
     }
 
-    public QuestionDTO updateStatus(String questionId, String userId, int status){
+    public Map<String, Object> updateStatus(String questionId, String userId, int status){
         Question q = questionDao.findOne(questionId);
+        Map<String, Object> output = new HashMap<String, Object>();
+        boolean updateRule = false;
         if(q != null){
             q.setStatus(status);
             q.setModifiedBy(userId);
@@ -182,15 +194,15 @@ public class QuestionService {
                     section.setRevision(revision.getVersion());
                     sectionDao.save(section);
                 }
+                Set<String> qIds = new HashSet<String>();
+                qIds.add(questionId);
+                updateRule = solutionService.updateSolutionRuleFromDeletedQuestions(qIds);
             }
             questionDao.save(q);
-            Set<String> qIds = new HashSet<String>();
-            qIds.add(questionId);
-            solutionService.updateSolutionRuleFromDeletedQuestions(qIds);
-            return QuestionConverter.convert(q);
-        }else{
-            return null;
+            output.put(Constants.DTO, QuestionConverter.convert(q));
+            output.put(Constants.FLAG, new Boolean(updateRule));
         }
+        return output;
     }
 
     @Autowired

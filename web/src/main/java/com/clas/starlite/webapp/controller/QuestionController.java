@@ -11,6 +11,8 @@ import com.clas.starlite.webapp.util.RestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 /**
  * Created by Son on 8/17/14.
  */
@@ -39,11 +41,12 @@ public class QuestionController {
         if(errorCode != null){
             restResultDTO = RestUtils.createInvalidOutput(errorCode);
         }else{
-            QuestionDTO questionDTO = questionService.update(question, userId);
+            Map<String, Object> output = questionService.update(question, userId);
+            QuestionDTO questionDTO = (QuestionDTO)output.get(Constants.DTO);
             if(questionDTO == null){
                 restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_OBJECT_NOT_FOUND);
             }else{
-                restResultDTO.setData(questionDTO);
+                restResultDTO.setData(output);
                 restResultDTO.setSuccessful(true);
             }
         }
@@ -54,7 +57,8 @@ public class QuestionController {
     @RequestMapping(value = "/question/approve/{id}", method= RequestMethod.GET, produces={"application/json"})
     public RestResultDTO approve(@PathVariable("id") String questionId, @RequestHeader(value=Constants.HTTP_HEADER_USER, required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();
-        QuestionDTO questionDTO = questionService.updateStatus(questionId, userId, Status.ACTIVE.getValue());
+        Map<String, Object> output = questionService.updateStatus(questionId, userId, Status.ACTIVE.getValue());
+        QuestionDTO questionDTO = (QuestionDTO)output.get(Constants.DTO);
         if(questionDTO != null){
             restResultDTO.setData(questionDTO);
             restResultDTO.setSuccessful(true);
@@ -67,9 +71,10 @@ public class QuestionController {
     @RequestMapping(value = "/question/delete/{id}", method= RequestMethod.GET, produces={"application/json"})
     public RestResultDTO delete(@PathVariable("id") String questionId, @RequestHeader(value=Constants.HTTP_HEADER_USER, required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();
-        QuestionDTO questionDTO = questionService.updateStatus(questionId, userId, Status.DEACTIVE.getValue());
+        Map<String, Object> output = questionService.updateStatus(questionId, userId, Status.DEACTIVE.getValue());
+        QuestionDTO questionDTO = (QuestionDTO)output.get(Constants.DTO);
         if(questionDTO != null){
-            restResultDTO.setData(questionDTO);
+            restResultDTO.setData(output);
             restResultDTO.setSuccessful(true);
         }else{
             restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_OBJECT_NOT_FOUND);
