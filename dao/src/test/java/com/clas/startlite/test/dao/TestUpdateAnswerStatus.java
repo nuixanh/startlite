@@ -28,6 +28,17 @@ public class TestUpdateAnswerStatus extends BaseDaoTest{
 //            questionDao.save(question);
         }
     }
+
+    @Test
+    public void testUpdateAQuestion(){
+        Question question = questionDao.findOne("b8d3b650-6373-4372-ab53-555f2660d9a2");
+        System.out.println("------- number of questions: " + question);
+        for(Answer ans: question.getAnswers()){
+            System.out.println("-----" + ans.getId() + "\t" + ans.getStatus());
+            ans.setStatus(Status.ACTIVE.getValue());
+        }
+        questionDao.save(question);
+    }
     @Autowired
     private QuestionDao questionDao;
 }
