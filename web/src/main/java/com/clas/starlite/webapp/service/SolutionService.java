@@ -335,6 +335,29 @@ public class SolutionService {
             rootSolution.setRevision(revision.getVersion());
             solutionDao.save(rootSolution);
         }
+        if(StringUtils.isNotBlank(s.getParentId()) && StringUtils.isNotBlank(oldSolution.getParentId()) &&
+                !s.getParentId().equals(oldSolution.getParentId())){//move 1 solution from a group to another group
+            Solution otherGroup = solutionDao.findOne(s.getParentId());
+            otherGroup.setRevision(revision.getVersion());
+            if(otherGroup.getSolutions() == null){
+                otherGroup.setSolutions(new ArrayList<Solution>());
+            }
+            otherGroup.getSolutions().add(oldSolution);
+            solutionDao.save(otherGroup);
+
+            Solution oldGroup = solutionDao.findOne(oldSolution.getParentId());
+            oldGroup.setRevision(revision.getVersion());
+            if(oldGroup.getSolutions() != null){
+                for (int i = oldGroup.getSolutions().size() - 1; i >= 0; i--) {
+                    if(oldGroup.getSolutions().get(i).getId().equals(oldSolution.getId())){
+                        oldGroup.getSolutions().remove(i);
+                    }
+                }
+            }
+            solutionDao.save(oldGroup);
+
+            oldSolution.setParentId(otherGroup.getId());
+        }
         solutionDao.save(oldSolution);
         return SolutionConverter.convert(oldSolution);
     }
