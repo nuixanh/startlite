@@ -26,6 +26,7 @@ public class AssessmentController extends ApplicationObjectSupport {
         QuestionDTO questionDTO = questionService.create(question, userId);
         restResultDTO.setData(questionDTO);
         restResultDTO.setSuccessful(true);*/
+        restResultDTO.setSuccessful(true);
         return restResultDTO;
     }
 }
