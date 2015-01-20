@@ -20,7 +20,7 @@ import java.util.Map;
 public class SolutionController {
 
     @RequestMapping(value = "/solutions", method= RequestMethod.GET, produces={"application/json"})
-    public RestResultDTO login(@RequestParam(value="revision", required=false) Long revision) {
+    public RestResultDTO list(@RequestParam(value="revision", required=false) Long revision) {
         RestResultDTO restResultDTO = new RestResultDTO();
         List<SolutionDTO> solutionList = solutionService.getList(revision);
         restResultDTO.setData(solutionList);
