@@ -39,4 +39,7 @@
     <bean id = "solutionRuleDao" class="com.clas.starlite.dao.SolutionRuleDao">
         <property name="parameterizedType" value="com.clas.starlite.domain.SolutionRule"/>
     </bean>
+    <bean id = "userGroupDao" class="com.clas.starlite.dao.UserGroupDao">
+        <property name="parameterizedType" value="com.clas.starlite.domain.UserGroup"/>
+    </bean>
 </beans>
