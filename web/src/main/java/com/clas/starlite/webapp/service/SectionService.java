@@ -2,14 +2,12 @@ package com.clas.starlite.webapp.service;
 
 import com.clas.starlite.common.Constants;
 import com.clas.starlite.common.Status;
-import com.clas.starlite.dao.QuestionDao;
-import com.clas.starlite.dao.RevisionDao;
-import com.clas.starlite.dao.ScenarioDao;
-import com.clas.starlite.dao.SectionDao;
+import com.clas.starlite.dao.*;
 import com.clas.starlite.domain.*;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
 import com.clas.starlite.webapp.converter.SectionConverter;
 import com.clas.starlite.webapp.dto.SectionDTO;
+import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,7 +19,39 @@ import java.util.*;
  */
 @Component
 public class SectionService {
-
+    public SectionHistory snapshotSection(Section section){
+        SectionHistory sHistory;
+        try {
+            sHistory = sectionHistoryDao.getOneByIdAndRevision(section.getId(), section.getRevision());
+            if(sHistory == null){
+                sHistory = new SectionHistory();
+                BeanUtilsBean.getInstance().copyProperties(sHistory, section);
+                List<Question> questions = sHistory.getQuestions();
+                if(questions != null && questions.size() > 0){
+                    sHistory.setQuestionHistories(new ArrayList<QuestionHistory>());
+                    for (Question question : questions) {
+                        QuestionHistory questionHistory = questionHistoryDao.snapshotQuestion(question);
+                        sHistory.getQuestionHistories().add(questionHistory);
+                    }
+                }
+                sHistory.setQuestions(null);
+                List<Scenario> scenarios = sHistory.getScenarios();
+                if(scenarios != null && scenarios.size() > 0){
+                    sHistory.setScenarioHistories(new ArrayList<ScenarioHistory>());
+                    for (Scenario childSc : scenarios) {
+                        ScenarioHistory childHistory = scenarioHistoryDao.snapshotScenario(childSc);
+                        sHistory.getScenarioHistories().add(childHistory);
+                    }
+                }
+                sHistory.setScenarios(null);
+                sectionHistoryDao.save(sHistory);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            sHistory = null;
+        }
+        return sHistory;
+    }
     public List<SectionDTO> getList(Long revision){
         List<Section> sections;
         try {
@@ -341,4 +371,10 @@ public class SectionService {
     private SolutionService solutionService;
     @Autowired
     private QuestionService questionService;
+    @Autowired
+    private SectionHistoryDao sectionHistoryDao;
+    @Autowired
+    private QuestionHistoryDao questionHistoryDao;
+    @Autowired
+    private ScenarioHistoryDao scenarioHistoryDao;
 }

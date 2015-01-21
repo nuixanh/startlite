@@ -42,4 +42,7 @@
     <bean id = "userGroupDao" class="com.clas.starlite.dao.UserGroupDao">
         <property name="parameterizedType" value="com.clas.starlite.domain.UserGroup"/>
     </bean>
+    <bean id = "questionHistoryDao" class="com.clas.starlite.dao.QuestionHistoryDao"/>
+    <bean id = "scenarioHistoryDao" class="com.clas.starlite.dao.ScenarioHistoryDao"/>
+    <bean id = "sectionHistoryDao" class="com.clas.starlite.dao.SectionHistoryDao"/>
 </beans>

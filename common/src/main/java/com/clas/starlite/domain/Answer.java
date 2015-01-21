@@ -1,11 +1,8 @@
 package com.clas.starlite.domain;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-
 /**
  * Created by sonnt4 on 8/15/2014.
  */
-@Document(collection="answer")
 public class Answer {
     private String id;
     private String desc;
