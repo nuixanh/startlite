@@ -1,7 +1,10 @@
 package com.clas.starlite.webapp.util;
 
+import com.clas.starlite.common.Constants;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
 import com.clas.starlite.webapp.dto.RestResultDTO;
+
+import java.util.Map;
 
 /**
  * Created by Son on 8/14/14.
@@ -11,6 +14,10 @@ public class RestUtils {
         RestResultDTO output = new RestResultDTO();
         output.setErrorCode(errorCode.getValue());
         output.setErrorDesc(errorCode.name());
+        return output;
+    }
+    static public Map<String, Object> createInvalidOutput(Map<String, Object> output, ErrorCodeMap errorCode) {
+        output.put(Constants.ERROR_CODE, errorCode);
         return output;
     }
 }

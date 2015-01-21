@@ -6,6 +6,7 @@ import java.util.List;
  * Created by Admin on 1/20/2015.
  */
 public class AssessmentInstanceDTO {
+    private String userId;
     private String username;
     private String customerName;
     private String customerEmail;
@@ -29,7 +30,7 @@ public class AssessmentInstanceDTO {
         this.solution = solution;
     }
 
-    static class Solution{
+    public static class Solution{
         private String id;
 
         public String getId() {
@@ -41,7 +42,7 @@ public class AssessmentInstanceDTO {
         }
     }
 
-    static class Scenario{
+    public static class Scenario{
         private String id;
         private List<Scenario> scenario;
         private List<Section> section;
@@ -79,7 +80,7 @@ public class AssessmentInstanceDTO {
             this.percent = percent;
         }
     }
-    static class Section{
+    public static class Section{
         private String id;
         private double percent;
         private List<Question> question;
@@ -108,7 +109,7 @@ public class AssessmentInstanceDTO {
             this.question = question;
         }
     }
-    static class Question{
+    public static class Question{
         private String questionId;
         private double percent;
         private List<Answer> chosenAnswer;
@@ -137,7 +138,7 @@ public class AssessmentInstanceDTO {
             this.chosenAnswer = chosenAnswer;
         }
     }
-    static class Answer{
+    public static class Answer{
         private String id;
         private String content;
 
@@ -188,5 +189,13 @@ public class AssessmentInstanceDTO {
 
     public void setTimeStamp(long timeStamp) {
         this.timeStamp = timeStamp;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

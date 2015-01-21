@@ -45,4 +45,6 @@
     <bean id = "questionHistoryDao" class="com.clas.starlite.dao.QuestionHistoryDao"/>
     <bean id = "scenarioHistoryDao" class="com.clas.starlite.dao.ScenarioHistoryDao"/>
     <bean id = "sectionHistoryDao" class="com.clas.starlite.dao.SectionHistoryDao"/>
+    <bean id = "solutionHistoryDao" class="com.clas.starlite.dao.SolutionHistoryDao"/>
+    <bean id = "assessmentDao" class="com.clas.starlite.dao.AssessmentDao"/>
 </beans>

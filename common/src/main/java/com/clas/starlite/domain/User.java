@@ -22,6 +22,8 @@ public class User {
     private String link;
     private String locale;
 
+    private long surveyCount;
+
     public User(String id, String password, String name, String firstName, String lastName, String email, int role, long created, String createdBy, long modified, String link, String locale) {
         this.id = id;
         this.password = password;
@@ -134,5 +136,13 @@ public class User {
 
     public void setLocale(String locale) {
         this.locale = locale;
+    }
+
+    public long getSurveyCount() {
+        return surveyCount;
+    }
+
+    public void setSurveyCount(long surveyCount) {
+        this.surveyCount = surveyCount;
     }
 }
