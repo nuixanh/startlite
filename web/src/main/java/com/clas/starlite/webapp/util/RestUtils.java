@@ -4,6 +4,7 @@ import com.clas.starlite.common.Constants;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
 import com.clas.starlite.webapp.dto.RestResultDTO;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -17,6 +18,11 @@ public class RestUtils {
         return output;
     }
     static public Map<String, Object> createInvalidOutput(Map<String, Object> output, ErrorCodeMap errorCode) {
+        output.put(Constants.ERROR_CODE, errorCode);
+        return output;
+    }
+    static public Map<String, Object> createInvalidOutputMap(ErrorCodeMap errorCode) {
+        Map<String, Object> output = new HashMap<String, Object>();
         output.put(Constants.ERROR_CODE, errorCode);
         return output;
     }

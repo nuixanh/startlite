@@ -1,10 +1,8 @@
 package com.clas.starlite.webapp.service;
 
 import com.clas.starlite.dao.*;
-import com.clas.starlite.domain.Assessment;
-import com.clas.starlite.domain.Solution;
-import com.clas.starlite.domain.SolutionHistory;
-import com.clas.starlite.domain.User;
+import com.clas.starlite.domain.*;
+import com.clas.starlite.util.CommonUtils;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
 import com.clas.starlite.webapp.dto.AssessmentInstanceDTO;
 import com.clas.starlite.webapp.util.RestUtils;
@@ -19,8 +17,90 @@ import java.util.*;
  */
 @Component
 public class AssessmentService {
+    private Map<String, Object> validateScenario(AssessmentInstanceDTO.Scenario dtoScenario, Map<String, Scenario> scMap, Map<String, Section> sectionMap, Map<String, Question> questionMap){
+        if(dtoScenario == null){
+            return RestUtils.createInvalidOutputMap(ErrorCodeMap.FAILURE_SCENARIO_NOT_FOUND);
+        }
+        Set<String> scIDs = new HashSet<String>();
+        Set<String> sIDs = new HashSet<String>();
+        scIDs.add(dtoScenario.getId());
+        if(CollectionUtils.isNotEmpty(dtoScenario.getScenario())){
+            for (AssessmentInstanceDTO.Scenario childDtoScenario : dtoScenario.getScenario()) {
+                scIDs.add(childDtoScenario.getId());
+            }
+        }
+        List<Scenario> scenarios = scenarioDao.find(scIDs);
+        if(scenarios.size() != scIDs.size()){
+            return RestUtils.createInvalidOutputMap(ErrorCodeMap.FAILURE_SCENARIO_NOT_FOUND);
+        }
+        for (Scenario scenario : scenarios) {
+            if(!scMap.containsKey(scenario.getId())){
+                scMap.put(scenario.getId(), scenario);
+            }
+        }
+        if(CollectionUtils.isNotEmpty(dtoScenario.getSection())){
+            for (AssessmentInstanceDTO.Section childDtoSection : dtoScenario.getSection()) {
+                sIDs.add(childDtoSection.getId());
+            }
+            List<Section> sections = sectionDao.find(sIDs);
+            if(sections.size() != sIDs.size()){
+                return RestUtils.createInvalidOutputMap(ErrorCodeMap.FAILURE_SECTION_NOT_FOUND);
+            }
+            for (Section section : sections) {
+                if(!sectionMap.containsKey(section.getId())){
+                    sectionMap.put(section.getId(), section);
+                }
+                if(CollectionUtils.isNotEmpty(section.getQuestions())){
+                    for (Question question : section.getQuestions()) {
+                        if(!questionMap.containsKey(question.getId())){
+                            questionMap.put(question.getId(), question);
+                        }
+                    }
+                }
+            }
+            for (AssessmentInstanceDTO.Section childDtoSection : dtoScenario.getSection()) {
+                Section section = sectionMap.get(childDtoSection.getId());
+                if(section == null){
+                    return RestUtils.createInvalidOutputMap(ErrorCodeMap.FAILURE_SECTION_NOT_FOUND);
+                }
+                List<AssessmentInstanceDTO.Question> dtoQuestions = childDtoSection.getQuestion();
+                for(AssessmentInstanceDTO.Question dtoQuestion: dtoQuestions){
+                    Question question = questionMap.get(dtoQuestion.getQuestionId());
+                    if(question == null){
+                        return RestUtils.createInvalidOutputMap(ErrorCodeMap.FAILURE_QUESTION_NOT_FOUND);
+                    }
+                    if(!section.getId().equals(question.getSectionId())){
+                        return RestUtils.createInvalidOutputMap(ErrorCodeMap.FAILURE_INVALID_QUESTION);
+                    }
+                    Map<String, Answer> answerMap = new HashMap<String, Answer>();
+                    for (Answer answer : question.getAnswers()) {
+                        answerMap.put(answer.getId(), answer);
+                    }
+                    if(CollectionUtils.isNotEmpty(dtoQuestion.getChosenAnswer())){
+                        for(AssessmentInstanceDTO.Answer dtoAnswers: dtoQuestion.getChosenAnswer()){
+                            if(!answerMap.containsKey(dtoAnswers.getId())){
+                                return RestUtils.createInvalidOutputMap(ErrorCodeMap.FAILURE_INVALID_QUESTION);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if(CollectionUtils.isNotEmpty(dtoScenario.getScenario())){
+            for (AssessmentInstanceDTO.Scenario childDtoScenario : dtoScenario.getScenario()) {
+                Map<String, Object> output = validateScenario(childDtoScenario, scMap, sectionMap, questionMap);
+                if(output != null){
+                    return output;
+                }
+            }
+        }
+        return null;
+    }
     public Map<String, Object> score(AssessmentInstanceDTO dto){
         Map<String, Object> output = new HashMap<String, Object>();
+        if(!CommonUtils.isValidEmail(dto.getCustomerEmail())){
+            return RestUtils.createInvalidOutput(output, ErrorCodeMap.FAILURE_INVALID_EMAIL);
+        }
         User user = userDao.findOne(dto.getUserId());
         if(user == null){
             return RestUtils.createInvalidOutput(output, ErrorCodeMap.FAILURE_USER_NOT_FOUND);
@@ -40,6 +120,15 @@ public class AssessmentService {
         if(CollectionUtils.isEmpty(solutions)){
             return RestUtils.createInvalidOutput(output, ErrorCodeMap.FAILURE_SOLUTION_NOT_FOUND);
         }
+        Map<String, Scenario> scMap = new HashMap<String, Scenario>();
+        Map<String, Section> sectionMap = new HashMap<String, Section>();
+        Map<String, Question> questionMap = new HashMap<String, Question>();
+        AssessmentInstanceDTO.Scenario dtoScenario = dto.getScenario();
+        Map<String, Object> validateResult = validateScenario(dtoScenario, scMap, sectionMap, questionMap);
+        if(validateResult != null){
+            return validateResult;
+        }
+
         List<SolutionHistory> solutionHistories = Collections.emptyList();
         for (Solution solution : solutions) {
             SolutionHistory solutionHistory = solutionHistoryDao.snapshotSolution(solution);
@@ -63,4 +152,10 @@ public class AssessmentService {
     private SolutionHistoryDao solutionHistoryDao;
     @Autowired
     private AssessmentDao assessmentDao;
+    @Autowired
+    private ScenarioDao scenarioDao;
+    @Autowired
+    private ScenarioHistoryDao scenarioHistoryDao;
+    @Autowired
+    private SectionDao sectionDao;
 }
