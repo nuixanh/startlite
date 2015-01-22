@@ -19,8 +19,9 @@ import java.util.Map;
 @RestController
 public class AssessmentController extends ApplicationObjectSupport {
     @RequestMapping(value = "/assessment/score", method= RequestMethod.POST, consumes="application/json", produces={"application/json"})
-    public RestResultDTO create(@RequestBody AssessmentInstanceDTO assessmentDto, @RequestHeader(value= Constants.HTTP_HEADER_USER, required = true) String userId) {
+    public RestResultDTO score(@RequestBody AssessmentInstanceDTO assessmentDto, @RequestHeader(value= Constants.HTTP_HEADER_USER, required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();
+        assessmentDto.setUserId(userId);
         System.out.println(assessmentDto.toString());
         Map<String, Object> output = assessmentService.score(assessmentDto);
         ErrorCodeMap errorCode = (ErrorCodeMap) output.get(Constants.ERROR_CODE);
