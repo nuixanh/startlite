@@ -33,6 +33,8 @@ public class AssessmentInstanceDTO {
 
     public static class Solution{
         private String id;
+        private String name;
+        private String desc;
 
         public String getId() {
             return id;
@@ -41,10 +43,27 @@ public class AssessmentInstanceDTO {
         public void setId(String id) {
             this.id = id;
         }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
     }
 
     public static class Scenario{
         private String id;
+        private String name;
         private List<Scenario> scenario;
         private List<Section> section;
         private double percent;
@@ -80,9 +99,18 @@ public class AssessmentInstanceDTO {
         public void setPercent(double percent) {
             this.percent = percent;
         }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
     }
     public static class Section{
         private String id;
+        private String name;
         private double percent;
         private List<Question> question;
 
@@ -109,10 +137,20 @@ public class AssessmentInstanceDTO {
         public void setQuestion(List<AssessmentInstanceDTO.Question> question) {
             this.question = question;
         }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
     }
     public static class Question{
         private String questionId;
         private double percent;
+        private String desc;
+        private int type;
         private List<Answer> chosenAnswer;
 
         public double getPercent() {
@@ -137,6 +175,22 @@ public class AssessmentInstanceDTO {
 
         public void setChosenAnswer(List<Answer> chosenAnswer) {
             this.chosenAnswer = chosenAnswer;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+        public void setType(int type) {
+            this.type = type;
         }
     }
     public static class Answer{

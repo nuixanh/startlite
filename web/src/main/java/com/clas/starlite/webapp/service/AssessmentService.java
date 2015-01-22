@@ -7,6 +7,8 @@ import com.clas.starlite.util.CommonUtils;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
 import com.clas.starlite.webapp.dto.AssessmentInstanceDTO;
 import com.clas.starlite.webapp.util.RestUtils;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,7 +20,7 @@ import java.util.*;
  */
 @Component
 public class AssessmentService {
-    public List<AssessmentInstanceDTO> getReport(String userId, long revisionByUser){
+    public List<AssessmentInstanceDTO> getReport(String userId, Long revisionByUser) throws Exception{
         List<AssessmentInstanceDTO> output = CommonUtils.newArrayList();
         List<Assessment> assessments = assessmentDao.getByRevision(userId, revisionByUser);
         for (Assessment assessment : assessments) {
@@ -27,6 +29,18 @@ public class AssessmentService {
             dto.setUserId(assessment.getUserId());
             dto.setCustomerName(assessment.getCustomerName());
             dto.setCustomerEmail(assessment.getCustomerEmail());
+            if(CollectionUtils.isNotEmpty(assessment.getSolutionHistories())){
+                dto.setSolution(new ArrayList<AssessmentInstanceDTO.Solution>());
+                for (SolutionHistory solutionHistory : assessment.getSolutionHistories()) {
+                    AssessmentInstanceDTO.Solution solution = new AssessmentInstanceDTO.Solution();
+                    BeanUtilsBean.getInstance().copyProperties(solution, solutionHistory);
+                    dto.getSolution().add(solution);
+                }
+            }
+            ScenarioHistory rootScenarioHistory = assessment.getRootScenarioHistory();
+            AssessmentInstanceDTO.Scenario scenario = new AssessmentInstanceDTO.Scenario();
+            BeanUtilsBean.getInstance().copyProperties(scenario, rootScenarioHistory);
+            dto.setScenario(scenario);
             output.add(dto);
         }
 
