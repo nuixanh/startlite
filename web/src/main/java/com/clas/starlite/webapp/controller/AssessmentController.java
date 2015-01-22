@@ -38,6 +38,8 @@ public class AssessmentController extends ApplicationObjectSupport {
     @RequestMapping(value = "/assessments", method= RequestMethod.GET, produces={"application/json"})
     public RestResultDTO list(@RequestHeader(value= Constants.HTTP_HEADER_USER, required = true) String userId, @RequestParam(value="revision", required=false) Long revision) {
         RestResultDTO restResultDTO = new RestResultDTO();
+        System.out.println(assessmentService.toString());
+        System.out.println("r=" + revision);
         List<AssessmentInstanceDTO> sectionDTOs = assessmentService.getReport(userId, revision);
         restResultDTO.setData(sectionDTOs);
         restResultDTO.setSuccessful(true);
