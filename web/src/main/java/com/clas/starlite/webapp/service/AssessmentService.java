@@ -65,7 +65,7 @@ public class AssessmentService {
                     }
                 }
             }
-            List<SectionHistory> sectionHistories = CommonUtils.newArrayList();
+            Set<String> sectionHistories = CommonUtils.newHashSet();
             for (AssessmentInstanceDTO.Section childDtoSection : dtoScenario.getSection()) {
                 Section section = sectionMap.get(childDtoSection.getId());
                 if(section == null){
@@ -93,7 +93,7 @@ public class AssessmentService {
                     }
                 }
                 SectionHistory sectionHistory = sectionService.snapshotSection(section);
-                sectionHistories.add(sectionHistory);
+                sectionHistories.add(sectionHistory.getHistoryId());
             }
             ScenarioHistory rootScenarioHistory = scenarioHistoryDao.snapshotScenario(rootScenario);
             if(CollectionUtils.isNotEmpty(sectionHistories)){

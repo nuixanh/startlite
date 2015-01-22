@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -14,8 +15,8 @@ import java.util.UUID;
 public class ScenarioHistory extends Scenario {
     @DBRef
     private List<ScenarioHistory> scenarioHistories;
-    @DBRef
-    private List<SectionHistory> sectionHistories;
+
+    private Set<String> sectionHistories;
 
     @Id
     private String historyId;
@@ -50,11 +51,11 @@ public class ScenarioHistory extends Scenario {
         this.scenarioHistories = scenarioHistories;
     }
 
-    public List<SectionHistory> getSectionHistories() {
+    public Set<String> getSectionHistories() {
         return sectionHistories;
     }
 
-    public void setSectionHistories(List<SectionHistory> sectionHistories) {
+    public void setSectionHistories(Set<String> sectionHistories) {
         this.sectionHistories = sectionHistories;
     }
 }
