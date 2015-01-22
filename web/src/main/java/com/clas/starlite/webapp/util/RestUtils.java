@@ -11,6 +11,12 @@ import java.util.Map;
  * Created by Son on 8/14/14.
  */
 public class RestUtils {
+    static public RestResultDTO createInvalidOutput(Exception ex) {
+        RestResultDTO output = new RestResultDTO();
+        output.setErrorCode(ErrorCodeMap.FAILURE_EXCEPTION.getValue());
+        output.setErrorDesc(ex.getMessage());
+        return output;
+    }
     static public RestResultDTO createInvalidOutput(ErrorCodeMap errorCode) {
         RestResultDTO output = new RestResultDTO();
         output.setErrorCode(errorCode.getValue());
