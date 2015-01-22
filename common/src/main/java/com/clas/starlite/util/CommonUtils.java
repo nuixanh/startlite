@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.regex.Pattern;
 
@@ -59,6 +60,9 @@ public class CommonUtils {
     }
     public static <E> HashSet<E> newHashSet() {
         return new HashSet<E>();
+    }
+    public static <K, V> HashMap<K, V> newHashMap() {
+        return new HashMap<K, V>();
     }
 
     public static void main(String[] args){

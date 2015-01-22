@@ -3,6 +3,7 @@ package com.clas.starlite.domain;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,7 +12,6 @@ import java.util.UUID;
  */
 @Document(collection="assessment")
 public class Assessment {
-
     private String id;
     private String userId;
     private String customerName;
@@ -22,12 +22,49 @@ public class Assessment {
     @DBRef
     List<SolutionHistory> solutionHistories;
     @DBRef
-    List<ScenarioHistory> scenarioHistories;
+    ScenarioHistory rootScenarioHistory;
+    List<Score> scores = new ArrayList<Score>();
 
     public Assessment() {
         id = UUID.randomUUID().toString();
         created = System.currentTimeMillis();
         modified = created;
+    }
+
+    public static class Score {
+        private String entityId;
+        private String type;
+        private double scorePercent;
+
+        public Score(String entityId, String type, double scorePercent) {
+            this.entityId = entityId;
+            this.type = type;
+            this.scorePercent = scorePercent;
+        }
+
+        public String getEntityId() {
+            return entityId;
+        }
+
+        public void setEntityId(String entityId) {
+            this.entityId = entityId;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public double getScorePercent() {
+            return scorePercent;
+        }
+
+        public void setScorePercent(double scorePercent) {
+            this.scorePercent = scorePercent;
+        }
     }
 
     public String getId() {
@@ -86,12 +123,12 @@ public class Assessment {
         this.solutionHistories = solutionHistories;
     }
 
-    public List<ScenarioHistory> getScenarioHistories() {
-        return scenarioHistories;
+    public ScenarioHistory getRootScenarioHistory() {
+        return rootScenarioHistory;
     }
 
-    public void setScenarioHistories(List<ScenarioHistory> scenarioHistories) {
-        this.scenarioHistories = scenarioHistories;
+    public void setRootScenarioHistory(ScenarioHistory rootScenarioHistory) {
+        this.rootScenarioHistory = rootScenarioHistory;
     }
 
     public long getScoreDate() {
@@ -100,5 +137,13 @@ public class Assessment {
 
     public void setScoreDate(long scoreDate) {
         this.scoreDate = scoreDate;
+    }
+
+    public List<Score> getScores() {
+        return scores;
+    }
+
+    public void setScores(List<Score> scores) {
+        this.scores = scores;
     }
 }
