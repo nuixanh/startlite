@@ -1,12 +1,17 @@
 package com.clas.starlite.webapp.controller;
 
 import com.clas.starlite.common.Constants;
+import com.clas.starlite.domain.Assessment;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
 import com.clas.starlite.webapp.dto.AssessmentInstanceDTO;
 import com.clas.starlite.webapp.dto.RestResultDTO;
+import com.clas.starlite.webapp.service.AssessmentService;
 import com.clas.starlite.webapp.util.RestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ApplicationObjectSupport;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * Created by sonnt4 on 20/1/2015.
@@ -17,16 +22,18 @@ public class AssessmentController extends ApplicationObjectSupport {
     public RestResultDTO create(@RequestBody AssessmentInstanceDTO assessmentDto, @RequestHeader(value= Constants.HTTP_HEADER_USER, required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();
         System.out.println(assessmentDto.toString());
-
-        /*ErrorCodeMap errorCode = questionService.validate(question);
+        Map<String, Object> output = assessmentService.score(assessmentDto);
+        ErrorCodeMap errorCode = (ErrorCodeMap) output.get(Constants.ERROR_CODE);
         if(errorCode != null){
             restResultDTO = RestUtils.createInvalidOutput(errorCode);
             return restResultDTO;
         }
-        QuestionDTO questionDTO = questionService.create(question, userId);
-        restResultDTO.setData(questionDTO);
-        restResultDTO.setSuccessful(true);*/
+        Assessment assessment = (Assessment) output.get(Constants.DATA);
+        restResultDTO.setData(assessment.getId());
         restResultDTO.setSuccessful(true);
         return restResultDTO;
     }
+
+    @Autowired
+    AssessmentService assessmentService;
 }

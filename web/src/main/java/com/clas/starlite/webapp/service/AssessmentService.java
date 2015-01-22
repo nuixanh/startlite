@@ -1,5 +1,6 @@
 package com.clas.starlite.webapp.service;
 
+import com.clas.starlite.common.Constants;
 import com.clas.starlite.dao.*;
 import com.clas.starlite.domain.*;
 import com.clas.starlite.util.CommonUtils;
@@ -138,6 +139,7 @@ public class AssessmentService {
         ass.setSolutionHistories(solutionHistories);
         ass.setScoreDate(dto.getTimeStamp());
         assessmentDao.save(ass);
+        output.put(Constants.DATA, ass);
         return output;
     }
     @Autowired
