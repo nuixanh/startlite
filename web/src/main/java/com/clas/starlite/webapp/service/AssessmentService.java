@@ -20,8 +20,9 @@ import java.util.*;
 @Component
 public class AssessmentService {
     private Map<String, Object> validateScenario(AssessmentInstanceDTO.Scenario dtoScenario, Map<String, Scenario> scMap, Map<String, Section> sectionMap, Map<String, Question> questionMap){
+        Map<String, Object> output = new HashMap<String, Object>();
         if(dtoScenario == null){
-            return RestUtils.createInvalidOutputMap(ErrorCodeMap.FAILURE_SCENARIO_NOT_FOUND);
+            return RestUtils.createInvalidOutput(output, ErrorCodeMap.FAILURE_SCENARIO_NOT_FOUND);
         }
         Set<String> scIDs = new HashSet<String>();
         Set<String> sIDs = new HashSet<String>();
@@ -32,12 +33,16 @@ public class AssessmentService {
             }
         }
         List<Scenario> scenarios = scenarioDao.find(scIDs);
+        Scenario rootScenario = null;
         if(scenarios.size() != scIDs.size()){
-            return RestUtils.createInvalidOutputMap(ErrorCodeMap.FAILURE_SCENARIO_NOT_FOUND);
+            return RestUtils.createInvalidOutput(output, ErrorCodeMap.FAILURE_SCENARIO_NOT_FOUND);
         }
         for (Scenario scenario : scenarios) {
             if(!scMap.containsKey(scenario.getId())){
                 scMap.put(scenario.getId(), scenario);
+            }
+            if(scenario.getId().equals(dtoScenario.getId())){
+                rootScenario = scenario;
             }
         }
         if(CollectionUtils.isNotEmpty(dtoScenario.getSection())){
@@ -46,7 +51,7 @@ public class AssessmentService {
             }
             List<Section> sections = sectionDao.find(sIDs);
             if(sections.size() != sIDs.size()){
-                return RestUtils.createInvalidOutputMap(ErrorCodeMap.FAILURE_SECTION_NOT_FOUND);
+                return RestUtils.createInvalidOutput(output, ErrorCodeMap.FAILURE_SECTION_NOT_FOUND);
             }
             for (Section section : sections) {
                 if(!sectionMap.containsKey(section.getId())){
@@ -60,19 +65,20 @@ public class AssessmentService {
                     }
                 }
             }
+            List<SectionHistory> sectionHistories = CommonUtils.newArrayList();
             for (AssessmentInstanceDTO.Section childDtoSection : dtoScenario.getSection()) {
                 Section section = sectionMap.get(childDtoSection.getId());
                 if(section == null){
-                    return RestUtils.createInvalidOutputMap(ErrorCodeMap.FAILURE_SECTION_NOT_FOUND);
+                    return RestUtils.createInvalidOutput(output, ErrorCodeMap.FAILURE_SECTION_NOT_FOUND);
                 }
                 List<AssessmentInstanceDTO.Question> dtoQuestions = childDtoSection.getQuestion();
                 for(AssessmentInstanceDTO.Question dtoQuestion: dtoQuestions){
                     Question question = questionMap.get(dtoQuestion.getQuestionId());
                     if(question == null){
-                        return RestUtils.createInvalidOutputMap(ErrorCodeMap.FAILURE_QUESTION_NOT_FOUND);
+                        return RestUtils.createInvalidOutput(output, ErrorCodeMap.FAILURE_QUESTION_NOT_FOUND);
                     }
                     if(!section.getId().equals(question.getSectionId())){
-                        return RestUtils.createInvalidOutputMap(ErrorCodeMap.FAILURE_INVALID_QUESTION);
+                        return RestUtils.createInvalidOutput(output, ErrorCodeMap.FAILURE_INVALID_QUESTION);
                     }
                     Map<String, Answer> answerMap = new HashMap<String, Answer>();
                     for (Answer answer : question.getAnswers()) {
@@ -81,22 +87,32 @@ public class AssessmentService {
                     if(CollectionUtils.isNotEmpty(dtoQuestion.getChosenAnswer())){
                         for(AssessmentInstanceDTO.Answer dtoAnswers: dtoQuestion.getChosenAnswer()){
                             if(!answerMap.containsKey(dtoAnswers.getId())){
-                                return RestUtils.createInvalidOutputMap(ErrorCodeMap.FAILURE_INVALID_QUESTION);
+                                return RestUtils.createInvalidOutput(output, ErrorCodeMap.FAILURE_INVALID_QUESTION);
                             }
                         }
                     }
                 }
+                SectionHistory sectionHistory = sectionService.snapshotSection(section);
+                sectionHistories.add(sectionHistory);
+            }
+            ScenarioHistory rootScenarioHistory = scenarioHistoryDao.snapshotScenario(rootScenario);
+            if(CollectionUtils.isNotEmpty(sectionHistories)){
+                rootScenarioHistory.setSectionHistories(sectionHistories);
+                scenarioHistoryDao.save(rootScenarioHistory);
             }
         }
         if(CollectionUtils.isNotEmpty(dtoScenario.getScenario())){
             for (AssessmentInstanceDTO.Scenario childDtoScenario : dtoScenario.getScenario()) {
-                Map<String, Object> output = validateScenario(childDtoScenario, scMap, sectionMap, questionMap);
-                if(output != null){
-                    return output;
+                Map<String, Object> otherOutput = validateScenario(childDtoScenario, scMap, sectionMap, questionMap);
+                ErrorCodeMap errorCode = (ErrorCodeMap) otherOutput.get(Constants.ERROR_CODE);
+                if(errorCode != null){
+                    return otherOutput;
                 }
             }
         }
-        return null;
+        Assessment ass = new Assessment();
+        output.put(Constants.DATA, ass);
+        return output;
     }
     public Map<String, Object> score(AssessmentInstanceDTO dto){
         Map<String, Object> output = new HashMap<String, Object>();
@@ -127,7 +143,8 @@ public class AssessmentService {
         Map<String, Question> questionMap = new HashMap<String, Question>();
         AssessmentInstanceDTO.Scenario dtoScenario = dto.getScenario();
         Map<String, Object> validateResult = validateScenario(dtoScenario, scMap, sectionMap, questionMap);
-        if(validateResult != null){
+        ErrorCodeMap errorCode = (ErrorCodeMap) validateResult.get(Constants.ERROR_CODE);
+        if(errorCode != null){
             return validateResult;
         }
 
@@ -136,9 +153,10 @@ public class AssessmentService {
             SolutionHistory solutionHistory = solutionHistoryDao.snapshotSolution(solution);
             solutionHistories.add(solutionHistory);
         }
-        Assessment ass = new Assessment();
+        Assessment ass = (Assessment) validateResult.get(Constants.DATA);
         ass.setSolutionHistories(solutionHistories);
         ass.setScoreDate(dto.getTimeStamp());
+
         assessmentDao.save(ass);
         output.put(Constants.DATA, ass);
         return output;
@@ -147,6 +165,8 @@ public class AssessmentService {
     private UserDao userDao;
     @Autowired
     private QuestionDao questionDao;
+    @Autowired
+    private QuestionHistoryDao questionHistoryDao;
     @Autowired
     private SectionService sectionService;
     @Autowired

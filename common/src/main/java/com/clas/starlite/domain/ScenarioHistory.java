@@ -14,6 +14,8 @@ import java.util.UUID;
 public class ScenarioHistory extends Scenario {
     @DBRef
     private List<ScenarioHistory> scenarioHistories;
+    @DBRef
+    private List<SectionHistory> sectionHistories;
 
     @Id
     private String historyId;
@@ -23,8 +25,6 @@ public class ScenarioHistory extends Scenario {
         historyId = UUID.randomUUID().toString();
         historyCreated = System.currentTimeMillis();
     }
-
-
 
     public String getHistoryId() {
         return historyId;
@@ -48,5 +48,13 @@ public class ScenarioHistory extends Scenario {
 
     public void setScenarioHistories(List<ScenarioHistory> scenarioHistories) {
         this.scenarioHistories = scenarioHistories;
+    }
+
+    public List<SectionHistory> getSectionHistories() {
+        return sectionHistories;
+    }
+
+    public void setSectionHistories(List<SectionHistory> sectionHistories) {
+        this.sectionHistories = sectionHistories;
     }
 }
