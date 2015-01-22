@@ -18,6 +18,20 @@ import java.util.*;
  */
 @Component
 public class AssessmentService {
+    public List<AssessmentInstanceDTO> getReport(String userId, long revisionByUser){
+        List<AssessmentInstanceDTO> output = CommonUtils.newArrayList();
+        List<Assessment> assessments = assessmentDao.getByRevision(userId, revisionByUser);
+        for (Assessment assessment : assessments) {
+            AssessmentInstanceDTO dto = new AssessmentInstanceDTO();
+            dto.setId(assessment.getId());
+            dto.setUserId(assessment.getUserId());
+            dto.setCustomerName(assessment.getCustomerName());
+            dto.setCustomerEmail(assessment.getCustomerEmail());
+            output.add(dto);
+        }
+
+        return output;
+    }
     private Map<String, Object> validateScenarioAndBuildAssessment(AssessmentInstanceDTO.Scenario dtoScenario, Map<String, Scenario> scMap, Map<String, Section> sectionMap, Map<String, Question> questionMap, Map<String, Assessment.Score> scoreMap, boolean isRootScenario){
         Map<String, Object> output = new HashMap<String, Object>();
         if(dtoScenario == null){
@@ -181,6 +195,7 @@ public class AssessmentService {
         ass.setScoreDate(dto.getTimeStamp());
         user = userDao.incSurveyCount(user);
         ass.setCountByUser(user.getSurveyCount());
+        ass.setUserId(user.getId());
         assessmentDao.save(ass);
         output.put(Constants.DATA, ass);
         return output;

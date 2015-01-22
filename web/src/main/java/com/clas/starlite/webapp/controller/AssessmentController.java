@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ApplicationObjectSupport;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,6 +33,16 @@ public class AssessmentController extends ApplicationObjectSupport {
         Assessment assessment = (Assessment) output.get(Constants.DATA);
         restResultDTO.setData(assessment.getId());
         restResultDTO.setSuccessful(true);
+        return restResultDTO;
+    }
+    @RequestMapping(value = "/assessments", method= RequestMethod.GET, produces={"application/json"})
+    public RestResultDTO list(@RequestParam(value="revision", required=false) Long revisionByUser
+            , @RequestHeader(value= Constants.HTTP_HEADER_USER, required = true) String userId) {
+        RestResultDTO restResultDTO = new RestResultDTO();
+        List<AssessmentInstanceDTO> sectionDTOs = assessmentService.getReport(userId, revisionByUser);
+        restResultDTO.setData(sectionDTOs);
+        restResultDTO.setSuccessful(true);
+
         return restResultDTO;
     }
 

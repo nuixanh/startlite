@@ -6,6 +6,7 @@ import java.util.List;
  * Created by Admin on 1/20/2015.
  */
 public class AssessmentInstanceDTO {
+    private String id;
     private String userId;
     private String username;
     private String customerName;
@@ -197,5 +198,13 @@ public class AssessmentInstanceDTO {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
