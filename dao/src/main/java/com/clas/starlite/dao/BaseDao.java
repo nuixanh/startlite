@@ -26,11 +26,11 @@ public class BaseDao<T, ID extends Serializable> {
     }
 
     public T findOne(ID id) {
-        Query query = new Query(Criteria.where("id").is(id));
+        Query query = new Query(Criteria.where("_id").is(id));
         return template.findOne(query, parameterizedType);
     }
     public List<T> find(Collection<ID> ids) {
-        Query query = new Query(Criteria.where("id").in((Object[])ids.toArray()));
+        Query query = new Query(Criteria.where("_id").in((Object[])ids.toArray()));
         List<T> rs = template.find(query, parameterizedType);
         return rs;
     }
