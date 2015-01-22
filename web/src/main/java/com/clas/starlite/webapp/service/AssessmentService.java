@@ -131,7 +131,7 @@ public class AssessmentService {
             return validateResult;
         }
 
-        List<SolutionHistory> solutionHistories = ListUtils.EMPTY_LIST;
+        List<SolutionHistory> solutionHistories = CommonUtils.newArrayList();
         for (Solution solution : solutions) {
             SolutionHistory solutionHistory = solutionHistoryDao.snapshotSolution(solution);
             solutionHistories.add(solutionHistory);
