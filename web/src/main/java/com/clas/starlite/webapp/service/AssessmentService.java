@@ -193,6 +193,8 @@ public class AssessmentService {
         Assessment ass = (Assessment) validateResult.get(Constants.DATA);
         ass.setSolutionHistories(solutionHistories);
         ass.setScoreDate(dto.getTimeStamp());
+        ass.setCustomerEmail(dto.getCustomerEmail());
+        ass.setCustomerName(dto.getCustomerName());
         user = userDao.incSurveyCount(user);
         ass.setCountByUser(user.getSurveyCount());
         ass.setUserId(user.getId());
