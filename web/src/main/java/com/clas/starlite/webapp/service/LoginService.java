@@ -63,6 +63,7 @@ public class LoginService {
                 output.setUserId(user.getId());
                 output.setSessionId(session.getId());
                 output.setRole(user.getRole());
+                output.setSurveyCount(user.getSurveyCount());
             }
         }
         return output;

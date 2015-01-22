@@ -7,6 +7,7 @@ public class UserLoginDTO {
     public String sessionId;
     public String userId;
     public int role;
+    private long surveyCount;
 
     public String getSessionId() {
         return sessionId;
@@ -30,5 +31,13 @@ public class UserLoginDTO {
 
     public void setRole(int role) {
         this.role = role;
+    }
+
+    public long getSurveyCount() {
+        return surveyCount;
+    }
+
+    public void setSurveyCount(long surveyCount) {
+        this.surveyCount = surveyCount;
     }
 }

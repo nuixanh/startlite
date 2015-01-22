@@ -179,7 +179,8 @@ public class AssessmentService {
         Assessment ass = (Assessment) validateResult.get(Constants.DATA);
         ass.setSolutionHistories(solutionHistories);
         ass.setScoreDate(dto.getTimeStamp());
-
+        user = userDao.incSurveyCount(user);
+        ass.setCountByUser(user.getSurveyCount());
         assessmentDao.save(ass);
         output.put(Constants.DATA, ass);
         return output;

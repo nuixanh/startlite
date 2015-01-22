@@ -19,6 +19,7 @@ public class Assessment {
     private long scoreDate;
     private long created;
     private long modified;
+    private long countByUser;
     @DBRef
     List<SolutionHistory> solutionHistories;
     @DBRef
@@ -145,5 +146,13 @@ public class Assessment {
 
     public void setScores(List<Score> scores) {
         this.scores = scores;
+    }
+
+    public long getCountByUser() {
+        return countByUser;
+    }
+
+    public void setCountByUser(long countByUser) {
+        this.countByUser = countByUser;
     }
 }
