@@ -8,6 +8,7 @@ import com.clas.starlite.webapp.common.ErrorCodeMap;
 import com.clas.starlite.webapp.dto.AssessmentInstanceDTO;
 import com.clas.starlite.webapp.util.RestUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -130,7 +131,7 @@ public class AssessmentService {
             return validateResult;
         }
 
-        List<SolutionHistory> solutionHistories = Collections.emptyList();
+        List<SolutionHistory> solutionHistories = ListUtils.EMPTY_LIST;
         for (Solution solution : solutions) {
             SolutionHistory solutionHistory = solutionHistoryDao.snapshotSolution(solution);
             solutionHistories.add(solutionHistory);
