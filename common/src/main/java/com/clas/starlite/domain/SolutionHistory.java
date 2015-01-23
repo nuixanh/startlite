@@ -14,6 +14,8 @@ import java.util.UUID;
 public class SolutionHistory extends Solution{
     @DBRef
     private List<SolutionHistory> solutionHistories;
+    @DBRef
+    private List<SolutionRuleHistory> ruleHistories;
 
     @Id
     private String historyId;
@@ -47,5 +49,13 @@ public class SolutionHistory extends Solution{
 
     public void setSolutionHistories(List<SolutionHistory> solutionHistories) {
         this.solutionHistories = solutionHistories;
+    }
+
+    public List<SolutionRuleHistory> getRuleHistories() {
+        return ruleHistories;
+    }
+
+    public void setRuleHistories(List<SolutionRuleHistory> ruleHistories) {
+        this.ruleHistories = ruleHistories;
     }
 }

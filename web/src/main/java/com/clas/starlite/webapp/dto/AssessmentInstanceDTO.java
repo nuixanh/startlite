@@ -30,11 +30,79 @@ public class AssessmentInstanceDTO {
     public void setSolution(List<Solution> solution) {
         this.solution = solution;
     }
+    public static class RuleCondition{
+        private String questionId;
+        private List<List<String>> answerIds;
 
+        public String getQuestionId() {
+            return questionId;
+        }
+
+        public void setQuestionId(String questionId) {
+            this.questionId = questionId;
+        }
+
+        public List<List<String>> getAnswerIds() {
+            return answerIds;
+        }
+
+        public void setAnswerIds(List<List<String>> answerIds) {
+            this.answerIds = answerIds;
+        }
+    }
+    public static class SolutionRule{
+        private String id;
+        private int type;
+        private String solutionId;
+        private List<List<RuleCondition>> ruleConditions;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+        public void setType(int type) {
+            this.type = type;
+        }
+
+        public String getSolutionId() {
+            return solutionId;
+        }
+
+        public void setSolutionId(String solutionId) {
+            this.solutionId = solutionId;
+        }
+
+        public List<List<RuleCondition>> getRuleConditions() {
+            return ruleConditions;
+        }
+
+        public void setRuleConditions(List<List<RuleCondition>> ruleConditions) {
+            this.ruleConditions = ruleConditions;
+        }
+    }
     public static class Solution{
         private String id;
         private String name;
         private String desc;
+        private boolean isGroup;
+        private List<Solution> solutions;
+        private List<SolutionRule> rules;
+
+        public List<SolutionRule> getRules() {
+            return rules;
+        }
+
+        public void setRules(List<SolutionRule> rules) {
+            this.rules = rules;
+        }
 
         public String getId() {
             return id;
@@ -58,6 +126,22 @@ public class AssessmentInstanceDTO {
 
         public void setDesc(String desc) {
             this.desc = desc;
+        }
+
+        public List<Solution> getSolutions() {
+            return solutions;
+        }
+
+        public void setSolutions(List<Solution> solutions) {
+            this.solutions = solutions;
+        }
+
+        public boolean isGroup() {
+            return isGroup;
+        }
+
+        public void setGroup(boolean isGroup) {
+            this.isGroup = isGroup;
         }
     }
 
@@ -151,6 +235,7 @@ public class AssessmentInstanceDTO {
         private double percent;
         private String desc;
         private int type;
+        private List<Answer> allAnswers;
         private List<Answer> chosenAnswer;
 
         public double getPercent() {
@@ -192,10 +277,19 @@ public class AssessmentInstanceDTO {
         public void setType(int type) {
             this.type = type;
         }
+
+        public List<Answer> getAllAnswers() {
+            return allAnswers;
+        }
+
+        public void setAllAnswers(List<Answer> allAnswers) {
+            this.allAnswers = allAnswers;
+        }
     }
     public static class Answer{
         private String id;
         private String content;
+        private int score;
 
         public String getId() {
             return id;
@@ -211,6 +305,14 @@ public class AssessmentInstanceDTO {
 
         public void setContent(String content) {
             this.content = content;
+        }
+
+        public int getScore() {
+            return score;
+        }
+
+        public void setScore(int score) {
+            this.score = score;
         }
     }
 
@@ -261,4 +363,6 @@ public class AssessmentInstanceDTO {
     public void setId(String id) {
         this.id = id;
     }
+
+
 }

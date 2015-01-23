@@ -21,21 +21,23 @@ public class Assessment {
     private long modified;
     private long countByUser;
     @DBRef
-    List<SolutionHistory> solutionHistories;
+    private List<SolutionHistory> solutionHistories;
     @DBRef
-    ScenarioHistory rootScenarioHistory;
-    List<Score> scores = new ArrayList<Score>();
+    private ScenarioHistory rootScenarioHistory;
+    private Score score;
+//    List<Score> scores = new ArrayList<Score>();
 
     public Assessment() {
         id = UUID.randomUUID().toString();
         created = System.currentTimeMillis();
         modified = created;
     }
-
     public static class Score {
         private String entityId;
         private String type;
         private double scorePercent;
+        private List<String> answerIDs;
+        private List<Score> children = new ArrayList<Score>();
 
         public Score(String entityId, String type, double scorePercent) {
             this.entityId = entityId;
@@ -65,6 +67,22 @@ public class Assessment {
 
         public void setScorePercent(double scorePercent) {
             this.scorePercent = scorePercent;
+        }
+
+        public List<Score> getChildren() {
+            return children;
+        }
+
+        public void setChildren(List<Score> children) {
+            this.children = children;
+        }
+
+        public List<String> getAnswerIDs() {
+            return answerIDs;
+        }
+
+        public void setAnswerIDs(List<String> answerIDs) {
+            this.answerIDs = answerIDs;
         }
     }
 
@@ -140,13 +158,13 @@ public class Assessment {
         this.scoreDate = scoreDate;
     }
 
-    public List<Score> getScores() {
+    /*public List<Score> getScores() {
         return scores;
     }
 
     public void setScores(List<Score> scores) {
         this.scores = scores;
-    }
+    }*/
 
     public long getCountByUser() {
         return countByUser;
@@ -154,5 +172,13 @@ public class Assessment {
 
     public void setCountByUser(long countByUser) {
         this.countByUser = countByUser;
+    }
+
+    public Score getScore() {
+        return score;
+    }
+
+    public void setScore(Score score) {
+        this.score = score;
     }
 }
