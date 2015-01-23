@@ -12,6 +12,7 @@ public class AssessmentInstanceDTO {
     private String customerName;
     private String customerEmail;
     private long timeStamp;
+    private long countByUser;
     private Scenario scenario;
     private List<Solution> solution;
 
@@ -364,5 +365,11 @@ public class AssessmentInstanceDTO {
         this.id = id;
     }
 
+    public long getCountByUser() {
+        return countByUser;
+    }
 
+    public void setCountByUser(long countByUser) {
+        this.countByUser = countByUser;
+    }
 }
