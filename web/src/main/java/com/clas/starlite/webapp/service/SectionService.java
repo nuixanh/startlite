@@ -4,10 +4,12 @@ import com.clas.starlite.common.Constants;
 import com.clas.starlite.common.Status;
 import com.clas.starlite.dao.*;
 import com.clas.starlite.domain.*;
+import com.clas.starlite.util.CommonUtils;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
 import com.clas.starlite.webapp.converter.SectionConverter;
 import com.clas.starlite.webapp.dto.SectionDTO;
 import org.apache.commons.beanutils.BeanUtilsBean;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -212,7 +214,13 @@ public class SectionService {
                     rootParent.setRevision(revision.getVersion());
                     scenarioDao.save(rootParent);
                     Set<String> sectionSet = sc.getSections();
-                    if(sectionSet != null && sectionSet.size() > 0){
+                    Map<String, Set<String>> sectionMap = sc.getSectionMap();
+                    boolean modified = false;
+                    if(sectionMap != null && sectionMap.containsKey(sectionId)){
+                        sectionMap.remove(sectionId);
+                        modified = true;
+                    }
+                    if(CollectionUtils.isNotEmpty(sectionSet)){
                         Set<String> newSectionSet = new HashSet<String>();
                         for (String sID : sectionSet) {
                             if(!sID.equals(sectionId)){
@@ -224,13 +232,16 @@ public class SectionService {
                         }else{
                             sc.setSections(null);
                         }
+                        modified = true;
+                    }
+                    if(modified){
                         scenarioDao.save(sc);
                     }
                 }
             }
             section.setScenarios(null);
             sectionDao.save(section);
-            if(questions != null && questions.size() > 0){
+            if(CollectionUtils.isNotEmpty(questions)){
                 Set<String> qIds = new HashSet<String>();
                 for (Question question : questions) {
                     qIds.add(question.getId());
@@ -259,7 +270,11 @@ public class SectionService {
             return ErrorCodeMap.FAILURE_SCENARIO_NOT_FOUND;
         }
         Set<String> sectionSet = detachedScenario.getSections();
-        if(sectionSet != null && sectionSet.size() > 0){
+        Map<String, Set<String>> sectionMap = detachedScenario.getSectionMap();
+        if(sectionMap != null && sectionMap.containsKey(sectionId)){
+            sectionMap.remove(sectionId);
+        }
+        if(CollectionUtils.isNotEmpty(sectionSet)){
             Set<String> newSectionSet = new HashSet<String>();
             for (String sID : sectionSet) {
                 if(!sID.equals(sectionId)){
@@ -272,7 +287,7 @@ public class SectionService {
                 detachedScenario.setSections(null);
             }
         }
-        if(section.getScenarios() != null && section.getScenarios().size() > 0){
+        if(CollectionUtils.isNotEmpty(section.getScenarios())){
             for (int i = section.getScenarios().size() - 1; i >= 0 ; i--) {
                 Scenario scOfSection = section.getScenarios().get(i);
                 if(scOfSection.getId().equals(scenarioId)){
@@ -311,8 +326,33 @@ public class SectionService {
         if(attachedScenario == null){
             return ErrorCodeMap.FAILURE_SCENARIO_NOT_FOUND;
         }
-        if(StringUtils.isNoneBlank(questionIDs)){
-
+        if(StringUtils.isNotBlank(questionIDs)){
+            String[] qIDarr = questionIDs.split(",", -1);
+            if(CollectionUtils.isEmpty(section.getQuestions()) || section.getQuestions().size() < qIDarr.length){
+                return ErrorCodeMap.FAILURE_INVALID_QUESTION;
+            }
+            Set<String> qIDSet = CommonUtils.newHashSet();
+            for(Question question: section.getQuestions()){
+                qIDSet.add(question.getId());
+            }
+            for (int i = 0; i < qIDarr.length; i++) {
+                if(!qIDSet.contains(qIDarr[i])){
+                    return ErrorCodeMap.FAILURE_INVALID_QUESTION;
+                }
+            }
+            Map<String, Set<String>> sectionMap = attachedScenario.getSectionMap();
+            if(sectionMap == null){
+                sectionMap = CommonUtils.newHashMap();
+                attachedScenario.setSectionMap(sectionMap);
+            }
+            qIDSet = sectionMap.get(sectionId);
+            if(qIDSet == null){
+                qIDSet = CommonUtils.newHashSet();
+                sectionMap.put(sectionId, qIDSet);
+            }
+            for (int i = 0; i < qIDarr.length; i++) {
+                qIDSet.add(qIDarr[i]);
+            }
         }
         List<Scenario> parents = section.getScenarios();
         if(parents != null && parents.size() > 0){
