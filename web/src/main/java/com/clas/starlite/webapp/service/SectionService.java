@@ -299,7 +299,7 @@ public class SectionService {
         return null;
     }
 
-    public ErrorCodeMap attachToScenario(String sectionId, String scenarioId, String userId){
+    public ErrorCodeMap attachToScenario(String sectionId, String scenarioId, String userId, String questionIDs){
         if(StringUtils.isBlank(sectionId) || StringUtils.isBlank(scenarioId)){
             return ErrorCodeMap.FAILURE_INVALID_PARAMS;
         }
@@ -310,6 +310,9 @@ public class SectionService {
         Scenario attachedScenario = scenarioDao.findOne(scenarioId);
         if(attachedScenario == null){
             return ErrorCodeMap.FAILURE_SCENARIO_NOT_FOUND;
+        }
+        if(StringUtils.isNoneBlank(questionIDs)){
+
         }
         List<Scenario> parents = section.getScenarios();
         if(parents != null && parents.size() > 0){

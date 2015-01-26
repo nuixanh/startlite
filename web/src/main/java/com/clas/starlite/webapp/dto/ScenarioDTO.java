@@ -1,6 +1,7 @@
 package com.clas.starlite.webapp.dto;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -17,8 +18,9 @@ public class ScenarioDTO {
     private String rootParentId;
     private List<ScenarioDTO> scenarios;
     private Set<String> sections;
+    private Map<String, Set<String>> sectionMap;//key: sectionId, value: set of question IDs
 
-    public ScenarioDTO(String id, String name, long modified, String parentId, long revision, int status, String rootParentId, Set<String> sections) {
+    public ScenarioDTO(String id, String name, long modified, String parentId, long revision, int status, String rootParentId, Set<String> sections, Map<String, Set<String>> sectionMap) {
         this.id = id;
         this.name = name;
         this.modified = modified;
@@ -27,6 +29,7 @@ public class ScenarioDTO {
         this.status = status;
         this.rootParentId = rootParentId;
         this.sections = sections;
+        this.sectionMap = sectionMap;
     }
 
     public String getId() {
@@ -99,5 +102,13 @@ public class ScenarioDTO {
 
     public void setSections(Set<String> sections) {
         this.sections = sections;
+    }
+
+    public Map<String, Set<String>> getSectionMap() {
+        return sectionMap;
+    }
+
+    public void setSectionMap(Map<String, Set<String>> sectionMap) {
+        this.sectionMap = sectionMap;
     }
 }

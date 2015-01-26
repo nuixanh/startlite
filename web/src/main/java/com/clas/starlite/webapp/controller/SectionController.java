@@ -82,9 +82,10 @@ public class SectionController extends ApplicationObjectSupport {
     @RequestMapping(value = "/section/attach/{id}/{scenarioId}", method= RequestMethod.GET, produces={"application/json"})
     public RestResultDTO attach(@PathVariable("id") String sectionId,
                                 @PathVariable("scenarioId") String scenarioId,
-                                @RequestHeader(value= Constants.HTTP_HEADER_USER, required = true) String userId) {
+                                @RequestHeader(value= Constants.HTTP_HEADER_USER, required = true) String userId,
+                                @RequestParam(value="questions", required=false) String questionIDs) {
         RestResultDTO restResultDTO = new RestResultDTO();
-        ErrorCodeMap errorCode = sectionService.attachToScenario(sectionId, scenarioId, userId);
+        ErrorCodeMap errorCode = sectionService.attachToScenario(sectionId, scenarioId, userId, questionIDs);
         if(errorCode != null){
             restResultDTO = RestUtils.createInvalidOutput(errorCode);
             return restResultDTO;

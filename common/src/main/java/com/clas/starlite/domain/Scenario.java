@@ -24,6 +24,7 @@ public class Scenario {
     private String parentId;
     private String rootParentId;
     private Set<String> sections;
+    private Map<String, Set<String>> sectionMap;//key: sectionId, value: set of question IDs
     @Indexed
     private int status;
     private long revision;
@@ -141,5 +142,13 @@ public class Scenario {
 
     public void setMyRevision(long myRevision) {
         this.myRevision = myRevision;
+    }
+
+    public Map<String, Set<String>> getSectionMap() {
+        return sectionMap;
+    }
+
+    public void setSectionMap(Map<String, Set<String>> sectionMap) {
+        this.sectionMap = sectionMap;
     }
 }

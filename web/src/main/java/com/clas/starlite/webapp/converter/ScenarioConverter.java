@@ -24,7 +24,7 @@ public class ScenarioConverter {
         return output;
     }
     public static ScenarioDTO convert(Scenario scenario){
-        ScenarioDTO dto = new ScenarioDTO(scenario.getId(), scenario.getName(), scenario.getModified(), scenario.getParentId(), scenario.getRevision(), scenario.getStatus(), scenario.getRootParentId(), scenario.getSections());
+        ScenarioDTO dto = new ScenarioDTO(scenario.getId(), scenario.getName(), scenario.getModified(), scenario.getParentId(), scenario.getRevision(), scenario.getStatus(), scenario.getRootParentId(), scenario.getSections(), scenario.getSectionMap());
         if(scenario.getScenarios() != null){
             dto.setScenarios(new ArrayList<ScenarioDTO>());
             for (Scenario sc : scenario.getScenarios()) {
