@@ -7,11 +7,13 @@ import com.clas.starlite.dao.RevisionDao;
 import com.clas.starlite.dao.ScenarioDao;
 import com.clas.starlite.dao.SectionDao;
 import com.clas.starlite.domain.*;
+import com.clas.starlite.util.CommonUtils;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
 import com.clas.starlite.webapp.converter.QuestionConverter;
 import com.clas.starlite.webapp.converter.SectionConverter;
 import com.clas.starlite.webapp.dto.QuestionDTO;
 import com.clas.starlite.webapp.util.RestUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -179,20 +181,46 @@ public class QuestionService {
                 Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_ADD, q.getId());
                 q.setRevision(revision.getVersion());
             }else if(status == Status.DEACTIVE.getValue()){
-                Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_DELETE, q.getId());
-                q.setRevision(revision.getVersion());
+                Revision revision;
                 if(StringUtils.isNotBlank(q.getSectionId())){
                     Section section = sectionDao.findOne(q.getSectionId());
-                    if(section != null && section.getQuestions() != null){
-                        for (int i = section.getQuestions().size() -1; i >= 0 ; i--) {
-                            Question question = section.getQuestions().get(i);
-                            if(questionId.equals(question.getId())){
-                                section.getQuestions().remove(i);
+                    if(section != null) {
+                        if(CollectionUtils.isNotEmpty(section.getQuestions())){
+                            for (int i = section.getQuestions().size() -1; i >= 0 ; i--) {
+                                Question question = section.getQuestions().get(i);
+                                if(questionId.equals(question.getId())){
+                                    section.getQuestions().remove(i);
+                                }
+                            }
+                        }
+
+                        if(CollectionUtils.isNotEmpty(section.getScenarios())){
+                            List<Scenario> scList = CommonUtils.newArrayList();
+                            for(Scenario scenario: section.getScenarios()){
+                                Map<String, Set<String>> sectionMap = scenario.getSectionMap();
+                                if(sectionMap != null && sectionMap.containsKey(section.getId()) && sectionMap.get(section.getId()).contains(questionId)){
+                                    if(sectionMap.get(section.getId()).size() == 1){
+                                        scList.add(scenario);
+                                    }else{
+
+                                    }
+                                }
+                            }
+                            if(scList.size() > 0){
+                                output.put(Constants.ERROR_CODE, ErrorCodeMap.FAILURE_DETACH_SECTION_BEFORE_DELETE_QUESTION);
+                                output.put(Constants.DATA, scList);
+                                output.put(Constants.DTO, section);
+                                return output;
                             }
                         }
                     }
+                    revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_DELETE, q.getId());
+                    q.setRevision(revision.getVersion());
                     section.setRevision(revision.getVersion());
                     sectionDao.save(section);
+                }else{
+                    revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_DELETE, q.getId());
+                    q.setRevision(revision.getVersion());
                 }
                 Set<String> qIds = new HashSet<String>();
                 qIds.add(questionId);
@@ -201,6 +229,8 @@ public class QuestionService {
             questionDao.save(q);
             output.put(Constants.DTO, QuestionConverter.convert(q));
             output.put(Constants.FLAG, new Boolean(updateRule));
+        }else{
+            output.put(Constants.ERROR_CODE, ErrorCodeMap.FAILURE_OBJECT_NOT_FOUND);
         }
         return output;
     }

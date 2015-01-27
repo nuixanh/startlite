@@ -1,7 +1,5 @@
 package com.clas.starlite.webapp.dto;
 
-import com.clas.starlite.webapp.common.ErrorCodeMap;
-
 /**
  * Created by Son on 8/14/14.
  */

@@ -58,13 +58,21 @@ public class QuestionController {
     public RestResultDTO approve(@PathVariable("id") String questionId, @RequestHeader(value=Constants.HTTP_HEADER_USER, required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();
         Map<String, Object> output = questionService.updateStatus(questionId, userId, Status.ACTIVE.getValue());
+        ErrorCodeMap errorCode = (ErrorCodeMap) output.get(Constants.ERROR_CODE);
+        if(errorCode != null){
+            restResultDTO = RestUtils.createInvalidOutput(errorCode);
+            return restResultDTO;
+        }
+
         QuestionDTO questionDTO = (QuestionDTO)output.get(Constants.DTO);
-        if(questionDTO != null){
+        restResultDTO.setData(questionDTO);
+        restResultDTO.setSuccessful(true);
+        /*if(questionDTO != null){
             restResultDTO.setData(questionDTO);
             restResultDTO.setSuccessful(true);
         }else{
             restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_OBJECT_NOT_FOUND);
-        }
+        }*/
 
         return restResultDTO;
     }
@@ -72,13 +80,24 @@ public class QuestionController {
     public RestResultDTO delete(@PathVariable("id") String questionId, @RequestHeader(value=Constants.HTTP_HEADER_USER, required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();
         Map<String, Object> output = questionService.updateStatus(questionId, userId, Status.DEACTIVE.getValue());
-        QuestionDTO questionDTO = (QuestionDTO)output.get(Constants.DTO);
-        if(questionDTO != null){
+        ErrorCodeMap errorCode = (ErrorCodeMap) output.get(Constants.ERROR_CODE);
+        if(errorCode != null){
+            restResultDTO = RestUtils.createInvalidOutput(errorCode);
+            if(errorCode == ErrorCodeMap.FAILURE_DETACH_SECTION_BEFORE_DELETE_QUESTION){
+                restResultDTO.setData(output);
+            }
+            return restResultDTO;
+        }
+
+//        QuestionDTO questionDTO = (QuestionDTO)output.get(Constants.DTO);
+        restResultDTO.setData(output);
+        restResultDTO.setSuccessful(true);
+        /*if(questionDTO != null){
             restResultDTO.setData(output);
             restResultDTO.setSuccessful(true);
         }else{
             restResultDTO = RestUtils.createInvalidOutput(ErrorCodeMap.FAILURE_OBJECT_NOT_FOUND);
-        }
+        }*/
 
         return restResultDTO;
     }
