@@ -230,6 +230,7 @@ public class QuestionService {
                                             scenarioDao.save(rootScenario);
                                         }
                                         scenarioDao.save(scenario);
+                                        output.put(Constants.FLAG_SCENARIO, new Boolean(true));
                                     }
                                 }
                             }

@@ -32,5 +32,6 @@ public class Constants {
     public static final String DTO = "dto";
     public static final String DATA = "data";
     public static final String FLAG = "flag";
+    public static final String FLAG_SCENARIO = "flag_scenario";
 
 }
