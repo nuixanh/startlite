@@ -180,6 +180,7 @@ public class AssessmentService {
             dto.setCustomerName(assessment.getCustomerName());
             dto.setCustomerEmail(assessment.getCustomerEmail());
             dto.setCountByUser(assessment.getCountByUser());
+            dto.setTimeStamp(assessment.getScoreDate());
             if(CollectionUtils.isNotEmpty(assessment.getSolutionHistories())){
                 dto.setSolution(new ArrayList<AssessmentInstanceDTO.Solution>());
                 for (SolutionHistory solutionHistory : assessment.getSolutionHistories()) {
