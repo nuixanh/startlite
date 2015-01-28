@@ -196,21 +196,33 @@ public class QuestionService {
 
                         if(CollectionUtils.isNotEmpty(section.getScenarios())){
                             List<Scenario> scList = CommonUtils.newArrayList();
+                            boolean inValid = false;
                             for(Scenario scenario: section.getScenarios()){
                                 Map<String, Set<String>> sectionMap = scenario.getSectionMap();
                                 if(sectionMap != null && sectionMap.containsKey(section.getId()) && sectionMap.get(section.getId()).contains(questionId)){
                                     if(sectionMap.get(section.getId()).size() == 1){
-                                        scList.add(scenario);
-                                    }else{
-
+                                        inValid = true;
                                     }
+                                    scList.add(scenario);
                                 }
                             }
-                            if(scList.size() > 0){
+                            if(inValid){
                                 output.put(Constants.ERROR_CODE, ErrorCodeMap.FAILURE_DETACH_SECTION_BEFORE_DELETE_QUESTION);
                                 output.put(Constants.DATA, scList);
                                 output.put(Constants.DTO, section);
                                 return output;
+                            }else{
+                                for(Scenario scenario: scList){
+                                    Map<String, Set<String>> sectionMap = scenario.getSectionMap();
+                                    if(sectionMap != null && sectionMap.containsKey(section.getId()) && sectionMap.get(section.getId()).contains(questionId)){
+                                        Set<String> qIDSet = sectionMap.get(section.getId());
+                                        qIDSet.remove(questionId);
+                                        if(CollectionUtils.isEmpty(qIDSet)){
+                                            sectionMap.remove(section.getId());
+                                        }
+                                        scenarioDao.save(scenario);
+                                    }
+                                }
                             }
                         }
                     }
@@ -243,4 +255,6 @@ public class QuestionService {
     private SectionDao sectionDao;
     @Autowired
     private SolutionService solutionService;
+    @Autowired
+    private ScenarioDao scenarioDao;
 }
