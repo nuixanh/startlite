@@ -220,6 +220,15 @@ public class QuestionService {
                                         if(CollectionUtils.isEmpty(qIDSet)){
                                             sectionMap.remove(section.getId());
                                         }
+                                        Revision scRev = revisionDao.incVersion(Constants.REVISION_TYPE_SCENARIO, Constants.REVISION_ACTION_DELETE_QUESTION, q.getId(), scenario.getId());
+                                        scenario.setMyRevision(scRev.getVersion());
+                                        scenario.setRevision(scRev.getVersion());
+                                        String rootParentId = scenario.getRootParentId();
+                                        if(!rootParentId.equals(scenario.getId())){
+                                            Scenario rootScenario = scenarioDao.findOne(rootParentId);
+                                            rootScenario.setRevision(scRev.getVersion());
+                                            scenarioDao.save(rootScenario);
+                                        }
                                         scenarioDao.save(scenario);
                                     }
                                 }

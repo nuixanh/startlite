@@ -17,15 +17,17 @@ public class RevisionHistory {
     @Indexed
     private String action;
     private String entityId;
+    private String relatedEntityId;
     private Date whenCreated;
 
-    public RevisionHistory(String id, String type, long version, String action, String entityId, Date whenCreated) {
+    public RevisionHistory(String id, String type, long version, String action, String entityId, Date whenCreated, String relatedEntityId) {
         this.id = id;
         this.type = type;
         this.version = version;
         this.action = action;
         this.entityId = entityId;
         this.whenCreated = whenCreated;
+        this.relatedEntityId = relatedEntityId;
     }
 
     public String getId() {
@@ -74,5 +76,13 @@ public class RevisionHistory {
 
     public void setEntityId(String entityId) {
         this.entityId = entityId;
+    }
+
+    public String getRelatedEntityId() {
+        return relatedEntityId;
+    }
+
+    public void setRelatedEntityId(String relatedEntityId) {
+        this.relatedEntityId = relatedEntityId;
     }
 }
