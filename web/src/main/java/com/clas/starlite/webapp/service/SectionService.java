@@ -326,6 +326,12 @@ public class SectionService {
         if(attachedScenario == null){
             return ErrorCodeMap.FAILURE_SCENARIO_NOT_FOUND;
         }
+        Set<String> sectionIDSet = attachedScenario.getSections();
+        Map<String, Set<String>> sectionMap = attachedScenario.getSectionMap();
+        boolean isNewAttach = true;
+        if(sectionIDSet != null & sectionIDSet.contains(sectionId)){
+            isNewAttach = false;
+        }
         if(StringUtils.isNotBlank(questionIDs)){
             String[] qIDarr = questionIDs.split(",", -1);
             if(CollectionUtils.isEmpty(section.getQuestions()) || section.getQuestions().size() < qIDarr.length){
@@ -340,7 +346,7 @@ public class SectionService {
                     return ErrorCodeMap.FAILURE_INVALID_QUESTION;
                 }
             }
-            Map<String, Set<String>> sectionMap = attachedScenario.getSectionMap();
+
             if(sectionMap == null){
                 sectionMap = CommonUtils.newHashMap();
                 attachedScenario.setSectionMap(sectionMap);
@@ -353,9 +359,12 @@ public class SectionService {
             for (int i = 0; i < qIDarr.length; i++) {
                 qIDSet.add(qIDarr[i]);
             }
+        }else if(!isNewAttach && sectionMap.containsKey(sectionId)){//edit attachment
+            sectionMap.remove(sectionId);
         }
+
         List<Scenario> parents = section.getScenarios();
-        if(parents != null && parents.size() > 0){
+        if(parents != null && parents.size() > 0 && isNewAttach){
             for (Scenario parent : parents) {
                 if(parent.getStatus() == Status.ACTIVE.getValue() && parent.getRootParentId().equals(attachedScenario.getRootParentId())){
                     return ErrorCodeMap.FAILURE_SECTION_BELONG_SAME_ROOT_SCENARIO;
