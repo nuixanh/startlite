@@ -25,6 +25,7 @@ public class Assessment {
     @DBRef
     private ScenarioHistory rootScenarioHistory;
     private Score score;
+    private String dto;
 //    List<Score> scores = new ArrayList<Score>();
 
     public Assessment() {
@@ -180,5 +181,13 @@ public class Assessment {
 
     public void setScore(Score score) {
         this.score = score;
+    }
+
+    public String getDto() {
+        return dto;
+    }
+
+    public void setDto(String dto) {
+        this.dto = dto;
     }
 }

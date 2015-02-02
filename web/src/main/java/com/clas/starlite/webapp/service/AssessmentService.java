@@ -42,7 +42,7 @@ public class AssessmentService {
                 answerMap.put(answer.getId(), answerDTO);
             }
         }
-        if(CollectionUtils.isNotEmpty(score.getAnswerIDs())){
+        if(score != null && CollectionUtils.isNotEmpty(score.getAnswerIDs())){
             question.setChosenAnswer(new ArrayList<AssessmentInstanceDTO.Answer>());
             for(String asID: score.getAnswerIDs()){
                 if(answerMap.containsKey(asID)){
@@ -59,7 +59,7 @@ public class AssessmentService {
             section.setPercent(score.getScorePercent());
         }
         int idx = 0;
-        List<Assessment.Score> childScores = score.getChildren();
+        List<Assessment.Score> childScores = score == null? new ArrayList<Assessment.Score>(): score.getChildren();
         if(CollectionUtils.isNotEmpty(sectionHistory.getQuestionHistories())){
             section.setQuestion(new ArrayList<AssessmentInstanceDTO.Question>());
             for (QuestionHistory qHistory : sectionHistory.getQuestionHistories()) {
@@ -88,7 +88,7 @@ public class AssessmentService {
         if(score != null && Constants.REVISION_TYPE_SCENARIO.equals(score.getType()) && score.getEntityId().equals(scenario.getId())){
             scenario.setPercent(score.getScorePercent());
         }
-        List<Assessment.Score> childScores = score.getChildren();
+        List<Assessment.Score> childScores = score == null? new ArrayList<Assessment.Score>(): score.getChildren();
         List<Assessment.Score> scenarioScores = CommonUtils.newArrayList();
         List<Assessment.Score> sectionScores = CommonUtils.newArrayList();
         splitScore(childScores, scenarioScores, sectionScores);
@@ -196,6 +196,9 @@ public class AssessmentService {
                     sectionHistoryMap.put(sectionHistory.getHistoryId(), sectionHistory);
                 }
             }
+            System.out.println("-------------------------------------------------");
+            System.out.println("-----------" + assessment.getId());
+            System.out.println("-------------------------------------------------");
             dto.setScenario(buildScenarioDTO(assessment.getRootScenarioHistory(), sectionHistoryMap, assessment.getScore()));
             output.add(dto);
         }
@@ -363,6 +366,7 @@ public class AssessmentService {
         user = userDao.incSurveyCount(user);
         ass.setCountByUser(user.getSurveyCount());
         ass.setUserId(user.getId());
+        ass.setDto(CommonUtils.printPrettyObj(dto));
         assessmentDao.save(ass);
         output.put(Constants.DATA, ass);
         return output;
