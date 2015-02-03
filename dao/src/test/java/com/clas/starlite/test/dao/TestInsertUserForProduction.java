@@ -1,4 +1,4 @@
-package com.clas.startlite.test.dao;
+package com.clas.starlite.test.dao;
 
 import com.clas.starlite.common.Constants;
 import com.clas.starlite.common.UserRole;

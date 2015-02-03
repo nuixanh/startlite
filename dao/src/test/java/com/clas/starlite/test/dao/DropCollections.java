@@ -1,14 +1,10 @@
-package com.clas.startlite.test.dao;
+package com.clas.starlite.test.dao;
 
-import com.clas.starlite.common.Status;
 import com.clas.starlite.dao.*;
-import com.clas.starlite.domain.Scenario;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.UUID;
 
 /**
  * Created by Son on 8/14/14.

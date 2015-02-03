@@ -1,11 +1,10 @@
-package com.clas.startlite.test.dao;
+package com.clas.starlite.test.dao;
 
 import com.clas.starlite.dao.QuestionDao;
 import com.clas.starlite.dao.QuestionHistoryDao;
 import com.clas.starlite.domain.Question;
 import com.clas.starlite.domain.QuestionHistory;
 import com.clas.starlite.util.CommonUtils;
-import org.apache.commons.beanutils.BeanUtilsBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

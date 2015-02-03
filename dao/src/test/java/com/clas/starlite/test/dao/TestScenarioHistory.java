@@ -1,4 +1,4 @@
-package com.clas.startlite.test.dao;
+package com.clas.starlite.test.dao;
 
 import com.clas.starlite.dao.ScenarioDao;
 import com.clas.starlite.dao.ScenarioHistoryDao;

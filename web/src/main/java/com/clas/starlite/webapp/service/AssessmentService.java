@@ -196,9 +196,6 @@ public class AssessmentService {
                     sectionHistoryMap.put(sectionHistory.getHistoryId(), sectionHistory);
                 }
             }
-            System.out.println("-------------------------------------------------");
-            System.out.println("-----------" + assessment.getId());
-            System.out.println("-------------------------------------------------");
             dto.setScenario(buildScenarioDTO(assessment.getRootScenarioHistory(), sectionHistoryMap, assessment.getScore()));
             output.add(dto);
         }
@@ -231,6 +228,9 @@ public class AssessmentService {
             if(scenario.getId().equals(dtoScenario.getId())){
                 rootScenario = scenario;
             }
+        }
+        if(rootScenario != null){
+            rootScenarioHistory = scenarioHistoryDao.snapshotScenario(rootScenario);
         }
         if(CollectionUtils.isNotEmpty(dtoScenario.getSection())){
             for (AssessmentInstanceDTO.Section childDtoSection : dtoScenario.getSection()) {
@@ -289,7 +289,6 @@ public class AssessmentService {
                 SectionHistory sectionHistory = sectionService.snapshotSection(section);
                 sectionHistories.add(sectionHistory.getHistoryId());
             }
-            rootScenarioHistory = scenarioHistoryDao.snapshotScenario(rootScenario);
             if(CollectionUtils.isNotEmpty(sectionHistories)){
                 rootScenarioHistory.setSectionHistories(sectionHistories);
                 scenarioHistoryDao.save(rootScenarioHistory);
