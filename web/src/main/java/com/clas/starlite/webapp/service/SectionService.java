@@ -359,7 +359,7 @@ public class SectionService {
             for (int i = 0; i < qIDarr.length; i++) {
                 qIDSet.add(qIDarr[i]);
             }
-        }else if(!isNewAttach && sectionMap.containsKey(sectionId)){//edit attachment
+        }else if(!isNewAttach && sectionMap != null && sectionMap.containsKey(sectionId)){//edit attachment
             sectionMap.remove(sectionId);
         }
 
@@ -372,10 +372,10 @@ public class SectionService {
             }
         }
 
-        if(attachedScenario.getSections() == null){
-            attachedScenario.setSections(new HashSet<String>());
+        if(sectionIDSet == null){
+            sectionIDSet = CommonUtils.newHashSet();
         }
-        attachedScenario.getSections().add(section.getId());
+        sectionIDSet.add(section.getId());
 
         if(section.getScenarios() == null){
             section.setScenarios(new ArrayList<Scenario>());
