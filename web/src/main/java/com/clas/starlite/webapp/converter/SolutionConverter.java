@@ -43,7 +43,7 @@ public class SolutionConverter {
     }
 
     public static RuleConditionDTO convertCondition(RuleCondition ruleCondition){
-        RuleConditionDTO dto = new RuleConditionDTO(ruleCondition.getQuestionId(), ruleCondition.getAnswerIds());
+        RuleConditionDTO dto = new RuleConditionDTO(ruleCondition.getQuestionId(), ruleCondition.getAnswerIds(), ruleCondition.getNegativeAnswerIds());
         return dto;
     }
     public static List<List<RuleConditionDTO>> convertConditions(List<List<RuleCondition>> conditions){

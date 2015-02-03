@@ -9,6 +9,7 @@ import java.util.List;
 public class RuleCondition {
     private String questionId;
     private List<List<String>> answerIds;
+    private List<List<String>> negativeAnswerIds;
 
     public String getQuestionId() {
         return questionId;
@@ -24,5 +25,13 @@ public class RuleCondition {
 
     public void setAnswerIds(List<List<String>> answerIds) {
         this.answerIds = answerIds;
+    }
+
+    public List<List<String>> getNegativeAnswerIds() {
+        return negativeAnswerIds;
+    }
+
+    public void setNegativeAnswerIds(List<List<String>> negativeAnswerIds) {
+        this.negativeAnswerIds = negativeAnswerIds;
     }
 }

@@ -8,10 +8,12 @@ import java.util.List;
 public class RuleConditionDTO {
     private String questionId;
     private List<List<String>> answerIds;
+    private List<List<String>> negativeAnswerIds;
 
-    public RuleConditionDTO(String questionId, List<List<String>> answerIds) {
+    public RuleConditionDTO(String questionId, List<List<String>> answerIds, List<List<String>> negativeAnswerIds) {
         this.questionId = questionId;
         this.answerIds = answerIds;
+        this.negativeAnswerIds = negativeAnswerIds;
     }
 
     public String getQuestionId() {
@@ -28,5 +30,13 @@ public class RuleConditionDTO {
 
     public void setAnswerIds(List<List<String>> answerIds) {
         this.answerIds = answerIds;
+    }
+
+    public List<List<String>> getNegativeAnswerIds() {
+        return negativeAnswerIds;
+    }
+
+    public void setNegativeAnswerIds(List<List<String>> negativeAnswerIds) {
+        this.negativeAnswerIds = negativeAnswerIds;
     }
 }
