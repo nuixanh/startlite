@@ -27,6 +27,11 @@ public class RestUtils {
         output.put(Constants.ERROR_CODE, errorCode);
         return output;
     }
+    static public Map<String, Object> createExceptionOutput(Map<String, Object> output, Exception ex) {
+        output.put(Constants.ERROR_CODE, ErrorCodeMap.FAILURE_EXCEPTION);
+        output.put(Constants.ERROR_DESC, ex.getMessage());
+        return output;
+    }
     static public Map<String, Object> createInvalidOutputMap(ErrorCodeMap errorCode) {
         Map<String, Object> output = new HashMap<String, Object>();
         output.put(Constants.ERROR_CODE, errorCode);

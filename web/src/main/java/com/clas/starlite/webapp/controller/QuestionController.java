@@ -76,6 +76,23 @@ public class QuestionController {
 
         return restResultDTO;
     }
+    @RequestMapping(value = "/question/copy/{id}/{sectionId}", method= RequestMethod.GET, produces={"application/json"})
+    public RestResultDTO copy(@PathVariable("id") String questionId, @PathVariable("sectionId") String sectionId,
+                              @RequestHeader(value=Constants.HTTP_HEADER_USER, required = true) String userId) {
+        RestResultDTO restResultDTO = new RestResultDTO();
+        Map<String, Object> output = questionService.copy(questionId, sectionId, userId);
+        ErrorCodeMap errorCode = (ErrorCodeMap) output.get(Constants.ERROR_CODE);
+        if(errorCode != null){
+            restResultDTO = RestUtils.createInvalidOutput(errorCode);
+            return restResultDTO;
+        }
+
+        QuestionDTO questionDTO = (QuestionDTO)output.get(Constants.DTO);
+        restResultDTO.setData(questionDTO);
+        restResultDTO.setSuccessful(true);
+
+        return restResultDTO;
+    }
     @RequestMapping(value = "/question/delete/{id}", method= RequestMethod.GET, produces={"application/json"})
     public RestResultDTO delete(@PathVariable("id") String questionId, @RequestHeader(value=Constants.HTTP_HEADER_USER, required = true) String userId) {
         RestResultDTO restResultDTO = new RestResultDTO();

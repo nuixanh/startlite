@@ -13,11 +13,13 @@ import com.clas.starlite.webapp.converter.QuestionConverter;
 import com.clas.starlite.webapp.converter.SectionConverter;
 import com.clas.starlite.webapp.dto.QuestionDTO;
 import com.clas.starlite.webapp.util.RestUtils;
+import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -59,6 +61,15 @@ public class QuestionService {
             answer.setStatus(Status.ACTIVE.getValue());
         }
     }
+    public void removeInactiveAnswerFromQuestion(Question q){
+        List<Answer> answers = CommonUtils.newArrayList();
+        for (Answer answer : q.getAnswers()) {
+            if(answer.getStatus() == Status.ACTIVE.getValue()){
+                answers.add(answer);
+            }
+        }
+        q.setAnswers(answers);
+    }
     public QuestionDTO create(Question q, String userId){
         addMoreInfoToQuestion(q, userId);
 
@@ -78,6 +89,60 @@ public class QuestionService {
         }
         questionDao.save(q);
         return QuestionConverter.convert(q);
+    }
+    public Question copy(Question oldQuestion, Section newSection, String userId) throws Exception{
+        Question newQuestion = new Question();
+        BeanUtilsBean.getInstance().copyProperties(newQuestion, oldQuestion);
+        removeInactiveAnswerFromQuestion(newQuestion);
+        addMoreInfoToQuestion(newQuestion, userId);
+        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_COPY_QUESTION, newQuestion.getId(), oldQuestion.getId());
+        newQuestion.setSectionId(newSection.getId());
+        newQuestion.setRevision(revision.getVersion());
+        if(newSection.getQuestions() == null){
+            newSection.setQuestions(new ArrayList<Question>());
+        }
+        newSection.getQuestions().add(newQuestion);
+        newSection.setRevision(revision.getVersion());
+        sectionDao.save(newSection);
+        questionDao.save(newQuestion);
+        return newQuestion;
+    }
+    public Map<String, Object> copy(String questionId, String sectionId, String userId) {
+        Map<String, Object> output = new HashMap<String, Object>();
+        if(StringUtils.isBlank(questionId) || StringUtils.isBlank(sectionId)){
+            return RestUtils.createInvalidOutput(output, ErrorCodeMap.FAILURE_INVALID_PARAMS);
+        }
+        Question oldQuestion = questionDao.findOne(questionId);
+        if(oldQuestion == null){
+            return RestUtils.createInvalidOutput(output, ErrorCodeMap.FAILURE_QUESTION_NOT_FOUND);
+        }
+        Section newSection = sectionDao.findOne(sectionId);
+        if(newSection == null){
+            return RestUtils.createInvalidOutput(output, ErrorCodeMap.FAILURE_SECTION_NOT_FOUND);
+        }
+        if(sectionId.equals(oldQuestion.getSectionId())){
+            return RestUtils.createInvalidOutput(output, ErrorCodeMap.FAILURE_INVALID_SECTION);
+        }
+        List<Question> questions = newSection.getQuestions();
+        if(CollectionUtils.isNotEmpty(questions)){
+            for (Question question : questions) {
+                if(question.getDesc().equals(oldQuestion.getDesc()) && !question.getId().equals(oldQuestion.getId())){
+                    return RestUtils.createInvalidOutput(output, ErrorCodeMap.FAILURE_DUPLICATED_QUESTION);
+                }
+            }
+        }
+
+        try {
+            Question newQuestion = copy(oldQuestion, newSection, userId);
+
+//            System.out.println(CommonUtils.printPrettyObj(newQuestion));
+            output.put(Constants.DTO, QuestionConverter.convert(newQuestion));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return RestUtils.createExceptionOutput(output, e);
+        }
+
+        return output;
     }
 
     public Map<String, Object> update(Question question, String userId){

@@ -12,6 +12,7 @@ import com.clas.starlite.webapp.converter.SectionConverter;
 import com.clas.starlite.webapp.converter.SolutionConverter;
 import com.clas.starlite.webapp.dto.SolutionDTO;
 import com.clas.starlite.webapp.dto.SolutionRuleDTO;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -392,6 +393,9 @@ public class SolutionService {
         solutionDao.save(s);
         return SolutionConverter.convert(s);
     }
+    /*public boolean copySolutionRuleBetweenTwoQuestions(Question oldQuestion, Question newQuestion){
+
+    }*/
     public boolean updateSolutionRuleFromDeletedAnswers(String qID, Collection<String> aIDs){
         boolean rs = false;
         Set<String> qIDs = new HashSet<String>();
@@ -405,7 +409,6 @@ public class SolutionService {
                     for(RuleCondition condition: conditions){
                         if(qID.equals(condition.getQuestionId())){
                             List<List<String>> answerIDList = new ArrayList<List<String>>();
-
                             for(List<String> answerIDs: condition.getAnswerIds()){
                                 boolean deleteAnswer = false;
                                 for(String aID: answerIDs){
@@ -418,7 +421,30 @@ public class SolutionService {
                                     answerIDList.add(answerIDs);
                                 }
                             }
-                            condition.setAnswerIds(answerIDList);
+                            if(CollectionUtils.isNotEmpty(answerIDList)){
+                                condition.setAnswerIds(answerIDList);
+                            }else{
+                                condition.setAnswerIds(null);
+                            }
+
+                            List<List<String>> negativeAnswerIDList = new ArrayList<List<String>>();
+                            for(List<String> negativeAnswerIDs: condition.getNegativeAnswerIds()){
+                                boolean deleteAnswer = false;
+                                for(String aID: negativeAnswerIDs){
+                                    if(aIDs.contains(aID)){
+                                        deleteAnswer = true;
+                                        rs = true;
+                                    }
+                                }
+                                if(!deleteAnswer){
+                                    negativeAnswerIDList.add(negativeAnswerIDs);
+                                }
+                            }
+                            if(CollectionUtils.isNotEmpty(negativeAnswerIDList)){
+                                condition.setNegativeAnswerIds(negativeAnswerIDList);
+                            }else{
+                                condition.setNegativeAnswerIds(null);
+                            }
                         }
                     }
                 }
