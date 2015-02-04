@@ -5,6 +5,7 @@ import com.clas.starlite.domain.Section;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -21,6 +22,11 @@ public class SectionDao extends BaseDao<Section, String>{
     }
     public List<Section> getActiveByName(String name){
         Criteria cr = Criteria.where("name").is(name).and("status").is(Status.ACTIVE.getValue());
+        Query q = Query.query(cr);
+        return template.find(q, Section.class);
+    }
+    public List<Section> getActiveByName(Collection<String> names){
+        Criteria cr = Criteria.where("name").in(names).and("status").is(Status.ACTIVE.getValue());
         Query q = Query.query(cr);
         return template.find(q, Section.class);
     }

@@ -95,16 +95,11 @@ public class QuestionService {
         BeanUtilsBean.getInstance().copyProperties(newQuestion, oldQuestion);
         removeInactiveAnswerFromQuestion(newQuestion);
         addMoreInfoToQuestion(newQuestion, userId);
-        Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_COPY_QUESTION, newQuestion.getId(), oldQuestion.getId());
         newQuestion.setSectionId(newSection.getId());
-        newQuestion.setRevision(revision.getVersion());
         if(newSection.getQuestions() == null){
             newSection.setQuestions(new ArrayList<Question>());
         }
         newSection.getQuestions().add(newQuestion);
-        newSection.setRevision(revision.getVersion());
-        sectionDao.save(newSection);
-        questionDao.save(newQuestion);
         return newQuestion;
     }
     public Map<String, Object> copy(String questionId, String sectionId, String userId) {
@@ -134,6 +129,12 @@ public class QuestionService {
 
         try {
             Question newQuestion = copy(oldQuestion, newSection, userId);
+            Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_COPY_QUESTION, newQuestion.getId(), oldQuestion.getId());
+            newQuestion.setRevision(revision.getVersion());
+            newSection.setRevision(revision.getVersion());
+
+            sectionDao.save(newSection);
+            questionDao.save(newQuestion);
 
 //            System.out.println(CommonUtils.printPrettyObj(newQuestion));
             output.put(Constants.DTO, QuestionConverter.convert(newQuestion));

@@ -7,7 +7,9 @@ import com.clas.starlite.domain.*;
 import com.clas.starlite.util.CommonUtils;
 import com.clas.starlite.webapp.common.ErrorCodeMap;
 import com.clas.starlite.webapp.converter.SectionConverter;
+import com.clas.starlite.webapp.dto.AssessmentInstanceDTO;
 import com.clas.starlite.webapp.dto.SectionDTO;
+import com.clas.starlite.webapp.util.RestUtils;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -313,6 +315,87 @@ public class SectionService {
         scenarioDao.save(detachedScenario);
         return null;
     }
+    public Map<String, Object> copy(String sectionId, String sectionName, String userId) {
+        Map<String, Object> output = new HashMap<String, Object>();
+        if(StringUtils.isBlank(sectionId)){
+            return RestUtils.createInvalidOutput(output, ErrorCodeMap.FAILURE_INVALID_PARAMS);
+        }
+        Section oldSection = sectionDao.findOne(sectionId);
+        if(oldSection == null){
+            return RestUtils.createInvalidOutput(output, ErrorCodeMap.FAILURE_SECTION_NOT_FOUND);
+        }
+        String validName = null;
+        if(StringUtils.isNotBlank(sectionName)){
+            List<Section> sections = sectionDao.getActiveByName(sectionName.trim());
+            for (Section s : sections) {
+                if(!s.getId().equals(oldSection.getId())){
+                    return RestUtils.createInvalidOutput(output, ErrorCodeMap.FAILURE_DUPLICATED_NAME);
+                }
+            }
+            validName = sectionName.trim();
+        }else{
+            String oldName = oldSection.getName();
+            List<String> nameList = CommonUtils.newArrayList();
+            Map<String, Section> nameMap = CommonUtils.newHashMap();
+            for (int i = 1; i < 11; i++) {
+                String newName = oldName + " - copy " + i;
+                nameList.add(newName);
+                nameMap.put(newName, null);
+            }
+            List<Section> sections = sectionDao.getActiveByName(nameList);
+            for (Section s : sections) {
+                nameMap.put(s.getName(), s);
+            }
+            for (String name : nameList) {
+                Section s = nameMap.get(name);
+                if(s == null){
+                    validName = name;
+                    break;
+                }
+            }
+            if(StringUtils.isBlank(validName)){
+                validName = oldName + " (" + UUID.randomUUID().toString() + ")";
+            }
+        }
+        try{
+            Section newSection = new Section();
+            newSection.setName(validName);
+            newSection.setId(UUID.randomUUID().toString());
+            newSection.setCreated(System.currentTimeMillis());
+            newSection.setModified(System.currentTimeMillis());
+            newSection.setCreatedBy(userId);
+            newSection.setModifiedBy(userId);
+            newSection.setStatus(Status.ACTIVE.getValue());
+            Set<String> entityIdSet = CommonUtils.newHashSet();
+            entityIdSet.add(newSection.getId());
+            if(CollectionUtils.isNotEmpty(oldSection.getQuestions())){
+                newSection.setQuestions(new ArrayList<Question>());
+                for (Question oldQuestion : oldSection.getQuestions()) {
+                    Question newQuestion = questionService.copy(oldQuestion, newSection, userId);
+                    entityIdSet.add(newQuestion.getId());
+                    newSection.getQuestions().add(newQuestion);
+                }
+            }
+
+            Revision revision = revisionDao.incVersion(Constants.REVISION_TYPE_QUESTION, Constants.REVISION_ACTION_COPY_SECTION, entityIdSet, oldSection.getId());
+            newSection.setRevision(revision.getVersion());
+            newSection.setMyRevision(revision.getVersion());
+            for (Question newQuestion : newSection.getQuestions()) {
+                newQuestion.setRevision(revision.getVersion());
+                questionDao.save(newQuestion);
+            }
+            sectionDao.save(newSection);
+
+            output.put(Constants.DTO, SectionConverter.convert(newSection));
+            output.put(Constants.REVISION, loginService.getCurrentRevision());
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return RestUtils.createExceptionOutput(output, e);
+        }
+
+        return output;
+    }
 
     public ErrorCodeMap attachToScenario(String sectionId, String scenarioId, String userId, String questionIDs){
         if(StringUtils.isBlank(sectionId) || StringUtils.isBlank(scenarioId)){
@@ -420,13 +503,15 @@ public class SectionService {
     @Autowired
     private QuestionDao questionDao;
     @Autowired
-    private SolutionService solutionService;
-    @Autowired
-    private QuestionService questionService;
-    @Autowired
     private SectionHistoryDao sectionHistoryDao;
     @Autowired
     private QuestionHistoryDao questionHistoryDao;
     @Autowired
     private ScenarioHistoryDao scenarioHistoryDao;
+    @Autowired
+    private SolutionService solutionService;
+    @Autowired
+    private QuestionService questionService;
+    @Autowired
+    private LoginService loginService;
 }

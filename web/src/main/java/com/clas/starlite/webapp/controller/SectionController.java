@@ -125,6 +125,23 @@ public class SectionController extends ApplicationObjectSupport {
         return restResultDTO;
     }
 
+    @RequestMapping(value = "/section/copy/{id}", method= RequestMethod.GET, produces={"application/json"})
+    public RestResultDTO copy(@PathVariable("id") String sectionId,
+                              @RequestParam(value="name", required=false) String newName,
+                              @RequestHeader(value=Constants.HTTP_HEADER_USER, required = true) String userId) {
+        RestResultDTO restResultDTO = new RestResultDTO();
+        Map<String, Object> output = sectionService.copy(sectionId, newName, userId);
+        ErrorCodeMap errorCode = (ErrorCodeMap) output.get(Constants.ERROR_CODE);
+        if(errorCode != null){
+            restResultDTO = RestUtils.createInvalidOutput(errorCode);
+        }else{
+            restResultDTO.setData(output);
+            restResultDTO.setSuccessful(true);
+        }
+
+        return restResultDTO;
+    }
+
     @Autowired
     SectionService sectionService;
 }

@@ -24,6 +24,7 @@ public class Constants {
     public static final String REVISION_ACTION_DELETE_SECTION = "delete_section";
     public static final String REVISION_ACTION_DELETE_QUESTION = "delete_question";
     public static final String REVISION_ACTION_COPY_QUESTION = "copy_question";
+    public static final String REVISION_ACTION_COPY_SECTION = "copy_section";
     public static final String REVISION_ACTION_ATTACH = "attach";
     public static final String REVISION_ACTION_DETACH = "detach";
     public static final long SESSION_WITHOUT_EXPIRATION = -1;
@@ -32,6 +33,7 @@ public class Constants {
     public static final String ERROR_DESC = "error_desc";
     public static final String ERROR_LINE = "error_line";
     public static final String DTO = "dto";
+    public static final String REVISION = "revision";
     public static final String DATA = "data";
     public static final String FLAG = "flag";
     public static final String FLAG_SCENARIO = "flag_scenario";

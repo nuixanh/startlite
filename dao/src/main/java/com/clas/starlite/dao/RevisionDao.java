@@ -31,12 +31,12 @@ public class RevisionDao extends BaseDao<Revision, String>{
         template.save(rHistory);
         return revision;
     }
-    private Revision incVersion(String type, long inc, String action, Collection<String> entityIdSet){
+    private Revision incVersion(String type, long inc, String action, Collection<String> entityIdSet, String relatedEntityId){
         Update update = Update.update("whenUpdated", Calendar.getInstance().getTime()).inc("version", inc);
         //return the modified object rather than the original
         Revision revision = template.findAndModify(query(where("type").is(type)),
                 update, FindAndModifyOptions.options().returnNew(true).upsert(true), Revision.class);
-        updateRevisionHistory(type, action, revision.getVersion(), entityIdSet);
+        updateRevisionHistory(type, action, revision.getVersion(), entityIdSet, relatedEntityId);
         return revision;
     }
     public Revision incVersion(String type, String action, String entityId){
@@ -46,12 +46,15 @@ public class RevisionDao extends BaseDao<Revision, String>{
         return incVersion(type, 1, action, entityId, relatedEntityId);
     }
     public Revision incVersion(String type, String action, Collection<String> entityIdSet){
-        return incVersion(type, 1, action, entityIdSet);
+        return incVersion(type, 1, action, entityIdSet, null);
     }
-    private void updateRevisionHistory(String type, String action, long revision, Collection<String> entityIdSet){
+    public Revision incVersion(String type, String action, Collection<String> entityIdSet, String relatedEntityId){
+        return incVersion(type, 1, action, entityIdSet, relatedEntityId);
+    }
+    private void updateRevisionHistory(String type, String action, long revision, Collection<String> entityIdSet, String relatedEntityId){
         for (String entityId : entityIdSet) {
             RevisionHistory rHistory = new RevisionHistory(UUID.randomUUID().toString(), type, revision,
-                    action, entityId, Calendar.getInstance().getTime(), null);
+                    action, entityId, Calendar.getInstance().getTime(), relatedEntityId);
             template.save(rHistory);
         }
     }
