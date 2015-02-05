@@ -20,6 +20,7 @@
         <security:intercept-url pattern="/question/approve/*" access="hasRole('ROLE_SCENARIO_CREATOR')"/>
         <security:intercept-url pattern="/question/delete/*" access="hasRole('ROLE_SCENARIO_CREATOR')"/>
         <security:intercept-url pattern="/setRole" access="hasRole('ROLE_SCENARIO_CREATOR')"/>
+        <security:intercept-url pattern="/group/*" access="hasRole('ROLE_SCENARIO_CREATOR')"/>
         <security:intercept-url pattern="/**" access="isAuthenticated()"/>
     </security:http>
 
